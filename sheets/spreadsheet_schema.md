@@ -1,0 +1,12 @@
+# スプレッドシート設計
+
+必要シート：
+
+- SNS_POST_MASTER
+- Threads投稿
+- Instagram投稿
+- SNS_RESULT
+- SNS_WINNING_POSTS
+- SNS_REUSE_ACTIONS
+- IMAGE_LIBRARY
+- FUNNEL_KPI

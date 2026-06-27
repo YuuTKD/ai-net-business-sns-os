@@ -1,0 +1,15 @@
+.env
+.env.*
+*.env
+*secret*
+*token*
+*credentials*
+*client_secret*
+*.json
+*.key
+*.pem
+__pycache__/
+.DS_Store
+logs/
+private/
+backups/
