@@ -49,11 +49,22 @@ AI Digital Productをグローバルに販売するためのSNS・販売OSです
 
 → `operations/go_live_copy_paste_guide.md` を開いてSTEP 1〜5を実行する
 
-1. Gumroad商品ページ「Sell the Client Docs You Already Use」を公開（STEP 1）
-2. Tally診断クイズ「What Paid Template Is Hidden Inside Your Client Docs?」を公開（STEP 2）
-3. Brevo Day 0〜7メールを有効化（STEP 3）
-4. URL置換作業（STEP 4）
-5. LinkedIn bio更新・Post 08を最初の投稿として公開（STEP 5）
+**ユーザーがやること（3タスク）：**
+
+1. **Gumroadパッケージ確認 → 公開**
+   - `dist/gumroad_upload_package/` の9ファイルを確認する
+   - ZIPを作成して Gumroad にアップロードする（手順：`dist/gumroad_upload_package/ZIP_STRUCTURE.md`）
+   - STEP 1の内容に従って商品ページを設定・公開する
+
+2. **Tally + Brevo を有効化**
+   - STEP 2: Tallyクイズを公開する
+   - STEP 3: Brevo Day 0〜7メールを有効化する
+   - STEP 4: URL置換（`operations/url_placeholder_replacement_map.md` 参照）
+
+3. **LinkedIn・Threads 最初の投稿**
+   - STEP 5: LinkedIn bio + Threads bio を更新する
+   - Post 08（クイズ告知）をLinkedInに投稿する
+   - Threads版をクロスポストする
 
 ## 運用ルール
 

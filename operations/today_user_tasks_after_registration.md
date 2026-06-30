@@ -9,18 +9,31 @@ The full go-live guide is at: `operations/go_live_copy_paste_guide.md`
 
 ---
 
-## TASK 1: Set Up Gumroad Product Page
+## TASK 1: Create the ZIP and Set Up Gumroad Product Page
 
-**Estimated time:** 30–45 minutes
+**Estimated time:** 45–60 minutes
 
 **What you're doing:**
-Creating and publishing the product listing for
+Zipping the product package and publishing the Gumroad listing for
 Sell the Client Docs You Already Use ($19).
 
-**Where to find the copy:**
-`platform_setup/gumroad_launch_kit_listing.md`
+**Product files location:** `dist/gumroad_upload_package/` (9 files)
 
-**Step-by-step:**
+**Step 1: Create the ZIP**
+
+Open your terminal and run:
+
+```bash
+cd dist
+zip -r Sell_the_Client_Docs_You_Already_Use_Gumroad_Package.zip gumroad_upload_package/
+```
+
+This creates: `dist/Sell_the_Client_Docs_You_Already_Use_Gumroad_Package.zip`
+
+Before uploading, open the ZIP and verify all 9 files are present.
+See `dist/gumroad_upload_package/ZIP_STRUCTURE.md` for the full file list.
+
+**Step 2: Set up Gumroad**
 
 1. Log in to Gumroad
 2. Click **New Product** → select **Digital Product**
@@ -28,22 +41,23 @@ Sell the Client Docs You Already Use ($19).
 4. Open `gumroad_launch_kit_listing.md` Section 2 → copy the short description → paste
 5. Open Section 3 → copy the full description → paste into Gumroad Description field
 6. Set price to **$19**
-7. For now, upload a placeholder PDF (even a 1-page "Coming soon" is fine)
-   — you'll replace this with the final product PDF after review
-8. Cover image: create in Canva using the text from Section 4 of the listing file
-9. Post-purchase message: copy from `platform_setup/gumroad_post_purchase_message.md`
-   and replace {{SUPPORT_EMAIL}} with your email
-10. Create discount code: **TEMPLATE5** → $5 off → active (for email use only)
-11. Add tags from Section 5 of the listing file
+7. Upload the ZIP file: `dist/Sell_the_Client_Docs_You_Already_Use_Gumroad_Package.zip`
+8. Cover image: create in Canva using the text from `go_live_copy_paste_guide.md` → STEP 1-7
+9. Post-purchase message: copy from `go_live_copy_paste_guide.md` → STEP 1-9
+   Replace {{SUPPORT_EMAIL}} with your email address
+10. Create discount code: **TEMPLATE5** → $5 off → active (for email use only — not on product page)
+11. Add tags from `go_live_copy_paste_guide.md` → STEP 1-5
 12. Set to **Public** and click **Publish**
-13. Copy your product URL — save it somewhere you can find it
+13. Copy your product URL — save it
 
 **Completion check:**
+- [ ] ZIP created and contains all 9 files
 - [ ] Product is live and visible to the public
 - [ ] Title shows: Sell the Client Docs You Already Use
 - [ ] Price shows $19
-- [ ] Description looks clean
-- [ ] Post-purchase message is set
+- [ ] ZIP file is uploaded and downloads correctly
+- [ ] Description looks clean (no placeholder text remaining)
+- [ ] Post-purchase message is set with your real email
 - [ ] TEMPLATE5 discount code is active
 - [ ] Product URL is copied and saved
 

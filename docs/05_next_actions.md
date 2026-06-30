@@ -16,31 +16,24 @@
 
 → `operations/go_live_copy_paste_guide.md` を開いてSTEP 1〜5を実行する
 
-**STEP 1: Gumroad商品ページを更新・公開（30〜45分）**
-- タイトル：Sell the Client Docs You Already Use
-- 価格：$19
-- 割引コード：TEMPLATE5（$5 off、Day 4メール末尾のみ）
-- ソース：`platform_setup/gumroad_launch_kit_listing.md`
-- 手順：`platform_setup/gumroad_setup_checklist.md`
+**タスク1: Gumroadパッケージを確認してアップロードする（30〜45分）**
+- `dist/gumroad_upload_package/` の9ファイルを開いて確認する
+- ZIPを作成：`dist/gumroad_upload_package/ZIP_STRUCTURE.md` のコマンドを使用
+- Gumroad商品ページを `go_live_copy_paste_guide.md` の STEP 1 に従って設定・公開する
+- タイトル：Sell the Client Docs You Already Use ／ 価格：$19
 
-**STEP 2: Tally診断クイズを公開（45〜60分）**
-- タイトル：What Paid Template Is Hidden Inside Your Client Docs?
-- ソース：`platform_setup/tally_readiness_quiz.md`
-- 手順：`platform_setup/tally_setup_checklist.md`
+**タスク2: Tally + Brevo を有効化する（75〜105分）**
+- STEP 2: Tallyクイズ公開（タイトル：What Paid Template Is Hidden Inside Your Client Docs?）
+- STEP 3: Brevo Day 0〜7メール有効化
+- STEP 4: URL置換（詳細は `operations/url_placeholder_replacement_map.md`）
+  - {{GUMROAD_LINK}} → 実際のGumroad URL
+  - {{TALLY_QUIZ_LINK}} → 実際のTally URL
+  - {{SUPPORT_EMAIL}} → サポートメールアドレス
 
-**STEP 3: Brevo Day 0〜7メールを有効化（30〜45分）**
-- ソース：`platform_setup/brevo_7day_email_sequence.md`
-- 手順：`platform_setup/brevo_setup_checklist.md`
-
-**STEP 4: URL置換作業（15分）**
-- {{GUMROAD_LINK}} → 実際のGumroad URL
-- {{TALLY_QUIZ_LINK}} → 実際のTally URL
-- {{SUPPORT_EMAIL}} → サポートメールアドレス
-- 置換対象ファイル：go_live_copy_paste_guide.md に一覧あり
-
-**STEP 5: SNS導線を整える（30分）**
-- X / Threads / LinkedIn プロフィールbio更新
-- Post 08を最初の投稿として公開（クイズ告知）
+**タスク3: LinkedIn・Threads 最初の投稿（30分）**
+- STEP 5: LinkedIn bio + Threads bio 更新（クイズリンク設置）
+- Post 08（クイズ告知・120点版）をLinkedInに投稿
+- Threads版をクロスポスト
 - ソース：`content/global_x_threads_launch_posts_20.md`
 
 ---

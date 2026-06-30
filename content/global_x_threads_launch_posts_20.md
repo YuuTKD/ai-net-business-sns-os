@@ -175,24 +175,48 @@ Let the next person pay $29 for the document version.
 ---
 
 ## POST 08
-**Intent:** Quiz announcement — warm and direct
-**Platform:** LinkedIn / Threads
+**Intent:** Quiz announcement — 120-point version, specific and credible
+**Platform:** LinkedIn (primary) / Threads (short version below)
 
+**LinkedIn version:**
 ```
-I made a free 3-minute quiz for freelance copywriters and solo marketers.
+What paid template is hidden inside your client docs?
 
-It tells you exactly which of your client documents to turn into
-your first paid template on Gumroad.
+I built a 3-minute quiz for freelance copywriters and solo marketers.
 
-6 possible results:
-• Proposal Template
-• Client Intake Template
-• Messaging Framework Template
-• Sales Page Checklist
-• Swipe File Template
-• Onboarding SOP
+It looks at the specific documents you use with clients —
+proposals, intake forms, messaging frameworks, SOPs, swipe files —
+and tells you which one is worth selling first.
 
-Free. Takes 3 minutes. No email required to start.
+Not the one you think is most polished.
+The one that scores highest on reusability, demand,
+and how easy it is to remove the client-specific parts.
+
+6 results:
+→ Proposal Template
+→ Client Intake Template
+→ Messaging Framework Template
+→ Sales Page Checklist
+→ Swipe File Template
+→ Onboarding SOP
+
+Free. 3 minutes. No email required to start.
+
+Take it here: {{TALLY_QUIZ_LINK}}
+
+(Link in first comment)
+```
+
+**Threads version (cross-post):**
+```
+What paid template is already inside your client docs?
+
+Free 3-min quiz for freelance copywriters and solo marketers.
+
+It tells you which of your existing documents — proposals, intake forms,
+messaging frameworks — is worth selling first on Gumroad.
+
+6 results. No email required to start.
 
 → {{TALLY_QUIZ_LINK}}
 ```
