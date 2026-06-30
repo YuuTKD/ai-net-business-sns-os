@@ -7,32 +7,30 @@
 
 ---
 
-## Phase 1：準備（Day 1〜3）
+## Phase 1：準備（Day 1〜3）✅ 完了
 
-### Day 1：アカウント登録（所要1〜2時間）
+### ✅ Day 1：アカウント登録 — 完了
 
-1. Gumroad登録（5分）
-2. Brevo登録（5分）
-3. Tally登録（5分）
-4. Beacons登録（5分）
-5. Canva確認（既存アカウント流用）
+- [x] Gumroad登録
+- [x] Brevo登録
+- [x] Tally登録
 
-### Day 2：商品・診断作成（所要2〜3時間）
+### Day 2（本日）：商品・診断・メールを公開する
 
-1. Claude Codeに30-Day Launch Kit本文作成を依頼
-2. Google Docsで本文を整理・確認
-3. Canvaで商品表紙デザイン作成（A4サイズ）
-4. Claude Codeに診断クイズ10問を依頼
-5. TallyでAI Digital Product Readiness Quiz作成
+全素材作成済み。貼り付けて公開するだけ。
 
-### Day 3：LP・メール・販売設定（所要2〜3時間）
+→ `operations/today_user_tasks_after_registration.md` を参照
 
-1. Claude CodeにBrevo 7日間メール文を依頼
-2. Brevoでステップ配信フロー設定（7通）
-3. TallyとBrevoを連携設定
-4. CarrdまたはNotionでLP作成（Claude Code提供コピー使用）
-5. Gumroadに商品登録（$19・公開）
-6. BeaconsにリンクまとめURL設置
+1. Gumroad商品ページを公開（ソース：`platform_setup/gumroad_launch_kit_listing.md`）
+2. Tally診断クイズを公開（ソース：`platform_setup/tally_readiness_quiz.md`）
+3. Brevo Day 0メールを設定・有効化（ソース：`platform_setup/brevo_7day_email_sequence.md`）
+
+### Day 3（翌日）：投稿開始・残り設定
+
+1. Brevo Days 1-7を全て設定（ソース：brevo_7day_email_sequence.md）
+2. 商品PDFをGumroadにアップロード（`products/30_day_ai_digital_product_launch_kit.md` をPDF化）
+3. X/Threadsに最初の投稿（`content/global_x_threads_launch_posts_20.md` Post 08）
+4. プロフィールにTallyクイズリンクを設置
 
 ---
 

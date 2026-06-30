@@ -2,19 +2,27 @@
 
 ## 採用構成（初期・費用$0）
 
-| 役割 | ツール | 採用理由 |
-|---|---|---|
-| 販売 | Gumroad | 即日開始・英語圏認知・自動納品・クーポンあり |
-| メール配信 | Brevo | 連絡先無制限・ステップ配信無料から |
-| 無料診断 | Tally | 回答無制限・見た目良・メール連携あり |
-| LP | Carrd（無料）または Notion | シンプル・すぐ作れる |
-| SNSリンク集 | Beacons | 無料・SNSプロフィールリンクに最適 |
-| 集客 | X + Threads | 英語圏リーチ・テスト投稿向き |
-| 制作 | Google Docs + Sheets + Canva | 完全無料・商品PDFとテンプレ作成 |
-| KPI管理 | Google Sheets（AI-NET-BUSINESS-OS） | 既存OS流用 |
-| AI | Claude Code + ChatGPT | 自動化の核 |
+| 役割 | ツール | 状態 | 採用理由 |
+|---|---|---|---|
+| 販売 | Gumroad | ✅ 登録済み | 即日開始・英語圏認知・自動納品・クーポンあり |
+| メール配信 | Brevo | ✅ 登録済み | 連絡先無制限・ステップ配信無料から |
+| 無料診断 | Tally | ✅ 登録済み | 回答無制限・見た目良・メール連携あり |
+| LP | Carrd または Notion | 後回し | Gumroad + Tallyで先行 |
+| SNSリンク集 | Beacons | 後回し | — |
+| 集客 | X + Threads | 今すぐ開始 | 英語圏リーチ・テスト投稿向き |
+| 制作 | Google Docs + Sheets + Canva | 使用中 | 完全無料・商品PDFとテンプレ作成 |
+| KPI管理 | Google Sheets（AI-NET-BUSINESS-OS） | 使用中 | 既存OS流用 |
+| AI | Claude Code + ChatGPT | 使用中 | 自動化の核 |
 
 **合計初期費用：$0**
+
+## 現在のフェーズ
+
+**Phase 2: 販売素材を各プラットフォームに設定・公開する**
+
+素材はすべて作成済み。次は貼り付けて公開するだけ。
+
+参照：`operations/today_user_tasks_after_registration.md`
 
 ---
 

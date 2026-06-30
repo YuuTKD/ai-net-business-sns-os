@@ -1,38 +1,49 @@
 # 次にやること（優先順位順）
 
-## グローバルローンチ（新方針：初期費用$0）
+## グローバルローンチ（現在のフェーズ）
 
-## 1. ユーザーが登録する3サービス
-- Gumroad（販売）
-- Brevo（メール配信）
-- Tally（無料診断）
+## ✅ 完了済み
+- Gumroad登録
+- Brevo登録
+- Tally登録
+- 全販売素材の作成（platform_setup/配下）
+- 商品本文作成（products/配下）
+- X/Threads投稿20本作成（content/配下）
 
-## 2. Claude Codeに依頼する文章作成
-- 30-Day AI Digital Product Launch Kit本文（Google Docs・英語）
-- AI Digital Product Readiness Quiz 診断クイズ10問（英語）
-- Brevo 7日間ステップ配信メール文7本（英語）
-- Gumroad商品ページ文章（英語）
-- CarrdまたはNotionのLPコピー（英語）
-- X / Threads投稿テンプレ30本（英語）
+## 今すぐやること（本日中）
 
-## 3. ChatGPT Deep Research実施
-Gumroad上の類似商品・競合価格・ターゲット読者を調査し、差別化ポイントを特定する。
+→ `operations/today_user_tasks_after_registration.md` を開いて3タスクを実行
 
-## 4. 商品ページ公開
-Gumroadに30-Day Launch Kit（$19）を公開する。
-Tallyで診断クイズを公開し、BrevoとTallyを連携する。
+**Task 1:** Gumroad商品ページを公開（30-45分）
+ソース：`platform_setup/gumroad_launch_kit_listing.md`
+設定手順：`platform_setup/gumroad_setup_checklist.md`
 
-## 5. 投稿開始（1日1本）
-X / Threadsに英語投稿を開始する。
-全投稿のCTAは「Take the free quiz → [Tally URL]」に統一する。
+**Task 2:** Tally診断クイズを公開（45-60分）
+ソース：`platform_setup/tally_readiness_quiz.md`
+設定手順：`platform_setup/tally_setup_checklist.md`
 
-## 6. Week 2：テスト・改善
-投稿テーマ3パターンをテスト。
-診断→登録転換率とメール開封率をBrevoで確認する。
+**Task 3:** Brevo Day 0メールを設定・有効化（20-30分）
+ソース：`platform_setup/brevo_7day_email_sequence.md`
+設定手順：`platform_setup/brevo_setup_checklist.md`
 
-## 7. Week 3〜4：販売検証
-Day 4メール（$5 OFFクーポン）の効果確認。
-5件販売達成後 → Bundleアップセル（$49）準備。
+## 今日の完了後にすること
+
+1. X/Threadsプロフィールにクイズリンクを設置
+2. 最初の投稿を公開（Post 08推奨）
+   → `content/global_x_threads_launch_posts_20.md`
+
+## 今週中にすること
+
+- Brevo Days 1-7を全設定完了
+- 商品PDFをGumroadにアップロード
+   → `products/30_day_ai_digital_product_launch_kit.md` をGoogle DocsでPDF化
+- 毎日1投稿を継続
+
+## 後回し
+
+- Carrd / Notion LP（売上が出てから）
+- TallyとBrevoの自動連携（手動CSV運用で先行）
+- Creator Funnel Bundle（$49）は5件販売後に設計
 
 ---
 

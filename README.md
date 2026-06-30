@@ -14,15 +14,26 @@
 
 ## グローバル展開方針
 
-- **販売プラットフォーム**：Gumroad（第一候補）
-- **メール配信**：Brevo（無料・連絡先無制限）
-- **無料診断**：Tally（無料・回答無制限）
-- **LP**：Carrd または Notion Sites（無料）
+- **販売プラットフォーム**：Gumroad ✅ 登録済み
+- **メール配信**：Brevo ✅ 登録済み
+- **無料診断**：Tally ✅ 登録済み
+- **LP**：Carrd または Notion Sites（後回し）
 - **集客SNS**：X（英語圏主力）+ Threads + Instagram
 - **制作ツール**：Google Docs / Google Sheets / Canva
 - **AI自動化**：Claude Code（文章生成）+ ChatGPT（Deep Research・改善）
 
 初期費用：**$0**
+
+## 現在のフェーズ
+
+**Phase 2: 販売導線を公開する**
+- Gumroad商品ページを公開
+- Tally診断クイズを公開
+- Brevo Day 0メールを設定
+- X/Threadsプロフィールにクイズリンクを設置
+- 1日1投稿を開始
+
+参照：`operations/today_user_tasks_after_registration.md`
 
 ## 運用ルール
 

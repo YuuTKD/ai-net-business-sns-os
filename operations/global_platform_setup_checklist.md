@@ -2,19 +2,16 @@
 
 ## ユーザーが登録するサービス（優先順）
 
-### 最初に登録する3つ（Day 1）
+### 最初に登録する3つ（Day 1）✅ 登録完了
 
-- [ ] **Gumroad**
-  - 用途：デジタル商品販売・自動納品
-  - 登録後：「Products」→「New Product」で商品ページ作成開始
+- [x] **Gumroad** ✅ 登録済み
+  - 次：`platform_setup/gumroad_setup_checklist.md` を使って商品ページを公開
 
-- [ ] **Brevo**
-  - 用途：メール配信・7日間ステップ配信
-  - 登録後：「Automations」→ ステップ配信フロー設計
+- [x] **Brevo** ✅ 登録済み
+  - 次：`platform_setup/brevo_setup_checklist.md` を使って7日間シーケンスを設定
 
-- [ ] **Tally**
-  - 用途：AI Digital Product Readiness Quiz（無料診断）
-  - 登録後：「New Form」→ 診断クイズ作成（Claude Code提供の質問文を使用）
+- [x] **Tally** ✅ 登録済み
+  - 次：`platform_setup/tally_setup_checklist.md` を使ってクイズを作成・公開
 
 ---
 
