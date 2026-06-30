@@ -1,4 +1,4 @@
-# Brevo 7-Day Email Sequence — AI Digital Product Launch Kit
+# Brevo 7-Day Email Sequence — Turn Your Client Work Into Paid Templates with AI
 
 URL Placeholders:
 - {{GUMROAD_LINK}} — replace with your Gumroad product URL
@@ -13,49 +13,38 @@ URL Placeholders:
 
 **Subject:**
 ```
-Welcome — here's what your quiz result means
+Your template type is inside — here's where to start
 ```
 
 **Preview text:**
 ```
-Your result is inside + one thing to do right now
+Based on your quiz, here's what's hiding in your client work
 ```
 
 **Body:**
 ```
 Hey [First Name],
 
-Welcome. I'm glad you're here.
+You just found out your template type — and I want to make sure
+you know exactly what to do next.
 
-You just took the AI Digital Product Readiness Quiz — and based on
-your answers, you have a clear path forward.
+Here's the short version:
 
-Your result: [QUIZ RESULT TYPE]
-(Check your quiz page for the full breakdown)
+The work you're already doing for clients contains at least one template
+that other people in your field would pay for.
 
-Here's what this means for you:
+Your job over the next 7 days is to find it, package it, and put it on Gumroad.
 
-You already have what it takes to create a digital product.
-You might not believe that yet — but by the end of this week,
-you will.
+This week, I'll walk you through:
 
-Over the next 7 days, I'll send you one short email each day covering:
+→ Why the work you do is worth more than one client's fee
+→ How to find your first template in under an hour
+→ The 3 most sellable template formats (and which fits you)
+→ How to use AI to package your work faster
+→ Where to sell it + how to price it
+→ How to get your first buyer without a big audience
 
-→ Why most beginners never launch (and the one fix)
-→ How to pick your product idea in 60 minutes
-→ How to build a lead magnet with AI
-→ How to turn your idea into a $19 product
-→ How to write a sales page in 30 minutes
-→ How to launch without a big audience
-→ The complete system to put it all together
-
-Each email is short. Each one is actionable.
-
-One more thing: if you want to get a head start, the full
-30-Day AI Digital Product Launch Kit covers all of this in one place —
-with templates, worksheets, and AI prompts for every step.
-
-→ Check it out here: {{GUMROAD_LINK}}
+Each email is short. Each one has one action.
 
 See you tomorrow.
 
@@ -64,376 +53,380 @@ See you tomorrow.
 
 **CTA:**
 ```
-→ {{GUMROAD_LINK}}
+→ Want to skip ahead?
+  Get the full Starter Kit now: {{GUMROAD_LINK}}
 ```
 
 **PS:**
 ```
-P.S. Hit reply and tell me: what's the one thing that's been
-stopping you from launching? I read every reply.
+P.S. Hit reply and tell me: what type of client work do you do?
+I read every reply and it helps me send you more relevant content.
 ```
 
 ---
 
-## DAY 1 — Why Most Creators Never Launch
+## DAY 1 — The Hidden Value in Client Work
 
 **Send:** Day 1 (24 hours after Day 0)
 
 **Subject:**
 ```
-The real reason most people never launch
+The thing most freelancers never realize about their own work
 ```
 
 **Preview text:**
 ```
-It's not what you think — and it's 100% fixable
+You're doing the work — you're just not selling it twice
 ```
 
 **Body:**
 ```
 Hey [First Name],
 
-Most people who want to create a digital product never actually do it.
+Here's something most freelancers and consultants never think about:
 
-Not because they lack ideas.
-Not because they don't have the skills.
-Not because the market is too crowded.
+Every process you've built, every framework you've developed,
+every document you've refined across multiple clients —
+that's not just your work history. That's your product catalog.
 
-They don't launch because they wait until everything feels ready.
+The client who hired you paid once.
+But someone else — another freelancer, a small business owner,
+a team lead — would pay $19 for the template version of what you delivered.
 
-They wait for:
-→ The perfect idea
-→ The right audience size
-→ The tech to feel simple
-→ The right moment
+The difference between freelancers who stay stuck in the hourly grind
+and those who start building additional income streams isn't talent or connections.
 
-And the right moment never comes.
+It's whether they see their process as something to package, not just perform.
 
-The creators who succeed do one thing differently:
-they ship something small and learn from it.
-
-This week, I'll show you exactly how to do that.
-
-Tomorrow: how to pick the right product idea in under 60 minutes.
+Tomorrow, I'll show you how to find the specific template hiding in your recent work —
+in under an hour.
 
 [Your Name]
 ```
 
 **CTA:**
 ```
-(No hard sell today — focus on education)
+(No hard sell today — focus on the idea)
 ```
 
 **PS:**
 ```
-P.S. If you'd rather not wait — the full system is already inside
-the 30-Day AI Digital Product Launch Kit:
+P.S. The Starter Kit includes a Client Work Audit Worksheet
+that makes this exercise structured and fast:
 → {{GUMROAD_LINK}}
 ```
 
 ---
 
-## DAY 2 — Choose Your Product Idea (60 Minutes)
+## DAY 2 — Find Your First Template in 60 Minutes
 
 **Send:** Day 2
 
 **Subject:**
 ```
-Pick your digital product idea in 60 minutes (3-question filter)
+How to find your first template in under an hour (3-step audit)
 ```
 
 **Preview text:**
 ```
-You probably already have the answer — let's find it
+Look at your last 3 months of client work — it's already there
 ```
 
 **Body:**
 ```
 Hey [First Name],
 
-Choosing a product idea is where most people get stuck.
+Here's a 3-step audit to find your first sellable template.
+It takes under an hour.
 
-Too many options. No clear winner.
+Step 1: List your last 3-5 client projects
+Write down what you delivered for each one.
+Don't overthink it — just list the main deliverables.
 
-Here's a simple 3-question filter I use to cut through the noise:
+Step 2: Find the repeats
+Circle anything you've delivered more than once.
+Any document, process, structure, or framework that appears in multiple projects.
 
-1. What do people already ask me for help with?
-2. What's a problem I solved for myself that others still struggle with?
-3. Can I explain the solution in 5 steps or less?
+Step 3: Ask yourself this one question
+"If another freelancer in my field asked me how I do this,
+what would I tell them — and could I turn that explanation into a document?"
 
-If you can answer all three, you have a product idea.
+If yes — that's your template.
 
-Here's a simple AI prompt to get you started:
+Here's an AI prompt to help:
 
-"I want to create a digital product. I'm skilled at [topic].
-My target audience is [who]. Give me 10 specific digital product
-ideas I could create this month, starting from easiest to hardest."
+"I'm a [YOUR PROFESSION] who does [TYPE OF WORK].
+My recent client deliverables include [LIST 3-5 DELIVERABLES].
+Which of these is most likely to be useful as a reusable template
+for other [PROFESSION]s? Explain why and suggest a product title."
 
 Paste that into Claude or ChatGPT.
-Pick the one that excites you most.
-That's your idea.
+Take note of the answer — it might surprise you.
 
-Tomorrow: how to create a lead magnet with AI — even if you
-hate writing.
+Tomorrow: the 3 most sellable template formats, and which one fits your work.
 
 [Your Name]
 ```
 
 **CTA:**
 ```
-→ Get the full Niche Selection Worksheet inside the Launch Kit:
+→ The Starter Kit includes 20 AI productization prompts like this one:
 {{GUMROAD_LINK}}
 ```
 
 **PS:**
 ```
-P.S. The kit includes a scoring matrix to rank your ideas
-and pick the one most likely to sell first.
+P.S. If you're already thinking "I know exactly which piece of work this would be"
+— that's your template. Trust that instinct.
 ```
 
 ---
 
-## DAY 3 — Build a Lead Magnet with AI
+## DAY 3 — The 3 Most Sellable Template Formats
 
 **Send:** Day 3
 
 **Subject:**
 ```
-How to create a lead magnet with AI (takes under an hour)
+3 template formats that sell — and which one fits your work
 ```
 
 **Preview text:**
 ```
-You don't need to write it from scratch
+Not all templates are created equal. Here's what buyers actually want.
 ```
 
 **Body:**
 ```
 Hey [First Name],
 
-A lead magnet is the free thing you give people in exchange
-for their email address.
+Once you've found the work to turn into a template,
+the next question is: what format should it be in?
 
-Most people think it needs to be a long, polished ebook.
+Here are the 3 that sell best:
 
-It doesn't.
+────────
+Format 1: The Checklist / SOP
+Best for: anyone who follows a consistent process
+Price range: $9–$29
+Example: "Client Onboarding Checklist for Freelance Designers"
+Time to create: 2-4 hours
 
-The best lead magnets are:
-→ Short (1-5 pages or a single checklist)
-→ Solve one specific problem
-→ Deliver a quick win within minutes of downloading
+────────
+Format 2: The Framework / Worksheet
+Best for: consultants, coaches, strategists
+Price range: $19–$49
+Example: "The Brand Audit Worksheet: 47 Questions to Diagnose Any Brand"
+Time to create: 4-8 hours
 
-Here's an AI prompt that generates a lead magnet outline
-in under 10 minutes:
+────────
+Format 3: The Template Pack
+Best for: anyone who creates similar documents repeatedly
+Price range: $29–$79
+Example: "Freelance Proposal + Contract + Brief Template Pack"
+Time to create: 1-3 days
 
-"I help [target audience] with [specific problem].
-Create a one-page checklist called '[Title]' that gives them
-a quick win by [desired outcome].
-Include 7 actionable steps, written simply for beginners."
+Which one fits your work best?
 
-Paste into Claude or ChatGPT. Edit the result. Done.
-
-The simplest lead magnet is a checklist saved as a PDF.
-Create it in Google Docs. Export as PDF. Upload to Gumroad for free.
-
-Tomorrow: how to turn your idea into an actual $19 product —
-plus a discount code you won't want to miss.
+Tomorrow: how to actually create your template — with AI doing most of the work.
+Plus, a coupon you won't want to miss.
 
 [Your Name]
 ```
 
 **CTA:**
 ```
-→ Get 5 lead magnet templates inside the Launch Kit:
+→ See all 7 template types inside the Starter Kit:
 {{GUMROAD_LINK}}
 ```
 
 **PS:**
 ```
-P.S. The Lead Magnet Builder in the kit gives you
-fill-in-the-blank templates for 5 different formats —
-checklist, swipe file, mini-guide, template pack, and quiz.
+P.S. The kit includes a Template Format Chooser that helps you decide
+which format is right for your specific type of work.
 ```
 
 ---
 
-## DAY 4 — Turn Your Idea Into a $19 Product + Coupon
+## DAY 4 — Create Your Template with AI + Coupon
 
 **Send:** Day 4
 
 **Subject:**
 ```
-$5 off today only — build your $19 product this week
+How to create your template with AI (+ $5 off today only)
 ```
 
 **Preview text:**
 ```
-Use code LAUNCH5 at checkout (expires in 48 hours)
+Use code TEMPLATE5 at checkout — expires in 48 hours
 ```
 
 **Body:**
 ```
 Hey [First Name],
 
-By now you should have:
-✓ A product idea (or shortlist)
-✓ A lead magnet concept
+By now you should have a good idea of:
+✓ Which piece of client work to turn into a template
+✓ Which format to use
 
-Today's step: turn that idea into a real product.
+Today: how to actually build it — in a few hours, not days.
 
-Here's what the simplest digital product looks like:
+Here's the AI workflow:
 
-→ A Google Doc or PDF
-→ 10-30 pages (or a simple template / checklist)
-→ Priced between $9 and $49
-→ Sold on Gumroad, Payhip, or Etsy
+Step 1: Take your existing client deliverable (or notes from memory)
+         and paste it into Claude or ChatGPT.
 
-That's it. No video production. No design team.
-No complicated tech.
+Step 2: Use this prompt:
+         "Turn this into a reusable template that a [PROFESSION]
+         could use with any client. Remove client-specific details.
+         Add clear instructions for each section.
+         Format it cleanly with headers and bullet points."
 
-The 30-Day AI Digital Product Launch Kit gives you
-a plug-and-play template for each product type —
-so you're filling in blanks, not writing from scratch.
+Step 3: Review, edit, and add your voice.
+         This takes 30-60 minutes depending on the complexity.
 
-And today, I want to make it easy for you to say yes.
+Step 4: Save as a Google Doc. Export as PDF. Upload to Gumroad.
 
-Use code LAUNCH5 for $5 off:
+That's it. Your template is live.
+
+And to make it easier to say yes to the full system —
+
+Use code TEMPLATE5 for $5 off the Starter Kit:
 → {{GUMROAD_LINK}}
 
-That brings the Launch Kit to $14.
-This code expires in 48 hours.
+Brings it to $14. Code expires in 48 hours.
 
 [Your Name]
 ```
 
 **CTA:**
 ```
-→ Get the kit for $14 with code LAUNCH5:
+→ Get the Starter Kit for $14 with code TEMPLATE5:
 {{GUMROAD_LINK}}
 ```
 
 **PS:**
 ```
-P.S. The price goes up to $29 after the first 10 sales.
-Right now it's $19 — $14 with the code.
+P.S. The Starter Kit includes 20 AI prompts specifically designed
+to turn client deliverables into sellable templates.
+Not just one prompt — twenty.
 ```
 
 ---
 
-## DAY 5 — Write Your Sales Page in 30 Minutes
+## DAY 5 — Where to Sell + How to Price
 
 **Send:** Day 5
 
 **Subject:**
 ```
-Write your entire sales page in 30 minutes (with this template)
+Where to sell your template (and what to charge)
 ```
 
 **Preview text:**
 ```
-6 sections. Fill in the blanks. Done.
+Gumroad setup takes under 30 minutes. Here's the pricing guide.
 ```
 
 **Body:**
 ```
 Hey [First Name],
 
-Most people spend weeks agonizing over their sales page.
+Let's talk about the two questions people get most stuck on:
 
-Here's a simpler approach: use a 6-section template.
+Where do I sell it?
+What do I charge?
 
-Section 1 — Headline
-What you get + who it's for
+────────
+WHERE TO SELL
 
-Section 2 — Problem
-What they're struggling with right now
+Start with Gumroad. It's free to sign up, handles payment and delivery
+automatically, and is widely trusted in the freelancer/creator community.
 
-Section 3 — Solution
-How your product solves it
+Setup takes under 30 minutes once you have your template ready.
 
-Section 4 — What's Inside
-Bullet list of what they get
+(The Starter Kit includes a step-by-step Gumroad setup guide and
+a fill-in-the-blank product page template.)
 
-Section 5 — Price + CTA
-Clear offer + one action to take
+────────
+WHAT TO CHARGE
 
-Section 6 — FAQ
-Answer the 3-5 most common objections
+Here's a simple pricing guide based on template complexity:
 
-That's your entire sales page.
+• Checklist (1-2 pages): $7–$17
+• Process document / SOP (3-10 pages): $17–$37
+• Worksheet / scoring tool: $19–$49
+• Template pack (3+ documents): $29–$79
+• Full framework / audit kit: $49–$99
 
-For each section, I include AI prompts inside the Launch Kit
-so you can generate a first draft in minutes —
-then edit to match your voice.
+Start on the lower end. Raise the price after 10 sales.
 
-Total time: 30-60 minutes once you have the template.
+A $19 template that sells 20 times = $380 from work you did once.
 
-→ Get the Simple Sales Page Template here:
-{{GUMROAD_LINK}}
+Tomorrow: how to get your first buyer without a big audience.
 
 [Your Name]
 ```
 
 **CTA:**
 ```
-→ {{GUMROAD_LINK}}
+→ Get the full pricing guide + Gumroad setup checklist inside the Starter Kit:
+{{GUMROAD_LINK}}
 ```
 
 **PS:**
 ```
-P.S. The kit also includes 30 social post prompts so you can
-start promoting your product the same day you publish it.
+P.S. The kit also includes 20 social post prompts for LinkedIn, X, Threads,
+and Reddit — designed to drive traffic to your template without being salesy.
 ```
 
 ---
 
-## DAY 6 — Launch Without a Big Audience
+## DAY 6 — First Sale Without a Big Audience
 
 **Send:** Day 6
 
 **Subject:**
 ```
-You don't need 10,000 followers to make your first sale
+You don't need 10,000 followers to sell your first template
 ```
 
 **Preview text:**
 ```
-100 engaged followers is enough — here's why
+Here's the 3-step approach that works from zero
 ```
 
 **Body:**
 ```
 Hey [First Name],
 
-"I'll launch when I have more followers."
+"I'll launch when I have a bigger audience."
 
-I hear this all the time.
+I hear this all the time. And I understand it.
 
-Here's what actually happens when you wait:
-You never feel ready.
-The audience never feels big enough.
+But here's what actually works when you're starting from zero:
 
-The truth: 100 engaged followers is enough to make your first sale.
+Step 1: Post about the problem your template solves — not the template itself.
 
-Here's how:
+Instead of: "I just released a client onboarding template!"
+Try: "The #1 mistake freelancers make during client onboarding
+     (and the checklist that fixed it for me)"
 
-Step 1: Post about the problem your product solves — not the product.
-Step 2: At the end of every post, link to your free quiz or lead magnet.
-Step 3: Let your email sequence do the selling.
+Step 2: Point to the free quiz in your profile or at the end of every post.
+
+Step 3: Let the email sequence do the selling.
 
 You're not selling to your followers.
-You're selling to the people who opted into your list
-because they have the exact problem your product solves.
+You're selling to the people who opted into your list because
+they resonated with your content.
 
-That's a very different game.
+That audience is smaller — but they're already warm.
 
-And it works whether you have 100 followers or 100,000.
+10 buyers from a 200-person email list beats
+0 buyers from 5,000 followers who don't know what you sell.
 
-The Launch Kit shows you exactly how to set this up —
-the posts, the lead magnet, the emails, all in one place.
-
-Tomorrow is the last email in this series.
-I'll have something special for you then.
+Tomorrow is the last email in this series. I'll make it count.
 
 [Your Name]
 ```
@@ -445,9 +438,8 @@ I'll have something special for you then.
 
 **PS:**
 ```
-P.S. If you're not on social yet, the kit also shows you
-how to use free quiz traffic (like {{TALLY_QUIZ_LINK}})
-to build your list without posting at all.
+P.S. The Starter Kit includes a 30-Day Launch Plan with daily tasks
+designed specifically for selling from a small or zero audience.
 ```
 
 ---
@@ -458,66 +450,61 @@ to build your list without posting at all.
 
 **Subject:**
 ```
-Last email — the full 30-day system is inside
+Last email — and a reminder of what's at stake
 ```
 
 **Preview text:**
 ```
-Everything we covered this week, in one place
+Every week you wait is another week of one-client, one-payment work
 ```
 
 **Body:**
 ```
 Hey [First Name],
 
-This is my last email in this series.
+This is the last email in this series.
 
-Over the past 7 days, we covered:
+I want to be honest with you for a second.
 
-→ Why most creators never launch (and how to avoid it)
-→ How to pick a product idea with AI in 60 minutes
-→ How to build a lead magnet faster than you think
-→ How to turn your idea into a $19 product
-→ How to write a sales page in 30 minutes
-→ How to launch without a big audience
+You already know how to do this.
 
-If you're ready to put all of this together in one system —
-the 30-Day AI Digital Product Launch Kit is built for exactly that.
+You already have the client work. You already have the knowledge.
+You've already done the hard part — for clients who paid you once.
 
-Here's everything you get:
+The only thing standing between where you are now and
+a $19 template sitting on Gumroad selling while you sleep
+is packaging it.
 
-✓ Niche Selection Worksheet + AI prompts
-✓ Product Idea Scoring Matrix
-✓ Lead Magnet Builder (5 formats)
-✓ Simple Sales Page Template
-✓ 30 Social Post Prompts
-✓ 7-Day Email Sequence Template
-✓ Affiliate Insert Map
-✓ KPI Tracker (Google Sheets)
-✓ 30-Day Day-by-Day Launch Plan
-✓ Final Checklist
+The Starter Kit makes that packaging step fast:
 
-→ Get the full kit here: {{GUMROAD_LINK}}
+✓ Client Work Audit Worksheet — find the template in your work
+✓ AI Productization Prompts — build it in hours, not days
+✓ Template Format Chooser — know exactly how to structure it
+✓ Simple Sales Page Template — write your Gumroad page fast
+✓ 20 Social Post Prompts — promote without feeling salesy
+✓ 30-Day Launch Plan — know exactly what to do each day
+✓ KPI Tracker — measure what's working
 
-The price is currently $19.
-It goes up to $29 after the first 10 sales.
+→ Get the full Starter Kit: {{GUMROAD_LINK}}
 
-If you have questions before buying, just reply to this email.
+Current price: $19 (goes up to $29 after 10 sales)
 
-Here's to your launch,
+If you have questions before buying, reply to this email.
+I respond to every message.
+
+Here's to getting paid for work you've already done,
 [Your Name]
 ```
 
 **CTA:**
 ```
-→ Get the 30-Day AI Digital Product Launch Kit:
+→ Turn Your Client Work Into Paid Templates with AI — $19:
 {{GUMROAD_LINK}}
 ```
 
 **PS:**
 ```
-P.S. After you launch your first product, the next step is
-the Creator Funnel Bundle — an advanced system with 50+ post templates,
-a complete funnel, and a full email library.
-Details inside after you purchase the Launch Kit.
+P.S. After you launch your first template, the next step is the Paid Audit Kit —
+a $79-$99 product that helps you turn your diagnostic process into a high-ticket offer.
+Details available after you purchase the Starter Kit.
 ```

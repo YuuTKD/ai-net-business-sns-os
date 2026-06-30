@@ -1,9 +1,9 @@
-# Gumroad Product Listing — 30-Day AI Digital Product Launch Kit
+# Gumroad Product Listing — Turn Your Client Work Into Paid Templates with AI
 
 ## 1. Product Title
 
 ```
-30-Day AI Digital Product Launch Kit
+Turn Your Client Work Into Paid Templates with AI
 ```
 
 ---
@@ -11,8 +11,8 @@
 ## 2. Short Description (160 characters max — shown in search)
 
 ```
-Use AI to choose, create, and launch your first digital product in 30 days.
-Step-by-step kit for beginners. No audience required.
+Turn the work you already do for clients into templates you can sell repeatedly.
+AI-powered system for freelancers and consultants.
 ```
 
 ---
@@ -20,121 +20,128 @@ Step-by-step kit for beginners. No audience required.
 ## 3. Full Product Description (paste into Gumroad Description field)
 
 ```
-You know AI can help you build an online income.
-But every time you try to start, you end up back at square one.
+You've already done the work.
 
-Too many options. Not enough direction. Zero momentum.
+Every proposal you wrote, every process you built,
+every deliverable you created — is a potential template.
 
-The 30-Day AI Digital Product Launch Kit solves that.
+The problem isn't that you lack knowledge or skills.
+The problem is that you're giving it away one client at a time,
+then starting from scratch for the next one.
 
-It's a complete, beginner-friendly system that walks you through
-every step of choosing, creating, and launching your first digital product —
-with AI doing the heavy lifting on the hard parts.
+This kit changes that.
 
-No coding. No team. No big audience required.
+Turn Your Client Work Into Paid Templates with AI is a step-by-step system
+that helps freelancers, consultants, and service providers extract the templates
+hiding inside their existing client work — and turn them into digital products
+they can sell on Gumroad for $9 to $79 each.
 
-Just a clear plan, the right prompts, and 30 days.
+With AI doing the heavy lifting.
 
 ────────────────────────────────────
-WHAT YOU GET INSIDE
+WHAT'S INSIDE
 ────────────────────────────────────
 
-✓ Niche Selection Worksheet
-  Find a profitable topic that fits your skills and audience.
-  Includes AI prompts to generate 10 ideas in minutes.
+✓ Client Work Audit Worksheet
+  Find the templates hiding in your last 3 months of work.
+  Includes the exact questions to ask yourself + AI prompts.
 
-✓ Digital Product Idea Generator
-  Score and rank your ideas to find the one most likely to sell.
+✓ Template Format Chooser
+  Decide whether your template should be a Google Doc, Notion page,
+  Canva file, or Google Sheets — based on what your buyers actually use.
 
-✓ Lead Magnet Builder
-  Create a compelling freebie that grows your email list fast.
-  5 proven formats + fill-in templates for each.
+✓ 7 Template Types Explained
+  Process documents, checklists, proposals, contracts, SOPs, scorecards,
+  and brief templates — with real examples from each.
+
+✓ AI Productization Prompts (20 prompts)
+  Paste these into Claude or ChatGPT to convert your client deliverables
+  into sellable templates in under an hour.
+
+✓ Pricing Guide
+  Know exactly what to charge for each template type.
+  From $9 checklists to $79 full process kits.
 
 ✓ Simple Sales Page Template
-  Write a conversion-ready page in 30 minutes.
-  AI prompts for every section — headline, bullets, CTA, FAQ.
+  Write your Gumroad product page in under 30 minutes.
+  Fill-in-the-blank format — no copywriting experience needed.
 
-✓ 30 Social Post Prompts
-  Pre-written frameworks for X, Threads, and Instagram.
-  Designed to drive traffic to your lead magnet and product.
+✓ 20 Social Post Prompts
+  Ready-to-edit frameworks for LinkedIn, X, Threads, and Reddit.
+  Designed to drive traffic to your product without sounding salesy.
 
 ✓ 7-Day Email Sequence Template
-  A plug-and-play welcome + sales sequence.
-  Works with Brevo, MailerLite, ConvertKit, and any email tool.
+  A plug-and-play welcome and nurture sequence.
+  Works with Brevo, MailerLite, ConvertKit, or any email tool.
 
-✓ Affiliate Insert Map
-  How to add affiliate links naturally inside your product
-  to earn additional commissions.
+✓ 30-Day Client-to-Template Launch Plan
+  Day-by-day checklist. Know exactly what to do each day for 30 days.
 
 ✓ KPI Tracker (Google Sheets)
-  Track posts, email signups, sales, and revenue weekly.
-
-✓ 30-Day Launch Plan
-  Day-by-day checklist so you always know what to do next.
-
-✓ Final Launch Checklist
-  Make sure nothing is missing before you go live.
+  Track posts, quiz signups, sales, and revenue week by week.
 
 ────────────────────────────────────
 WHO THIS IS FOR
 ────────────────────────────────────
 
-✓ Solopreneurs ready to create their first income stream
-✓ Freelancers who want to package their knowledge into a product
-✓ Content creators who want to monetize their existing content
-✓ Coaches and consultants who want to scale without more 1-on-1 time
-✓ Side hustlers who want income that doesn't stop when they stop working
-✓ Complete beginners who want a proven path, not random advice
+✓ Freelancers who do the same type of work repeatedly for different clients
+✓ Consultants who have developed frameworks, processes, or audits
+✓ Designers who create similar deliverables across projects
+✓ Coaches and trainers who teach repeatable methods
+✓ Writers and copywriters who use frameworks and structures
+✓ Developers and engineers who follow repeatable workflows
+✓ Anyone who does client work and wants to stop starting from zero
 
 ────────────────────────────────────
 WHO THIS IS NOT FOR
 ────────────────────────────────────
 
-✗ Anyone looking for a get-rich-quick shortcut
-✗ People unwilling to spend 1-2 focused hours per day
-✗ Those who want a fully automated, zero-effort system
+✗ People who want a get-rich-quick shortcut
+✗ Those who haven't done any client or service work
+✗ Anyone looking for a fully automated, zero-effort income stream
 
 ────────────────────────────────────
 FREQUENTLY ASKED QUESTIONS
 ────────────────────────────────────
 
-Q: Do I need any technical skills?
-A: No. If you can type and copy-paste, you can use this kit.
-   Every template is designed to be filled in, not built from scratch.
+Q: Do I need a big social media following?
+A: No. The kit includes strategies for selling even with under 500 followers.
+   The Tally quiz funnel works regardless of audience size.
 
-Q: Do I need an existing audience?
-A: No. The kit includes strategies for launching from zero followers.
-   100 engaged followers is enough to make your first sale.
-
-Q: What types of digital products can I create?
-A: eBooks, templates, checklists, mini-courses, Notion templates,
-   prompt libraries, spreadsheets, swipe files, and more.
-
-Q: Which platforms does this work with?
-A: Gumroad, Payhip, Etsy, Lemon Squeezy, Shopify, and any other
-   platform where you can sell digital downloads.
-
-Q: How much time will this take?
-A: 1-2 hours per day for 30 days. Most tasks take under an hour
-   when you use the AI prompts included.
+Q: What kind of templates can I create?
+A: Process docs, checklists, proposals, contracts, SOPs, scorecards,
+   briefs, frameworks, worksheets — any document you create repeatedly.
 
 Q: What AI tools do I need?
-A: ChatGPT or Claude (both have free tiers). No paid AI subscription required.
+A: Claude or ChatGPT (both have free tiers). No paid AI subscription required.
+
+Q: How long will this take?
+A: With the AI prompts, most people create their first template in 2-4 hours.
+   The full launch system takes 30 days at 1-2 hours per day.
+
+Q: What format should my template be in?
+A: The kit includes a Template Format Chooser that helps you decide
+   based on what your target buyers actually prefer.
+
+Q: Where do I sell the templates?
+A: Gumroad is the recommended platform. Setup takes under 30 minutes.
+   The kit includes a step-by-step Gumroad setup guide.
 
 ────────────────────────────────────
 REFUND POLICY
 ────────────────────────────────────
 
 Due to the digital nature of this product, all sales are final.
-If you have any issues accessing your files, email us and we'll make it right.
+If you have any issues accessing your files, contact us and we'll make it right.
 
 ────────────────────────────────────
 CALL TO ACTION
 ────────────────────────────────────
 
-→ Get the Kit for $19
+→ Get the Starter Kit for $19
 
-The price goes up to $29 after the first 10 sales.
+The price increases to $29 after the first 10 sales.
+Not sure yet? Take the free quiz first: [Tally Quiz Link]
 ```
 
 ---
@@ -143,34 +150,34 @@ The price goes up to $29 after the first 10 sales.
 
 ```
 Primary headline:
-30-Day AI Digital Product Launch Kit
+Turn Your Client Work Into Paid Templates with AI
 
 Subheadline:
-Launch your first digital product in 30 days
-using AI — even with zero audience
+Extract the templates hiding in your existing work
+and sell them on Gumroad — starting this week
 
 Bottom label:
-Step-by-step system for solopreneurs, creators & side hustlers
+For freelancers, consultants, coaches & service providers
 ```
 
 ---
 
-## 5. Gumroad Tags (copy and paste each)
+## 5. Gumroad Tags
 
 ```
-digital product
-AI tools
-launch kit
-solopreneur
-creator economy
-side hustle
-passive income
-digital business
-online business
+freelancer
+consultant
 templates
-email marketing
-launch strategy
-beginners
+digital product
+client work
+passive income
+productize
+solopreneur
+AI tools
+side income
+service provider
+digital templates
+productization
 ```
 
 ---
@@ -181,31 +188,33 @@ beginners
 |---|---|---|
 | Launch price | $19 | First 10 sales |
 | Standard price | $29 | After 10 sales |
-| Bundle upsell | $49 | After purchase (coming soon) |
+| Bundle | $49 | After publishing Starter Kit |
+| Audit Kit | $79〜$99 | After 5 Starter Kit sales |
 
 ---
 
 ## 7. Discount Code for Email Sequence
 
 ```
-Code: LAUNCH5
+Code: TEMPLATE5
 Amount off: $5
-Applies to: 30-Day AI Digital Product Launch Kit
-Expiry: 48 hours after Day 4 email is sent (set manually each time or use recurring)
+Applies to: Turn Your Client Work Into Paid Templates with AI
+Use in: Brevo Day 4 email
 ```
 
 ---
 
 ## 8. Pre-Publish Checklist
 
-- [ ] Product title matches exactly: "30-Day AI Digital Product Launch Kit"
+- [ ] Product title: "Turn Your Client Work Into Paid Templates with AI"
 - [ ] Short description is 160 characters or less
-- [ ] Full description is pasted and formatted
-- [ ] Product file is uploaded (PDF + Google Sheets link inside)
-- [ ] Cover image is uploaded (Canva design)
-- [ ] Price is set to $19
-- [ ] Post-purchase message is set (from gumroad_post_purchase_message.md)
-- [ ] LAUNCH5 discount code is created
-- [ ] Tags are added
-- [ ] Product is set to Public
-- [ ] Test purchase completed (use a $0 coupon to test)
+- [ ] Full description pasted and formatted correctly
+- [ ] Product PDF uploaded (from products/ directory)
+- [ ] Cover image uploaded (from Canva using cover text above)
+- [ ] Price set to $19
+- [ ] Post-purchase message set
+- [ ] TEMPLATE5 discount code created
+- [ ] Tags added
+- [ ] Set to Public
+- [ ] Test purchase completed (use 100% off code)
+- [ ] Gumroad product URL copied and saved

@@ -1,119 +1,120 @@
-# Tally Quiz — AI Digital Product Readiness Quiz
+# Tally Quiz — What Paid Template Is Hidden Inside Your Client Work?
 
 ## Quiz Title (shown at top of form)
 
 ```
-AI Digital Product Readiness Quiz
+What Paid Template Is Hidden Inside Your Client Work?
 ```
 
 ## Quiz Description (shown under title)
 
 ```
-Find out which type of digital product is right for you —
-based on your skills, experience, and goals.
+Find out which type of sellable template is hiding inside
+the work you already do for clients.
 Takes 3 minutes. Free.
 ```
 
 ## Welcome Text (first screen)
 
 ```
-In the next 3 minutes, you'll discover your ideal digital product type
-based on your existing skills and goals.
+If you do any kind of client or service work —
+freelancing, consulting, coaching, design, writing, development —
+there's almost certainly a sellable template hiding in what you do.
 
-Answer honestly — there are no wrong answers.
+This quiz will help you find it.
 
-At the end, you'll get a personalized result with your best first product idea
-and a free resource to help you get started.
+Answer honestly based on what you actually do, not what you wish you did.
+At the end, you'll get your template type + a free resource to help you package it.
 ```
 
 ---
 
 ## 10 Questions + Answer Choices
 
-**Q1. What best describes your current situation?**
-- A: I have a regular job and want a side income
-- B: I'm a freelancer or consultant
-- C: I'm a content creator or blogger
-- D: I'm a coach or expert who sells services
-- E: I'm a complete beginner to online business
+**Q1. What best describes your primary work right now?**
+- A: Freelance services (design, writing, development, marketing, etc.)
+- B: Consulting or advisory work
+- C: Coaching or training people
+- D: Managing projects or operations inside a company
+- E: Something else / I'm exploring options
 
-**Q2. What do people most often ask you for help with?**
-- A: A specific skill or knowledge area (how-to)
-- B: Staying organized or building systems
-- C: Writing, content, or marketing
-- D: Business strategy or growth
-- E: Nothing specific yet — I'm still figuring it out
+**Q2. When you work with a new client, what do you usually create or deliver?**
+- A: Visual deliverables (designs, decks, graphics, layouts)
+- B: Written documents (reports, copy, proposals, briefs, SOPs)
+- C: Strategy or analysis (plans, audits, recommendations, research)
+- D: Systems or workflows (processes, automations, checklists, templates)
+- E: Direct teaching or coaching (sessions, frameworks, curricula)
 
-**Q3. How comfortable are you creating content?**
-- A: I create content regularly — it's natural for me
-- B: I can write but I don't post consistently
-- C: I'm still learning
-- D: I don't really enjoy content creation
+**Q3. How often do you find yourself doing the same type of work for different clients?**
+- A: Almost every project follows the same basic structure
+- B: Many projects are similar but I customize heavily each time
+- C: Projects vary quite a bit — no two are alike
+- D: I'm just starting out and don't have enough client work yet
 
-**Q4. Which outcome matters most to you right now?**
-- A: Making my first $100 online as fast as possible
-- B: Building a consistent monthly income stream
-- C: Eventually replacing my current income
-- D: Creating a scalable business long-term
+**Q4. When you finish a project, what do you usually do with the files and documents?**
+- A: Archive them and move on — each project starts fresh next time
+- B: Reuse parts of them but spend time adapting
+- C: Have a solid template I already reuse across projects
+- D: I'm not sure — I haven't thought about it
 
-**Q5. How much time can you spend on this each week?**
-- A: Less than 5 hours
-- B: 5–10 hours
-- C: 10–20 hours
-- D: More than 20 hours
+**Q5. What's the most common problem your clients hire you to solve?**
+- A: They lack a clear process or system
+- B: They don't know how to communicate or position themselves
+- C: They need to improve or optimize their performance
+- D: They need creative assets or visual work
+- E: They want strategic clarity or a plan
 
-**Q6. What type of product feels most natural to you?**
-- A: A ready-to-use template, checklist, or spreadsheet
-- B: A step-by-step guide, ebook, or mini-course
-- C: Recommending and explaining tools and resources
-- D: A coaching program or consulting package
-- E: A system, workflow, or automation kit
+**Q6. What format do your deliverables most often take?**
+- A: Google Docs or Word documents
+- B: Google Sheets or Excel spreadsheets
+- C: Notion pages or similar tools
+- D: Canva, Figma, or design files
+- E: Slide decks (Google Slides, PowerPoint)
 
-**Q7. Have you ever made money online?**
-- A: No, never
-- B: A little (under $500 total)
-- C: Yes, occasionally (under $500/month)
-- D: Yes, consistently ($500+ per month)
+**Q7. Have you ever reused a document from one client project on another?**
+- A: Yes, frequently — I have files I've reused multiple times
+- B: Sometimes — I adapt old work but don't have clean templates
+- C: Rarely — I start fresh each time
+- D: Not yet — I'm building my first client projects
 
-**Q8. Which statement sounds most like you?**
-- A: "I know a lot about one topic but I don't know how to package it"
-- B: "I have content or an audience but haven't monetized it yet"
-- C: "I want to earn without trading time for money"
-- D: "I want to test something small before going all in"
+**Q8. Which of these do you find yourself explaining or teaching regularly?**
+- A: A step-by-step process ("here's how to do X")
+- B: A way of evaluating or scoring something ("here's how to assess X")
+- C: A structure or format ("here's the framework I use")
+- D: A set of criteria or checklist ("here's what to check")
+- E: Not sure yet
 
-**Q9. Which AI tools have you used?**
-- A: ChatGPT or Claude — regularly
-- B: ChatGPT or Claude — a few times
-- C: I've heard of them but haven't really used them
-- D: I haven't used AI tools yet
+**Q9. If you packaged your most common client deliverable into a template,
+     how long do you think it would take someone else to use it?**
+- A: Under 30 minutes — it's a simple checklist or one-page document
+- B: 1-3 hours — it requires some thinking and customization
+- C: Half a day — it's a more complex process or system
+- D: More than a day — it involves multiple steps and decisions
+- E: I'm not sure what my deliverable would even look like as a template
 
-**Q10. What's your biggest fear about launching a digital product?**
-- A: Nobody will buy it
-- B: I don't know what topic to choose
-- C: I don't have enough time to create it
-- D: The tech feels too complicated
-- E: I'm not qualified enough to charge for it
+**Q10. What's your biggest hesitation about turning your work into a paid template?**
+- A: I'm not sure anyone would pay for it
+- B: I don't know which piece of work to start with
+- C: I worry it's not polished or professional enough
+- D: I'm not sure how to price it
+- E: I don't know where or how to sell it
 
 ---
 
 ## Scoring Logic
 
-Assign result types based on dominant answer patterns:
+Use Q2 (delivery type) and Q5 (problem type) as the two primary determinants.
 
-| Primary Pattern | Result Type |
-|---|---|
-| A/B in Q1 + A in Q6 | Template Creator |
-| C in Q1 or Q3 + A/E in Q2 | Content-to-Product Creator |
-| D in Q1 or Q6 + A/B in Q2 | Coaching / Consulting Offer |
-| B in Q2 + C in Q6 | Affiliate Funnel Builder |
-| A/B in Q1 + E in Q6 | Automation Kit Builder |
-| B in Q6 + A in Q3 | Mini-Course Creator |
+| Q2 answer | Q5 answer | Primary result type |
+|---|---|---|
+| A (visual) | Any | Visual / Design Template Creator |
+| B (written docs) | B (communication) | Writing / Content Template Creator |
+| B (written docs) | A (process) | Process Template Creator |
+| C (strategy) | C or E (optimize/plan) | Strategy / Audit Template Creator |
+| D (systems) | A (process) | Process Template Creator |
+| E (coaching) | Any | Coaching / Teaching Template Creator |
 
-**Note for Tally setup:** Since Tally's free plan has basic logic,
-use the following simplified approach:
-- Add a hidden score field
-- Use Q6 as the primary determinant (most direct)
-- Show corresponding result page based on Q6 answer
+**Simplified Tally setup:** Use Q2 as the primary determinant for result page logic.
 
 ---
 
@@ -121,230 +122,204 @@ use the following simplified approach:
 
 ---
 
-### Result Type 1: Template Creator
+### Result Type 1: Process Template Creator
 
 **Headline:**
 ```
-You're a Template Creator
+Your Template Type: Process Template Creator
 ```
 
 **Result copy:**
 ```
-Based on your answers, your strongest path to a first digital product
-is a template, toolkit, or checklist.
+Based on your answers, the template most likely hiding in your client work
+is a process document — a step-by-step guide, SOP, workflow, or checklist.
 
-You have systems, processes, or skills that others want to copy.
-Instead of explaining your method one-on-one, you package it once
-and sell it repeatedly.
+What this looks like:
+→ Client onboarding process (the steps you walk every new client through)
+→ Project kick-off checklist (everything you do at the start of each project)
+→ Delivery workflow (how you produce and hand off your work)
+→ Review and approval process (how you get sign-off from clients)
 
-Your first product idea:
-A ready-to-use template for your niche
-(examples: content calendar, client onboarding kit, project tracker,
-spreadsheet system, prompt library)
+Why this is valuable:
+Other freelancers and consultants desperately want proven processes.
+They're spending hours reinventing what you've already built.
 
-Why this works for you:
-→ Templates are fast to create (often under a weekend)
-→ No video recording or complex course structure needed
-→ Buyers see immediate value — they use it the same day
+Your first template idea:
+Take the most repetitive process in your current client work.
+Write it out as a numbered list with 10-20 steps.
+That's your first sellable template.
 
-Next step:
-Pick one system or process you use regularly.
-Write down the 5-7 steps involved.
-Turn those steps into a template.
-
-→ The 30-Day AI Digital Product Launch Kit walks you through the
-  exact process to create and sell your first template in 30 days:
+→ The Starter Kit walks you through exactly how to package this
+  and sell it on Gumroad for $9–$49:
   {{GUMROAD_LINK}}
 ```
 
 ---
 
-### Result Type 2: Mini-Course Creator
+### Result Type 2: Visual / Design Template Creator
 
 **Headline:**
 ```
-You're a Mini-Course Creator
+Your Template Type: Visual / Design Template Creator
 ```
 
 **Result copy:**
 ```
-Based on your answers, your strongest path is a short course or written guide.
+Based on your answers, the template most likely hiding in your work
+is a visual or design asset — a deck template, brief template, brand guidelines
+framework, or presentation structure.
 
-You have knowledge worth teaching — and you can explain it step-by-step.
-A mini-course doesn't need to be long or complex.
-5–7 lessons, 15–30 minutes each, is plenty for a $19–$49 product.
+What this looks like:
+→ Client presentation deck template (your go-to slide structure)
+→ Creative brief template (what you send clients to kick off a project)
+→ Brand review checklist (what you check before delivering brand work)
+→ Design spec document (how you document design decisions for clients)
 
-Your first product idea:
-A beginner's guide or step-by-step system for your specialty
-(examples: beginner's guide to [skill], 5-day writing challenge,
-beginner photography basics, freelance proposal system)
+Why this is valuable:
+Other designers and creative freelancers want frameworks they can trust.
+Your aesthetic standards + project management process = something worth paying for.
 
-Why this works for you:
-→ You already know the material — you just need a structure
-→ AI can help you outline, script, and write every module
-→ Short courses sell well at $19–$97
+Your first template idea:
+Look at the last 5 projects you delivered.
+Find the one document you spent the most time on that you now reuse.
+That's your template.
 
-Next step:
-Pick one transformation you can take someone through.
-Outline it in 5–7 steps.
-Write the content for each step (AI does the heavy lifting).
-
-→ The 30-Day AI Digital Product Launch Kit includes
-  a mini-course outline template and AI prompts for every module:
+→ The Starter Kit shows you how to extract, format, and sell it in a week:
   {{GUMROAD_LINK}}
 ```
 
 ---
 
-### Result Type 3: Affiliate Funnel Builder
+### Result Type 3: Strategy / Audit Template Creator
 
 **Headline:**
 ```
-You're an Affiliate Funnel Builder
+Your Template Type: Strategy / Audit Template Creator
 ```
 
 **Result copy:**
 ```
-Based on your answers, your strongest path is a curated resource guide
-combined with an email funnel.
+Based on your answers, the template most likely hiding in your work
+is a strategy framework or audit template — a scoring system, diagnostic tool,
+or structured evaluation your clients pay you to run.
 
-You're good at researching, testing, and recommending tools and resources.
-You don't need to create a product from scratch —
-you can package your recommendations and earn affiliate commissions.
+What this looks like:
+→ Business audit template (how you diagnose a client's problem)
+→ Competitive analysis framework (your research structure)
+→ Marketing strategy template (the framework you guide clients through)
+→ Performance scorecard (how you measure and present results)
 
-Your first product idea:
-A "best tools for [topic]" guide with affiliate links inside
-(examples: best AI tools for solopreneurs, ultimate freelancer toolkit,
-top productivity apps for creators)
+Why this is valuable:
+Strategy templates signal expertise. Buyers aren't just buying a document —
+they're buying a framework from someone who has tested it with real clients.
 
-Why this works for you:
-→ No product creation required — you curate, not create
-→ Affiliate income starts from your very first sale
-→ Lead magnets work naturally in this model
+Your first template idea:
+Think about the last audit or strategy session you ran.
+What were the 5-7 main areas you evaluated?
+That structure is your template.
 
-Next step:
-Pick a topic you know well.
-List 10–15 tools or resources in that niche.
-Write a short review of each.
-Sign up for affiliate programs and insert your links.
-
-→ The 30-Day AI Digital Product Launch Kit includes
-  an Affiliate Insert Map that shows you exactly how to add
-  affiliate links into any digital product:
+→ The Starter Kit helps you turn your diagnostic process into a $29-$79 template:
   {{GUMROAD_LINK}}
 ```
 
 ---
 
-### Result Type 4: Content-to-Product Creator
+### Result Type 4: Writing / Content Template Creator
 
 **Headline:**
 ```
-You're a Content-to-Product Creator
+Your Template Type: Writing / Content Template Creator
 ```
 
 **Result copy:**
 ```
-Based on your answers, your strongest path is packaging your
-existing content into a product.
+Based on your answers, the template most likely hiding in your work
+is a writing or content template — a proposal structure, copywriting framework,
+brief format, or messaging guide.
 
-If you've been posting, writing, or creating — you already have raw material.
-The question is how to organize it into something people will pay for.
+What this looks like:
+→ Client proposal template (your winning proposal structure)
+→ Copywriting brief template (what you send to clients to get better input)
+→ Content calendar template (how you organize and plan content)
+→ Brand voice guide template (how you document tone and messaging)
 
-Your first product idea:
-Bundle your 10 best posts, threads, or articles into a PDF guide
-(examples: "My top 10 posts on [topic] — compiled and expanded",
-swipe file of your best captions, curated content library)
+Why this is valuable:
+Writers and marketers know that good structure saves hours.
+Your proposal template alone — the one that wins clients for you — is
+something other freelancers would happily pay $19-$39 for.
 
-Why this works for you:
-→ The content already exists — you're reorganizing, not creating
-→ Fans and followers will pay for organized, evergreen access
-→ Fast to create and easy to price at $7–$29
+Your first template idea:
+Your client proposal. Export the blank structure.
+Remove client-specific details. Add instructions.
+That's a sellable template.
 
-Next step:
-Look at your best-performing content from the past 6 months.
-Find 10 pieces on a single theme.
-Write an intro, add context to each, and compile into a PDF.
-
-→ The 30-Day AI Digital Product Launch Kit shows you
-  how to package existing content into a sellable product in under a week:
+→ The Starter Kit shows you how to productize your writing frameworks fast:
   {{GUMROAD_LINK}}
 ```
 
 ---
 
-### Result Type 5: Coaching / Consulting Offer
+### Result Type 5: Coaching / Teaching Template Creator
 
 **Headline:**
 ```
-You're a Coaching / Consulting Offer Builder
+Your Template Type: Coaching / Teaching Template Creator
 ```
 
 **Result copy:**
 ```
-Based on your answers, your expertise is your product.
+Based on your answers, the template most likely hiding in your work
+is a coaching or curriculum template — a session framework, goal-setting tool,
+progress tracker, or teaching guide.
 
-You don't need to create a template or course first.
-Your fastest path to income is a simple paid offer —
-a 1-on-1 session, a group workshop, or a consulting package.
+What this looks like:
+→ Coaching session template (your standard session structure)
+→ Goal-setting worksheet (what you use with clients at the start)
+→ 90-day plan template (how you structure client action plans)
+→ Progress check-in template (how you run review sessions)
 
-Your first product idea:
-A 60-minute paid strategy session or audit
-(examples: website audit, business strategy session, resume review,
-content strategy call, AI setup session)
+Why this is valuable:
+Other coaches want structure, not chaos. A clear, repeatable framework
+from an experienced coach is worth real money — even at $19 to start.
 
-Why this works for you:
-→ You already have the knowledge — no product creation required
-→ You can start charging immediately
-→ High-ticket sessions ($97–$500) convert well even with small audiences
+Your first template idea:
+What's the first thing you do with every new coaching client?
+That intake or onboarding process — structured as a worksheet — is your template.
 
-Next step:
-Define one specific problem you can help someone solve in 60 minutes.
-Create a simple intake form (Tally works great).
-Set a price. Start offering it.
-
-→ The 30-Day AI Digital Product Launch Kit includes
-  a sales page template and email sequence that works for
-  both digital products and service offers:
+→ The Starter Kit walks you through creating and selling it this week:
   {{GUMROAD_LINK}}
 ```
 
 ---
 
-### Result Type 6: Automation Kit Builder
+### Result Type 6: Systems / Technical Template Creator
 
 **Headline:**
 ```
-You're an Automation Kit Builder
+Your Template Type: Systems / Technical Template Creator
 ```
 
 **Result copy:**
 ```
-Based on your answers, your strongest path is an automation workflow kit,
-AI prompt library, or system template.
+Based on your answers, the template most likely hiding in your work
+is a system or technical template — a workflow automation, technical brief,
+testing checklist, or project management framework.
 
-You love building efficient systems — and other people desperately need them.
-Tech-forward products are in high demand, especially anything AI-related.
+What this looks like:
+→ Project setup checklist (your standard new-project workflow)
+→ Technical specification template (how you document requirements)
+→ QA or testing checklist (what you check before delivery)
+→ Handoff document template (what you give clients when you finish)
 
-Your first product idea:
-An AI prompt library or automation workflow kit
-(examples: ChatGPT prompt pack for [niche], Notion productivity system,
-Zapier workflow templates, Claude prompts for content creators)
+Why this is valuable:
+Technical people often underestimate how much value is in their process.
+Your "obvious" workflow is someone else's missing system.
 
-Why this works for you:
-→ Prompt libraries are fast to build (a day or two)
-→ The AI-curious market is massive and growing
-→ Systems sell well at $19–$49 and above
+Your first template idea:
+Your project handoff document. The thing you put together at the end of every project.
+That — cleaned up and generalized — is a $19-$49 template.
 
-Next step:
-Pick a niche or use case.
-Collect or write 50–100 prompts or workflows.
-Package them in a Notion doc or Google Sheets.
-Sell via Gumroad.
-
-→ The 30-Day AI Digital Product Launch Kit includes
-  a KPI tracker, launch plan, and AI prompts for building
-  and selling your first automation kit:
+→ The Starter Kit shows you how to package your technical processes for sale:
   {{GUMROAD_LINK}}
 ```
 
@@ -354,13 +329,13 @@ Sell via Gumroad.
 
 **Heading:**
 ```
-Your result is ready.
+Your template type is ready.
 ```
 
 **Sub-heading:**
 ```
-Enter your email to see your digital product type
-and get a free resource to help you launch.
+Enter your email to see what's hiding in your client work
+and get a free resource to help you package it.
 ```
 
 **Input label:**
@@ -370,7 +345,7 @@ Email address
 
 **Button text:**
 ```
-Show my result →
+Show my template type →
 ```
 
 **Privacy note:**
@@ -380,47 +355,47 @@ No spam. Unsubscribe anytime.
 
 ---
 
-## CTA After Result (shown at bottom of result page)
+## CTA After Result (bottom of result page)
 
 ```
-Ready to launch your first digital product?
+Ready to turn your client work into your first digital product?
 
-The 30-Day AI Digital Product Launch Kit gives you every template,
-worksheet, and AI prompt you need to go from idea to launch in 30 days.
+The Starter Kit gives you every template, worksheet, and AI prompt
+you need to go from client work to Gumroad listing in under a week.
 
-→ Get the Kit for $19: {{GUMROAD_LINK}}
+→ Get the Starter Kit for $19: {{GUMROAD_LINK}}
 ```
 
 ---
 
-## Tally Setup Instructions (step by step)
+## Tally Setup Instructions
 
 1. Log in to Tally → click **New Form**
-2. Title: `AI Digital Product Readiness Quiz`
-3. Add a **Text block** for the welcome message (copy from Welcome Text above)
-4. Add **10 Multiple Choice questions** (copy questions and answers above)
-5. Add an **Email** field block with the opt-in copy above
-6. For result pages:
-   - Add a **Thank You page** block
-   - Set up 6 conditional endings based on Q6 answer:
-     - Q6 = A → Template Creator result
-     - Q6 = B → Mini-Course Creator result
-     - Q6 = C → Affiliate Funnel Builder result
-     - Q6 = D → Coaching / Consulting Offer result
-     - Q6 = E → Automation Kit Builder result
-     - (Default) → Content-to-Product Creator result
-7. Each Thank You page: paste corresponding result copy + CTA with Gumroad link
-8. Connect email field to Brevo (Settings → Integrations → Brevo or use Zapier)
-9. Publish form → copy URL → place in X/Threads bio and all posts
+2. Title: `What Paid Template Is Hidden Inside Your Client Work?`
+3. Add **Text block** for welcome message (copy from Welcome Text above)
+4. Add **10 Multiple Choice questions** (copy from Questions above)
+   — make all required
+5. Add **Email** field with opt-in copy above
+6. Set up 6 conditional result pages based on Q2 answer:
+   - Q2 = A (visual) → Result Type 2: Visual / Design Template Creator
+   - Q2 = B (written) → Result Type 4: Writing / Content Template Creator
+   - Q2 = C (strategy) → Result Type 3: Strategy / Audit Template Creator
+   - Q2 = D (systems) → Result Type 6: Systems / Technical Template Creator
+   - Q2 = E (coaching) → Result Type 5: Coaching / Teaching Template Creator
+   - Default → Result Type 1: Process Template Creator
+7. Each result page: paste result copy + replace {{GUMROAD_LINK}} with real URL
+8. Publish → copy quiz URL
+9. Place URL in: X/Threads/LinkedIn bio, all post CTAs, Brevo Day 0 email
 
 ---
 
 ## User Tasks for Tally Setup
 
-- [ ] Log in and create new form (5 min)
-- [ ] Copy and paste each question (20 min)
-- [ ] Set up 6 Thank You pages with result copy (20 min)
-- [ ] Replace {{GUMROAD_LINK}} with real Gumroad URL (5 min)
-- [ ] Set up email integration with Brevo or save manually (10 min)
-- [ ] Publish and test form with a real email (5 min)
+- [ ] Create new form (5 min)
+- [ ] Add welcome text (5 min)
+- [ ] Add all 10 questions with answer choices (20 min)
+- [ ] Add email opt-in block (5 min)
+- [ ] Set up 6 result pages with real Gumroad URL (20 min)
+- [ ] Publish and test with real email (5 min)
+- [ ] Save Tally URL
 - [ ] Total: ~60 minutes
