@@ -17,14 +17,14 @@
 → `operations/go_live_copy_paste_guide.md` を開いてSTEP 1〜5を実行する
 
 **STEP 1: Gumroad商品ページを更新・公開（30〜45分）**
-- タイトル：Turn Your Client Work Into Paid Templates with AI
+- タイトル：Sell the Client Docs You Already Use
 - 価格：$19
-- 割引コード：TEMPLATE5（$5 off）
+- 割引コード：TEMPLATE5（$5 off、Day 4メール末尾のみ）
 - ソース：`platform_setup/gumroad_launch_kit_listing.md`
 - 手順：`platform_setup/gumroad_setup_checklist.md`
 
 **STEP 2: Tally診断クイズを公開（45〜60分）**
-- タイトル：What Paid Template Is Hidden Inside Your Client Work?
+- タイトル：What Paid Template Is Hidden Inside Your Client Docs?
 - ソース：`platform_setup/tally_readiness_quiz.md`
 - 手順：`platform_setup/tally_setup_checklist.md`
 

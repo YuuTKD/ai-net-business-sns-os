@@ -1,4 +1,4 @@
-# Brevo 7-Day Email Sequence — Turn Your Client Work Into Paid Templates with AI
+# Brevo 7-Day Email Sequence — Sell the Client Docs You Already Use
 
 URL Placeholders:
 - {{GUMROAD_LINK}} — replace with your Gumroad product URL
@@ -18,7 +18,7 @@ Your template type is inside — here's where to start
 
 **Preview text:**
 ```
-Based on your quiz, here's what's hiding in your client work
+Based on your quiz, here's which client doc to sell first
 ```
 
 **Body:**
@@ -30,19 +30,20 @@ you know exactly what to do next.
 
 Here's the short version:
 
-The work you're already doing for clients contains at least one template
-that other people in your field would pay for.
+The documents you're already sending clients — proposals, intake forms,
+messaging frameworks — are things other copywriters and marketers
+would pay $19–$49 for.
 
-Your job over the next 7 days is to find it, package it, and put it on Gumroad.
+Your job over the next 7 days: pick one, clean it up, and list it on Gumroad.
 
 This week, I'll walk you through:
 
-→ Why the work you do is worth more than one client's fee
-→ How to find your first template in under an hour
-→ The 3 most sellable template formats (and which fits you)
-→ How to use AI to package your work faster
-→ Where to sell it + how to price it
-→ How to get your first buyer without a big audience
+→ Why your existing client docs are worth more than one client fee
+→ How to find the right document to sell first (30 minutes)
+→ Which format sells best for your type of work
+→ How to clean it up fast with AI
+→ How to price it and write your Gumroad listing
+→ How to get your first buyer without a large audience
 
 Each email is short. Each one has one action.
 
@@ -60,46 +61,49 @@ See you tomorrow.
 **PS:**
 ```
 P.S. Hit reply and tell me: what type of client work do you do?
-I read every reply and it helps me send you more relevant content.
+I read every reply.
 ```
 
 ---
 
-## DAY 1 — The Hidden Value in Client Work
+## DAY 1 — The Client Doc You Keep Recreating
 
 **Send:** Day 1 (24 hours after Day 0)
 
 **Subject:**
 ```
-The thing most freelancers never realize about their own work
+The client doc you keep recreating is worth money
 ```
 
 **Preview text:**
 ```
-You're doing the work — you're just not selling it twice
+You're not charging enough for what's sitting in your Google Drive
 ```
 
 **Body:**
 ```
 Hey [First Name],
 
-Here's something most freelancers and consultants never think about:
+Here's something most copywriters and solo marketers never think about:
 
-Every process you've built, every framework you've developed,
-every document you've refined across multiple clients —
-that's not just your work history. That's your product catalog.
+The documents you've refined across dozens of clients —
+your proposal format, your intake questionnaire, your messaging framework —
+aren't just your work process.
+
+They're your product catalog.
 
 The client who hired you paid once.
-But someone else — another freelancer, a small business owner,
-a team lead — would pay $19 for the template version of what you delivered.
+But another copywriter — especially one just starting out —
+would pay $19 for the blank version of your intake form.
+Another marketer would pay $29 for your brand messaging framework.
 
-The difference between freelancers who stay stuck in the hourly grind
-and those who start building additional income streams isn't talent or connections.
+The difference between people who stay stuck billing by the hour
+and those who start building additional income isn't talent.
 
-It's whether they see their process as something to package, not just perform.
+It's whether they see their best documents as something to package,
+not just use.
 
-Tomorrow, I'll show you how to find the specific template hiding in your recent work —
-in under an hour.
+Tomorrow, I'll show you how to find the specific doc to sell first.
 
 [Your Name]
 ```
@@ -111,206 +115,200 @@ in under an hour.
 
 **PS:**
 ```
-P.S. The Starter Kit includes a Client Work Audit Worksheet
-that makes this exercise structured and fast:
+P.S. The Starter Kit includes a Client Docs Inventory Sheet
+that makes the next step structured and fast:
 → {{GUMROAD_LINK}}
 ```
 
 ---
 
-## DAY 2 — Find Your First Template in 60 Minutes
+## DAY 2 — Find Your First Sellable Doc in 30 Minutes
 
 **Send:** Day 2
 
 **Subject:**
 ```
-How to find your first template in under an hour (3-step audit)
+How to find your first sellable doc in 30 minutes
 ```
 
 **Preview text:**
 ```
-Look at your last 3 months of client work — it's already there
+Look at your last 5 client projects — it's already there
 ```
 
 **Body:**
 ```
 Hey [First Name],
 
-Here's a 3-step audit to find your first sellable template.
-It takes under an hour.
+Here's a simple exercise. Takes 30 minutes.
 
-Step 1: List your last 3-5 client projects
-Write down what you delivered for each one.
-Don't overthink it — just list the main deliverables.
+Step 1: List your last 5 client projects
+Write down what documents you sent or delivered for each one.
+Don't overthink it — just list the main files you created.
 
 Step 2: Find the repeats
-Circle anything you've delivered more than once.
-Any document, process, structure, or framework that appears in multiple projects.
+Circle any document, questionnaire, framework, or checklist
+that you created or adapted more than once across different clients.
 
-Step 3: Ask yourself this one question
-"If another freelancer in my field asked me how I do this,
-what would I tell them — and could I turn that explanation into a document?"
+Step 3: Ask yourself this question
+"If another copywriter or marketer asked me how I do this,
+could I hand them this document and they'd understand it?"
 
 If yes — that's your template.
 
 Here's an AI prompt to help:
 
-"I'm a [YOUR PROFESSION] who does [TYPE OF WORK].
-My recent client deliverables include [LIST 3-5 DELIVERABLES].
-Which of these is most likely to be useful as a reusable template
-for other [PROFESSION]s? Explain why and suggest a product title."
+"I'm a [PROFESSION] who works with [TYPE OF CLIENTS].
+My most common client documents include [LIST 3–5 DOCS].
+Which of these would be most useful as a reusable template
+for other [PROFESSION]s? Give me a product title and a one-sentence description."
 
 Paste that into Claude or ChatGPT.
-Take note of the answer — it might surprise you.
 
-Tomorrow: the 3 most sellable template formats, and which one fits your work.
+Tomorrow: the 3 doc formats that sell best for copywriters and marketers.
 
 [Your Name]
 ```
 
 **CTA:**
 ```
-→ The Starter Kit includes 20 AI productization prompts like this one:
+→ The Starter Kit includes a Paid Template Idea Finder that structures this exercise:
 {{GUMROAD_LINK}}
 ```
 
 **PS:**
 ```
-P.S. If you're already thinking "I know exactly which piece of work this would be"
-— that's your template. Trust that instinct.
+P.S. If you already know which doc you want to sell — trust that instinct.
+That's your template.
 ```
 
 ---
 
-## DAY 3 — The 3 Most Sellable Template Formats
+## DAY 3 — The 3 Formats That Sell
 
 **Send:** Day 3
 
 **Subject:**
 ```
-3 template formats that sell — and which one fits your work
+3 doc formats that sell — and which one you already have
 ```
 
 **Preview text:**
 ```
-Not all templates are created equal. Here's what buyers actually want.
+Not all templates sell equally. Here's what buyers actually buy.
 ```
 
 **Body:**
 ```
 Hey [First Name],
 
-Once you've found the work to turn into a template,
-the next question is: what format should it be in?
+Once you've found the document, the question is: what format?
 
-Here are the 3 that sell best:
-
-────────
-Format 1: The Checklist / SOP
-Best for: anyone who follows a consistent process
-Price range: $9–$29
-Example: "Client Onboarding Checklist for Freelance Designers"
-Time to create: 2-4 hours
+Here are the 3 that sell best for copywriters and marketers:
 
 ────────
-Format 2: The Framework / Worksheet
-Best for: consultants, coaches, strategists
+Format 1: The Questionnaire / Intake Form
+Best for: anyone with a strong client discovery process
+Price range: $17–$37
+Example: "The 30-Question Client Intake Form for Copywriters"
+Time to create: 2–4 hours
+
+────────
+Format 2: The Framework / Guide
+Best for: those who explain a process or methodology to clients
 Price range: $19–$49
-Example: "The Brand Audit Worksheet: 47 Questions to Diagnose Any Brand"
-Time to create: 4-8 hours
+Example: "Brand Voice Positioning Guide: From Values to Voice in 8 Steps"
+Time to create: 4–8 hours
 
 ────────
 Format 3: The Template Pack
-Best for: anyone who creates similar documents repeatedly
+Best for: anyone who sends multiple related documents
 Price range: $29–$79
-Example: "Freelance Proposal + Contract + Brief Template Pack"
-Time to create: 1-3 days
+Example: "Freelance Copywriter Client Kit: Proposal + Intake + Brief Templates"
+Time to create: 1–3 days
 
-Which one fits your work best?
+Which format fits your document?
 
-Tomorrow: how to actually create your template — with AI doing most of the work.
-Plus, a coupon you won't want to miss.
+Tomorrow: how to build it in one afternoon.
 
 [Your Name]
 ```
 
 **CTA:**
 ```
-→ See all 7 template types inside the Starter Kit:
+→ See all format options inside the Starter Kit:
 {{GUMROAD_LINK}}
 ```
 
 **PS:**
 ```
-P.S. The kit includes a Template Format Chooser that helps you decide
-which format is right for your specific type of work.
+P.S. The Starter Kit includes a Template Offer Builder with AI prompts
+to structure any of these formats from a document you already have.
 ```
 
 ---
 
-## DAY 4 — Create Your Template with AI + Coupon
+## DAY 4 — Create It in One Afternoon
 
 **Send:** Day 4
 
 **Subject:**
 ```
-How to create your template with AI (+ $5 off today only)
+How to turn your client doc into a paid template (one afternoon)
 ```
 
 **Preview text:**
 ```
-Use code TEMPLATE5 at checkout — expires in 48 hours
+AI does most of the work. Here's the exact process.
 ```
 
 **Body:**
 ```
 Hey [First Name],
 
-By now you should have a good idea of:
-✓ Which piece of client work to turn into a template
+By now you should know:
+✓ Which client doc to turn into a template
 ✓ Which format to use
 
-Today: how to actually build it — in a few hours, not days.
+Today: how to actually build it.
 
-Here's the AI workflow:
+Here's the workflow:
 
-Step 1: Take your existing client deliverable (or notes from memory)
-         and paste it into Claude or ChatGPT.
+Step 1: Open the client document you've chosen.
+         Remove anything client-specific (names, company details, project specifics).
 
-Step 2: Use this prompt:
+Step 2: Paste the cleaned-up version into Claude or ChatGPT with this prompt:
+
          "Turn this into a reusable template that a [PROFESSION]
-         could use with any client. Remove client-specific details.
-         Add clear instructions for each section.
-         Format it cleanly with headers and bullet points."
+         could use with any client. Add clear instructions for each section.
+         Keep the tone practical and direct. Format with headers and bullet points."
 
-Step 3: Review, edit, and add your voice.
-         This takes 30-60 minutes depending on the complexity.
+Step 3: Review the output. Add your own voice and any context that's missing.
+         This takes 30–60 minutes.
 
-Step 4: Save as a Google Doc. Export as PDF. Upload to Gumroad.
+Step 4: Save as a Google Doc. Export as PDF. Upload to Gumroad at $19.
 
-That's it. Your template is live.
+That's it. One afternoon. One listing.
 
-And to make it easier to say yes to the full system —
+The Starter Kit includes the Template Offer Builder — a set of targeted AI prompts
+designed for copywriters and marketers to clean up and structure any client document.
 
-Use code TEMPLATE5 for $5 off the Starter Kit:
-→ {{GUMROAD_LINK}}
+→ Get the Starter Kit: {{GUMROAD_LINK}}
 
-Brings it to $14. Code expires in 48 hours.
+(Use code TEMPLATE5 at checkout if you'd like $5 off — expires in 48 hours.)
 
 [Your Name]
 ```
 
 **CTA:**
 ```
-→ Get the Starter Kit for $14 with code TEMPLATE5:
-{{GUMROAD_LINK}}
+→ Get the Starter Kit: {{GUMROAD_LINK}}
 ```
 
 **PS:**
 ```
-P.S. The Starter Kit includes 20 AI prompts specifically designed
-to turn client deliverables into sellable templates.
-Not just one prompt — twenty.
+P.S. The Gumroad Sales Page Template inside the kit means you won't have to
+figure out what to write on your product page from scratch.
 ```
 
 ---
@@ -333,7 +331,7 @@ Gumroad setup takes under 30 minutes. Here's the pricing guide.
 ```
 Hey [First Name],
 
-Let's talk about the two questions people get most stuck on:
+Two questions people always get stuck on:
 
 Where do I sell it?
 What do I charge?
@@ -341,44 +339,42 @@ What do I charge?
 ────────
 WHERE TO SELL
 
-Start with Gumroad. It's free to sign up, handles payment and delivery
-automatically, and is widely trusted in the freelancer/creator community.
+Start with Gumroad. Free to use, handles payment and delivery automatically,
+trusted by buyers in the freelance and creator community.
 
-Setup takes under 30 minutes once you have your template ready.
-
-(The Starter Kit includes a step-by-step Gumroad setup guide and
-a fill-in-the-blank product page template.)
+Setup takes under 30 minutes once your template is ready.
 
 ────────
 WHAT TO CHARGE
 
-Here's a simple pricing guide based on template complexity:
+Pricing guide for copywriter and marketer templates:
 
-• Checklist (1-2 pages): $7–$17
-• Process document / SOP (3-10 pages): $17–$37
-• Worksheet / scoring tool: $19–$49
-• Template pack (3+ documents): $29–$79
-• Full framework / audit kit: $49–$99
+• Intake questionnaire (1–2 pages): $17–$29
+• Copy brief template: $17–$29
+• Brand voice guide framework: $29–$49
+• Messaging framework (full): $29–$49
+• Template pack (3+ documents): $39–$79
+• Swipe file or curated copy collection: $19–$49
 
-Start on the lower end. Raise the price after 10 sales.
+Start at the lower end. Raise the price after 10 sales.
 
-A $19 template that sells 20 times = $380 from work you did once.
+$19 × 20 sales = $380 from a document you wrote once.
 
-Tomorrow: how to get your first buyer without a big audience.
+Tomorrow: how to get your first buyer without a large following.
 
 [Your Name]
 ```
 
 **CTA:**
 ```
-→ Get the full pricing guide + Gumroad setup checklist inside the Starter Kit:
+→ Get the full pricing guide + Gumroad Sales Page Template inside the Starter Kit:
 {{GUMROAD_LINK}}
 ```
 
 **PS:**
 ```
-P.S. The kit also includes 20 social post prompts for LinkedIn, X, Threads,
-and Reddit — designed to drive traffic to your template without being salesy.
+P.S. The kit also includes 7 LinkedIn posts designed to drive traffic
+to your template without sounding like you're selling.
 ```
 
 ---
@@ -389,44 +385,43 @@ and Reddit — designed to drive traffic to your template without being salesy.
 
 **Subject:**
 ```
-You don't need 10,000 followers to sell your first template
+You don't need 5,000 LinkedIn followers to sell your first template
 ```
 
 **Preview text:**
 ```
-Here's the 3-step approach that works from zero
+Here's what actually works from a small audience
 ```
 
 **Body:**
 ```
 Hey [First Name],
 
-"I'll launch when I have a bigger audience."
+"I'll launch when I have more followers."
 
-I hear this all the time. And I understand it.
+Here's what actually works when you're starting small:
 
-But here's what actually works when you're starting from zero:
+Step 1: Write one LinkedIn post about the problem your template solves —
+        not the template itself.
 
-Step 1: Post about the problem your template solves — not the template itself.
+Instead of: "I just released a client intake form template!"
+Try: "The mistake most copywriters make when briefing new clients
+     (and the 5-question fix I use before every project)"
 
-Instead of: "I just released a client onboarding template!"
-Try: "The #1 mistake freelancers make during client onboarding
-     (and the checklist that fixed it for me)"
-
-Step 2: Point to the free quiz in your profile or at the end of every post.
+Step 2: Put your quiz link in your LinkedIn bio and at the end of your posts.
 
 Step 3: Let the email sequence do the selling.
 
-You're not selling to your followers.
-You're selling to the people who opted into your list because
-they resonated with your content.
+You're not selling to followers.
+You're selling to the people who found your content useful enough
+to click the quiz and give you their email.
 
-That audience is smaller — but they're already warm.
+That's a small list — but they already trust you.
 
-10 buyers from a 200-person email list beats
-0 buyers from 5,000 followers who don't know what you sell.
+50 people on an email list who know what you sell
+beats 5,000 LinkedIn followers who don't.
 
-Tomorrow is the last email in this series. I'll make it count.
+Tomorrow is the last email.
 
 [Your Name]
 ```
@@ -438,58 +433,53 @@ Tomorrow is the last email in this series. I'll make it count.
 
 **PS:**
 ```
-P.S. The Starter Kit includes a 30-Day Launch Plan with daily tasks
-designed specifically for selling from a small or zero audience.
+P.S. The Starter Kit includes a 7-Day Launch Email + Post Pack with
+7 LinkedIn posts designed to drive buyers without feeling salesy.
 ```
 
 ---
 
-## DAY 7 — Final Reminder
+## DAY 7 — Final Email
 
 **Send:** Day 7
 
 **Subject:**
 ```
-Last email — and a reminder of what's at stake
+Last email — this is what it comes down to
 ```
 
 **Preview text:**
 ```
-Every week you wait is another week of one-client, one-payment work
+You already have the document. You just haven't listed it yet.
 ```
 
 **Body:**
 ```
 Hey [First Name],
 
-This is the last email in this series.
+This is the last email.
 
-I want to be honest with you for a second.
+I'll be direct.
 
-You already know how to do this.
+You already have a client document that other copywriters and marketers
+would pay for. You've refined it across multiple projects.
+It works. Clients have paid you to use it.
 
-You already have the client work. You already have the knowledge.
-You've already done the hard part — for clients who paid you once.
+The only thing between where you are now and
+a $19 template sitting on Gumroad
+is one afternoon to clean it up and list it.
 
-The only thing standing between where you are now and
-a $19 template sitting on Gumroad selling while you sleep
-is packaging it.
+The Starter Kit makes that afternoon as short as possible:
 
-The Starter Kit makes that packaging step fast:
+✓ Client Docs Inventory Sheet — find the right doc in 30 minutes
+✓ Paid Template Idea Finder — get a clear product title and price point
+✓ Template Offer Builder — AI prompts to clean and structure it fast
+✓ Gumroad Sales Page Template — write your listing in 30 minutes
+✓ 7-Day Launch Email + Post Pack — 7 emails + 7 LinkedIn posts to launch
 
-✓ Client Work Audit Worksheet — find the template in your work
-✓ AI Productization Prompts — build it in hours, not days
-✓ Template Format Chooser — know exactly how to structure it
-✓ Simple Sales Page Template — write your Gumroad page fast
-✓ 20 Social Post Prompts — promote without feeling salesy
-✓ 30-Day Launch Plan — know exactly what to do each day
-✓ KPI Tracker — measure what's working
+→ Get the Starter Kit for $19: {{GUMROAD_LINK}}
 
-→ Get the full Starter Kit: {{GUMROAD_LINK}}
-
-Current price: $19 (goes up to $29 after 10 sales)
-
-If you have questions before buying, reply to this email.
+If you have questions before buying, hit reply.
 I respond to every message.
 
 Here's to getting paid for work you've already done,
@@ -498,13 +488,13 @@ Here's to getting paid for work you've already done,
 
 **CTA:**
 ```
-→ Turn Your Client Work Into Paid Templates with AI — $19:
+→ Sell the Client Docs You Already Use — $19:
 {{GUMROAD_LINK}}
 ```
 
 **PS:**
 ```
-P.S. After you launch your first template, the next step is the Paid Audit Kit —
-a $79-$99 product that helps you turn your diagnostic process into a high-ticket offer.
-Details available after you purchase the Starter Kit.
+P.S. After your first template is live, the next step is the Paid Template Product Audit —
+where I look at your existing client docs and tell you exactly which to sell next,
+what to charge, and how to write the Gumroad page. Details inside after purchase.
 ```

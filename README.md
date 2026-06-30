@@ -7,27 +7,28 @@ AI Digital Productをグローバルに販売するためのSNS・販売OSです
 
 ### 商品1（主力・最初に売る）
 
-**Turn Your Client Work Into Paid Templates with AI**
+**Sell the Client Docs You Already Use**
+- サブタイトル：Use AI to turn your proposals, intake forms, and messaging frameworks into paid templates.
 - 価格：$19（10件販売後 → $29）
-- 対象：クライアントワークをしているフリーランサー・コンサルタント全職種
+- 対象：Freelance copywriters / Solo marketers
 - 販売：Gumroad ✅ 登録済み
-- 無料診断：What Paid Template Is Hidden Inside Your Client Work?（Tally）
+- 無料診断：What Paid Template Is Hidden Inside Your Client Docs?（Tally）
 - メール：Brevo 7日間ステップ配信
 
 ### 商品2（アップセル・2番手）
 
-**Turn Your Client Work Into a Paid Audit with AI**
-- 価格：$79〜$99
+**Paid Template Product Audit**
+- 価格：$99
 - タイミング：商品1で5件販売後に公開
 
 ## 最終商品階段
 
 | ステップ | 商品 | 価格 |
 |---|---|---|
-| Free | Tally診断クイズ | $0 |
-| Entry | Paid Templates Starter Kit | $19→$29 |
-| Core | Paid Templates Bundle | $49 |
-| Secondary | Paid Audit Kit | $79〜$99 |
+| Free | What Paid Template Is Hidden Inside Your Client Docs? | $0 |
+| Entry | Sell the Client Docs You Already Use | $19→$29 |
+| Core | Client Docs to Paid Templates Bundle | $49 |
+| Secondary | Paid Template Product Audit | $99 |
 | Premium | Custom Review（1on1） | $249〜$499 |
 
 ## グローバル展開方針
@@ -36,7 +37,7 @@ AI Digital Productをグローバルに販売するためのSNS・販売OSです
 - **メール配信**：Brevo ✅ 登録済み（7日間シーケンス設定済み）
 - **無料診断**：Tally ✅ 登録済み
 - **LP**：Carrd または Notion Sites（売上が出てから）
-- **集客SNS**：LinkedIn（主力）+ Reddit + X / Threads
+- **集客SNS**：LinkedIn（主力）+ Threads（短縮クロスポスト）+ Reddit（調査コメントのみ）
 - **制作ツール**：Google Docs / Google Sheets / Canva
 - **AI自動化**：Claude Code（文章生成）+ ChatGPT（Deep Research・改善）
 
@@ -48,11 +49,11 @@ AI Digital Productをグローバルに販売するためのSNS・販売OSです
 
 → `operations/go_live_copy_paste_guide.md` を開いてSTEP 1〜5を実行する
 
-1. Gumroad商品ページを新タイトルで更新・公開（STEP 1）
-2. Tally診断クイズを公開（STEP 2）
+1. Gumroad商品ページ「Sell the Client Docs You Already Use」を公開（STEP 1）
+2. Tally診断クイズ「What Paid Template Is Hidden Inside Your Client Docs?」を公開（STEP 2）
 3. Brevo Day 0〜7メールを有効化（STEP 3）
 4. URL置換作業（STEP 4）
-5. SNS導線を整える・最初の投稿を公開（STEP 5）
+5. LinkedIn bio更新・Post 08を最初の投稿として公開（STEP 5）
 
 ## 運用ルール
 

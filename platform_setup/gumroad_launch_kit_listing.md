@@ -1,9 +1,9 @@
-# Gumroad Product Listing — Turn Your Client Work Into Paid Templates with AI
+# Gumroad Product Listing — Sell the Client Docs You Already Use
 
 ## 1. Product Title
 
 ```
-Turn Your Client Work Into Paid Templates with AI
+Sell the Client Docs You Already Use
 ```
 
 ---
@@ -11,8 +11,8 @@ Turn Your Client Work Into Paid Templates with AI
 ## 2. Short Description (160 characters max — shown in search)
 
 ```
-Turn the work you already do for clients into templates you can sell repeatedly.
-AI-powered system for freelancers and consultants.
+Turn your proposals, intake forms, and messaging frameworks into paid templates.
+For freelance copywriters and solo marketers.
 ```
 
 ---
@@ -20,112 +20,99 @@ AI-powered system for freelancers and consultants.
 ## 3. Full Product Description (paste into Gumroad Description field)
 
 ```
-You've already done the work.
+You already have the product.
 
-Every proposal you wrote, every process you built,
-every deliverable you created — is a potential template.
+Every proposal you've refined across 20 clients.
+Every intake form you send before starting a project.
+Every messaging framework you explain on discovery calls.
 
-The problem isn't that you lack knowledge or skills.
-The problem is that you're giving it away one client at a time,
-then starting from scratch for the next one.
+Those aren't just internal tools.
+They're documents other copywriters and marketers would pay $19–$49 for.
 
-This kit changes that.
+The problem isn't that you lack ideas.
+The problem is that you've been giving your best documents away —
+one client at a time.
 
-Turn Your Client Work Into Paid Templates with AI is a step-by-step system
-that helps freelancers, consultants, and service providers extract the templates
-hiding inside their existing client work — and turn them into digital products
-they can sell on Gumroad for $9 to $79 each.
+Sell the Client Docs You Already Use is a 5-part kit that helps
+freelance copywriters and solo marketers identify, clean up, and list
+one client document as a paid template on Gumroad — in under a week.
 
-With AI doing the heavy lifting.
+Use AI to do most of the work in a single afternoon.
 
 ────────────────────────────────────
-WHAT'S INSIDE
+WHAT'S INSIDE (5 ASSETS)
 ────────────────────────────────────
 
-✓ Client Work Audit Worksheet
-  Find the templates hiding in your last 3 months of work.
-  Includes the exact questions to ask yourself + AI prompts.
+✓ Client Docs Inventory Sheet
+  A structured worksheet to list every document you send to clients —
+  proposals, intake forms, messaging guides, SOPs — and evaluate
+  which one is worth selling first. Includes AI prompts to speed up the audit.
 
-✓ Template Format Chooser
-  Decide whether your template should be a Google Doc, Notion page,
-  Canva file, or Google Sheets — based on what your buyers actually use.
+✓ Paid Template Idea Finder
+  Answer 8 questions about your most reused document.
+  Walk away with a product title, target buyer, price point, and format.
 
-✓ 7 Template Types Explained
-  Process documents, checklists, proposals, contracts, SOPs, scorecards,
-  and brief templates — with real examples from each.
+✓ Template Offer Builder
+  Step-by-step AI prompts to clean up your document,
+  remove client-specific details, and structure it for general sale.
+  Includes a fill-in-the-blank table of contents template.
 
-✓ AI Productization Prompts (20 prompts)
-  Paste these into Claude or ChatGPT to convert your client deliverables
-  into sellable templates in under an hour.
+✓ Gumroad Sales Page Template
+  A fill-in-the-blank Gumroad product description.
+  Write your listing page in under 30 minutes.
+  No copywriting experience needed.
 
-✓ Pricing Guide
-  Know exactly what to charge for each template type.
-  From $9 checklists to $79 full process kits.
-
-✓ Simple Sales Page Template
-  Write your Gumroad product page in under 30 minutes.
-  Fill-in-the-blank format — no copywriting experience needed.
-
-✓ 20 Social Post Prompts
-  Ready-to-edit frameworks for LinkedIn, X, Threads, and Reddit.
-  Designed to drive traffic to your product without sounding salesy.
-
-✓ 7-Day Email Sequence Template
-  A plug-and-play welcome and nurture sequence.
-  Works with Brevo, MailerLite, ConvertKit, or any email tool.
-
-✓ 30-Day Client-to-Template Launch Plan
-  Day-by-day checklist. Know exactly what to do each day for 30 days.
-
-✓ KPI Tracker (Google Sheets)
-  Track posts, quiz signups, sales, and revenue week by week.
+✓ 7-Day Launch Email + Post Pack
+  7 email templates + 7 LinkedIn posts for your first launch week.
+  Designed to drive buyers to your template without sounding salesy.
 
 ────────────────────────────────────
 WHO THIS IS FOR
 ────────────────────────────────────
 
-✓ Freelancers who do the same type of work repeatedly for different clients
-✓ Consultants who have developed frameworks, processes, or audits
-✓ Designers who create similar deliverables across projects
-✓ Coaches and trainers who teach repeatable methods
-✓ Writers and copywriters who use frameworks and structures
-✓ Developers and engineers who follow repeatable workflows
-✓ Anyone who does client work and wants to stop starting from zero
+✓ Freelance copywriters who reuse proposal structures, intake forms, or copy briefs
+✓ Solo marketers who have built messaging frameworks or brand voice guides
+✓ Strategists who run the same discovery or audit process with every client
+✓ Any service provider who sends the same type of document to multiple clients
+✓ People who want additional income from work they've already done
 
 ────────────────────────────────────
 WHO THIS IS NOT FOR
 ────────────────────────────────────
 
-✗ People who want a get-rich-quick shortcut
-✗ Those who haven't done any client or service work
-✗ Anyone looking for a fully automated, zero-effort income stream
+✗ Anyone looking for a get-rich-quick system
+✗ People who haven't done any client or service work yet
+✗ Those who want fully automated, zero-effort income
 
 ────────────────────────────────────
 FREQUENTLY ASKED QUESTIONS
 ────────────────────────────────────
 
-Q: Do I need a big social media following?
-A: No. The kit includes strategies for selling even with under 500 followers.
-   The Tally quiz funnel works regardless of audience size.
+Q: Do I need a large LinkedIn following to sell my first template?
+A: No. The kit includes a 7-Day Launch Email + Post Pack designed to work
+   from a small or brand-new audience.
 
-Q: What kind of templates can I create?
-A: Process docs, checklists, proposals, contracts, SOPs, scorecards,
-   briefs, frameworks, worksheets — any document you create repeatedly.
+Q: What types of documents can I sell?
+A: Proposals, intake forms, brand voice guides, messaging frameworks,
+   content calendars, SOPs, copy briefs, swipe files — any document
+   you send clients repeatedly.
 
 Q: What AI tools do I need?
 A: Claude or ChatGPT (both have free tiers). No paid AI subscription required.
 
 Q: How long will this take?
-A: With the AI prompts, most people create their first template in 2-4 hours.
-   The full launch system takes 30 days at 1-2 hours per day.
-
-Q: What format should my template be in?
-A: The kit includes a Template Format Chooser that helps you decide
-   based on what your target buyers actually prefer.
+A: Most people complete their first template in one afternoon.
+   The 7-day launch plan takes 1–2 hours per day.
 
 Q: Where do I sell the templates?
-A: Gumroad is the recommended platform. Setup takes under 30 minutes.
-   The kit includes a step-by-step Gumroad setup guide.
+A: Gumroad is the recommended platform. Free to start, handles payment
+   and delivery automatically. Setup takes under 30 minutes.
+   The Gumroad Sales Page Template included in this kit walks you through it.
+
+Q: What if my document is too client-specific to sell?
+A: The Template Offer Builder includes AI prompts that help you generalize
+   any client document into a reusable format — removing client details
+   while keeping all the structure and value.
 
 ────────────────────────────────────
 REFUND POLICY
@@ -140,8 +127,8 @@ CALL TO ACTION
 
 → Get the Starter Kit for $19
 
-The price increases to $29 after the first 10 sales.
-Not sure yet? Take the free quiz first: [Tally Quiz Link]
+Not sure which document to sell first?
+Take the free 3-minute quiz: [{{TALLY_QUIZ_LINK}}]
 ```
 
 ---
@@ -150,14 +137,14 @@ Not sure yet? Take the free quiz first: [Tally Quiz Link]
 
 ```
 Primary headline:
-Turn Your Client Work Into Paid Templates with AI
+Sell the Client Docs You Already Use
 
 Subheadline:
-Extract the templates hiding in your existing work
-and sell them on Gumroad — starting this week
+Turn your proposals, intake forms, and messaging frameworks
+into paid templates — starting this week
 
 Bottom label:
-For freelancers, consultants, coaches & service providers
+For freelance copywriters and solo marketers
 ```
 
 ---
@@ -165,19 +152,19 @@ For freelancers, consultants, coaches & service providers
 ## 5. Gumroad Tags
 
 ```
-freelancer
-consultant
+copywriter
+solo marketer
+freelance
+proposals
 templates
+client docs
 digital product
-client work
 passive income
 productize
-solopreneur
-AI tools
-side income
+messaging framework
+intake form
 service provider
 digital templates
-productization
 ```
 
 ---
@@ -189,7 +176,7 @@ productization
 | Launch price | $19 | First 10 sales |
 | Standard price | $29 | After 10 sales |
 | Bundle | $49 | After publishing Starter Kit |
-| Audit Kit | $79〜$99 | After 5 Starter Kit sales |
+| Paid Template Product Audit | $99 | After 5 Starter Kit sales |
 
 ---
 
@@ -198,22 +185,23 @@ productization
 ```
 Code: TEMPLATE5
 Amount off: $5
-Applies to: Turn Your Client Work Into Paid Templates with AI
-Use in: Brevo Day 4 email
+Applies to: Sell the Client Docs You Already Use
+Use in: Brevo Day 4 email only (do not feature on product page)
+Note: Mention softly at end of Day 4 email — not the headline offer
 ```
 
 ---
 
 ## 8. Pre-Publish Checklist
 
-- [ ] Product title: "Turn Your Client Work Into Paid Templates with AI"
+- [ ] Product title: "Sell the Client Docs You Already Use"
 - [ ] Short description is 160 characters or less
 - [ ] Full description pasted and formatted correctly
-- [ ] Product PDF uploaded (from products/ directory)
+- [ ] Product PDF uploaded
 - [ ] Cover image uploaded (from Canva using cover text above)
 - [ ] Price set to $19
 - [ ] Post-purchase message set
-- [ ] TEMPLATE5 discount code created
+- [ ] TEMPLATE5 discount code created (email use only)
 - [ ] Tags added
 - [ ] Set to Public
 - [ ] Test purchase completed (use 100% off code)

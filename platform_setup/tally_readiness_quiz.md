@@ -1,30 +1,34 @@
-# Tally Quiz — What Paid Template Is Hidden Inside Your Client Work?
+# Tally Quiz — What Paid Template Is Hidden Inside Your Client Docs?
 
 ## Quiz Title (shown at top of form)
 
 ```
-What Paid Template Is Hidden Inside Your Client Work?
+What Paid Template Is Hidden Inside Your Client Docs?
 ```
 
 ## Quiz Description (shown under title)
 
 ```
-Find out which type of sellable template is hiding inside
-the work you already do for clients.
+Find out which of your client documents is worth selling as a paid template.
 Takes 3 minutes. Free.
 ```
 
 ## Welcome Text (first screen)
 
 ```
-If you do any kind of client or service work —
-freelancing, consulting, coaching, design, writing, development —
-there's almost certainly a sellable template hiding in what you do.
+If you're a freelance copywriter or solo marketer,
+you're sending clients the same types of documents over and over.
 
-This quiz will help you find it.
+Your proposal. Your intake form. Your messaging framework.
+Your swipe file. Your onboarding process.
 
-Answer honestly based on what you actually do, not what you wish you did.
-At the end, you'll get your template type + a free resource to help you package it.
+One of those documents — cleaned up and listed on Gumroad —
+could earn you $19–$49 each time someone downloads it.
+
+This quiz will help you find which one.
+
+Answer based on what you actually use with clients right now.
+At the end, you'll get your template type + a free resource to package it.
 ```
 
 ---
@@ -32,89 +36,90 @@ At the end, you'll get your template type + a free resource to help you package 
 ## 10 Questions + Answer Choices
 
 **Q1. What best describes your primary work right now?**
-- A: Freelance services (design, writing, development, marketing, etc.)
-- B: Consulting or advisory work
-- C: Coaching or training people
-- D: Managing projects or operations inside a company
-- E: Something else / I'm exploring options
+- A: Freelance copywriting (sales pages, emails, ads, website copy)
+- B: Content marketing (blog posts, newsletters, social content)
+- C: Brand strategy or messaging consulting
+- D: Fractional CMO or solo marketing work
+- E: Something else / I'm exploring
 
-**Q2. When you work with a new client, what do you usually create or deliver?**
-- A: Visual deliverables (designs, decks, graphics, layouts)
-- B: Written documents (reports, copy, proposals, briefs, SOPs)
-- C: Strategy or analysis (plans, audits, recommendations, research)
-- D: Systems or workflows (processes, automations, checklists, templates)
-- E: Direct teaching or coaching (sessions, frameworks, curricula)
+**Q2. Which of these do you send most often to clients?**
+- A: A project proposal or scope of work
+- B: A client intake form or discovery questionnaire
+- C: A brand voice or messaging guide
+- D: A content plan or editorial calendar
+- E: A checklist or onboarding process document
 
-**Q3. How often do you find yourself doing the same type of work for different clients?**
-- A: Almost every project follows the same basic structure
-- B: Many projects are similar but I customize heavily each time
-- C: Projects vary quite a bit — no two are alike
-- D: I'm just starting out and don't have enough client work yet
+**Q3. How often do you create the same type of document for different clients?**
+- A: Nearly every project uses the same basic structure
+- B: Similar structure but I spend hours customizing each time
+- C: Projects vary enough that I start mostly from scratch
+- D: I'm still building my first client processes
 
-**Q4. When you finish a project, what do you usually do with the files and documents?**
-- A: Archive them and move on — each project starts fresh next time
-- B: Reuse parts of them but spend time adapting
-- C: Have a solid template I already reuse across projects
-- D: I'm not sure — I haven't thought about it
+**Q4. Which document takes the longest to build for each new client?**
+- A: The intake questionnaire / discovery questions
+- B: The project proposal or scope of work
+- C: The brand voice or messaging strategy document
+- D: The content plan or campaign framework
+- E: The sales or landing page copy itself
 
-**Q5. What's the most common problem your clients hire you to solve?**
-- A: They lack a clear process or system
-- B: They don't know how to communicate or position themselves
-- C: They need to improve or optimize their performance
-- D: They need creative assets or visual work
-- E: They want strategic clarity or a plan
+**Q5. Which phrase best describes your most reused document?**
+- A: A list of questions I ask every new client before starting
+- B: A template I fill in to pitch new projects and set expectations
+- C: A framework I walk clients through to define their messaging
+- D: A checklist I run before delivering copy or content
+- E: A curated set of example copy I reference across projects
 
-**Q6. What format do your deliverables most often take?**
-- A: Google Docs or Word documents
-- B: Google Sheets or Excel spreadsheets
-- C: Notion pages or similar tools
-- D: Canva, Figma, or design files
-- E: Slide decks (Google Slides, PowerPoint)
+**Q6. What format do your most reused documents take?**
+- A: Google Docs (written guides, briefs, copy scripts)
+- B: Notion pages (brand guides, strategy docs, SOPs)
+- C: Google Slides or Canva (decks, frameworks, presentations)
+- D: Google Sheets (content calendars, tracking, audits)
+- E: A combination depending on the client
 
-**Q7. Have you ever reused a document from one client project on another?**
-- A: Yes, frequently — I have files I've reused multiple times
-- B: Sometimes — I adapt old work but don't have clean templates
-- C: Rarely — I start fresh each time
-- D: Not yet — I'm building my first client projects
+**Q7. What do clients most often say about how you work?**
+- A: You ask great questions and get to the heart of what they need
+- B: You always know what information to request upfront
+- C: You have a clear, consistent way of defining brand and messaging
+- D: You know what good copy looks like and can explain why it works
+- E: You have a reliable process that keeps projects moving
 
-**Q8. Which of these do you find yourself explaining or teaching regularly?**
-- A: A step-by-step process ("here's how to do X")
-- B: A way of evaluating or scoring something ("here's how to assess X")
-- C: A structure or format ("here's the framework I use")
-- D: A set of criteria or checklist ("here's what to check")
-- E: Not sure yet
+**Q8. If you packaged your most reused document as a sellable template, who would buy it?**
+- A: Newer copywriters figuring out their onboarding process
+- B: Copywriters who want a proven proposal or brief format
+- C: Brand strategists or marketers who need a messaging framework
+- D: Content marketers who want a planning or editorial template
+- E: Copywriters who want a curated swipe file to reference
 
-**Q9. If you packaged your most common client deliverable into a template,
-     how long do you think it would take someone else to use it?**
-- A: Under 30 minutes — it's a simple checklist or one-page document
-- B: 1-3 hours — it requires some thinking and customization
-- C: Half a day — it's a more complex process or system
-- D: More than a day — it involves multiple steps and decisions
-- E: I'm not sure what my deliverable would even look like as a template
+**Q9. How long would it take someone else to use your document?**
+- A: Under 30 minutes — it's a short questionnaire or checklist
+- B: 1–2 hours — it requires thinking and filling in details
+- C: Half a day — it's a structured process to work through
+- D: Longer — it involves multiple steps and client input
+- E: I'm not sure what it would look like as a standalone template
 
-**Q10. What's your biggest hesitation about turning your work into a paid template?**
+**Q10. What's your biggest hesitation about packaging a client doc as a paid template?**
 - A: I'm not sure anyone would pay for it
-- B: I don't know which piece of work to start with
-- C: I worry it's not polished or professional enough
-- D: I'm not sure how to price it
-- E: I don't know where or how to sell it
+- B: It feels too client-specific to generalize
+- C: I'm not sure which document to start with
+- D: I worry it's not polished enough
+- E: I don't know how to price or list it
 
 ---
 
 ## Scoring Logic
 
-Use Q2 (delivery type) and Q5 (problem type) as the two primary determinants.
+Use Q2 as the primary determinant.
 
-| Q2 answer | Q5 answer | Primary result type |
-|---|---|---|
-| A (visual) | Any | Visual / Design Template Creator |
-| B (written docs) | B (communication) | Writing / Content Template Creator |
-| B (written docs) | A (process) | Process Template Creator |
-| C (strategy) | C or E (optimize/plan) | Strategy / Audit Template Creator |
-| D (systems) | A (process) | Process Template Creator |
-| E (coaching) | Any | Coaching / Teaching Template Creator |
+| Q2 answer | Primary result type |
+|---|---|
+| A (proposal) | Proposal Template |
+| B (intake form) | Client Intake Template |
+| C (messaging guide) | Messaging Framework Template |
+| D (content plan) | Sales Page Checklist |
+| E (checklist/SOP) | Onboarding SOP |
+| Default | Proposal Template |
 
-**Simplified Tally setup:** Use Q2 as the primary determinant for result page logic.
+**Tiebreaker:** If Q2 = D and Q5 = E → Swipe File Template (Result Type 5)
 
 ---
 
@@ -122,204 +127,216 @@ Use Q2 (delivery type) and Q5 (problem type) as the two primary determinants.
 
 ---
 
-### Result Type 1: Process Template Creator
+### Result Type 1: Proposal Template
 
 **Headline:**
 ```
-Your Template Type: Process Template Creator
+Your Template Type: Proposal Template
 ```
 
 **Result copy:**
 ```
-Based on your answers, the template most likely hiding in your client work
-is a process document — a step-by-step guide, SOP, workflow, or checklist.
+Based on your answers, the document most likely worth selling
+is your project proposal — the structure you use to pitch clients,
+define scope, and set expectations for new work.
 
 What this looks like:
-→ Client onboarding process (the steps you walk every new client through)
-→ Project kick-off checklist (everything you do at the start of each project)
-→ Delivery workflow (how you produce and hand off your work)
-→ Review and approval process (how you get sign-off from clients)
+→ A blank proposal structure with section-by-section instructions
+→ The framing language you've refined across dozens of pitches
+→ Your standard scope and deliverables language
+→ The format that wins clients, packaged for other copywriters to use
 
-Why this is valuable:
-Other freelancers and consultants desperately want proven processes.
-They're spending hours reinventing what you've already built.
+Why this sells:
+Other copywriters are losing clients because their proposals are weak.
+Yours isn't. Package the structure and let others learn from it.
 
 Your first template idea:
-Take the most repetitive process in your current client work.
-Write it out as a numbered list with 10-20 steps.
-That's your first sellable template.
+Open your last three winning proposals.
+Find the sections that appear in every one.
+That structure — without the client details — is your template.
 
-→ The Starter Kit walks you through exactly how to package this
-  and sell it on Gumroad for $9–$49:
+→ The Starter Kit shows you how to clean it up and list it on Gumroad for $19–$49:
   {{GUMROAD_LINK}}
 ```
 
 ---
 
-### Result Type 2: Visual / Design Template Creator
+### Result Type 2: Client Intake Template
 
 **Headline:**
 ```
-Your Template Type: Visual / Design Template Creator
+Your Template Type: Client Intake Template
 ```
 
 **Result copy:**
 ```
-Based on your answers, the template most likely hiding in your work
-is a visual or design asset — a deck template, brief template, brand guidelines
-framework, or presentation structure.
+Based on your answers, the document most likely worth selling
+is your client intake questionnaire — the questions you ask every new client
+before a project begins.
 
 What this looks like:
-→ Client presentation deck template (your go-to slide structure)
-→ Creative brief template (what you send clients to kick off a project)
-→ Brand review checklist (what you check before delivering brand work)
-→ Design spec document (how you document design decisions for clients)
+→ The discovery questions you ask on every new project
+→ Your creative brief format (what clients fill in before you write)
+→ The onboarding sequence you walk new clients through
+→ The project kickoff checklist you run every time
 
-Why this is valuable:
-Other designers and creative freelancers want frameworks they can trust.
-Your aesthetic standards + project management process = something worth paying for.
-
-Your first template idea:
-Look at the last 5 projects you delivered.
-Find the one document you spent the most time on that you now reuse.
-That's your template.
-
-→ The Starter Kit shows you how to extract, format, and sell it in a week:
-  {{GUMROAD_LINK}}
-```
-
----
-
-### Result Type 3: Strategy / Audit Template Creator
-
-**Headline:**
-```
-Your Template Type: Strategy / Audit Template Creator
-```
-
-**Result copy:**
-```
-Based on your answers, the template most likely hiding in your work
-is a strategy framework or audit template — a scoring system, diagnostic tool,
-or structured evaluation your clients pay you to run.
-
-What this looks like:
-→ Business audit template (how you diagnose a client's problem)
-→ Competitive analysis framework (your research structure)
-→ Marketing strategy template (the framework you guide clients through)
-→ Performance scorecard (how you measure and present results)
-
-Why this is valuable:
-Strategy templates signal expertise. Buyers aren't just buying a document —
-they're buying a framework from someone who has tested it with real clients.
+Why this sells:
+Newer copywriters and marketers waste hours on bad briefings
+because they don't know what to ask. Your intake form —
+the one that prevents scope creep — is worth $19 to someone
+who wants to skip the guesswork.
 
 Your first template idea:
-Think about the last audit or strategy session you ran.
-What were the 5-7 main areas you evaluated?
-That structure is your template.
-
-→ The Starter Kit helps you turn your diagnostic process into a $29-$79 template:
-  {{GUMROAD_LINK}}
-```
-
----
-
-### Result Type 4: Writing / Content Template Creator
-
-**Headline:**
-```
-Your Template Type: Writing / Content Template Creator
-```
-
-**Result copy:**
-```
-Based on your answers, the template most likely hiding in your work
-is a writing or content template — a proposal structure, copywriting framework,
-brief format, or messaging guide.
-
-What this looks like:
-→ Client proposal template (your winning proposal structure)
-→ Copywriting brief template (what you send to clients to get better input)
-→ Content calendar template (how you organize and plan content)
-→ Brand voice guide template (how you document tone and messaging)
-
-Why this is valuable:
-Writers and marketers know that good structure saves hours.
-Your proposal template alone — the one that wins clients for you — is
-something other freelancers would happily pay $19-$39 for.
-
-Your first template idea:
-Your client proposal. Export the blank structure.
-Remove client-specific details. Add instructions.
+Export your intake form or discovery questionnaire.
+Remove client-specific fields.
+Add a brief note explaining why each question matters.
 That's a sellable template.
 
-→ The Starter Kit shows you how to productize your writing frameworks fast:
+→ The Starter Kit walks you through listing it on Gumroad in under a week:
   {{GUMROAD_LINK}}
 ```
 
 ---
 
-### Result Type 5: Coaching / Teaching Template Creator
+### Result Type 3: Messaging Framework Template
 
 **Headline:**
 ```
-Your Template Type: Coaching / Teaching Template Creator
+Your Template Type: Messaging Framework Template
 ```
 
 **Result copy:**
 ```
-Based on your answers, the template most likely hiding in your work
-is a coaching or curriculum template — a session framework, goal-setting tool,
-progress tracker, or teaching guide.
+Based on your answers, the document most likely worth selling
+is your brand messaging framework — the structured process you use
+to help clients define their voice, positioning, and key messages.
 
 What this looks like:
-→ Coaching session template (your standard session structure)
-→ Goal-setting worksheet (what you use with clients at the start)
-→ 90-day plan template (how you structure client action plans)
-→ Progress check-in template (how you run review sessions)
+→ Your brand voice guide template
+→ Your messaging hierarchy framework
+→ The questions you use to extract a brand's core message
+→ The document that takes clients from "we're unclear" to "we know exactly what to say"
 
-Why this is valuable:
-Other coaches want structure, not chaos. A clear, repeatable framework
-from an experienced coach is worth real money — even at $19 to start.
+Why this sells:
+Business owners and marketers pay consultants $500+/hour for this thinking.
+Your framework — packaged as a self-guided template — can sell at $29–$49
+to people who need the structure but can't afford a full engagement.
 
 Your first template idea:
-What's the first thing you do with every new coaching client?
-That intake or onboarding process — structured as a worksheet — is your template.
+Think about the last messaging guide you delivered.
+What were the 5–8 sections or questions that formed the structure?
+That structure, with instructions, is your template.
 
-→ The Starter Kit walks you through creating and selling it this week:
+→ The Starter Kit shows you how to turn it into a $29–$49 paid template:
   {{GUMROAD_LINK}}
 ```
 
 ---
 
-### Result Type 6: Systems / Technical Template Creator
+### Result Type 4: Sales Page Checklist
 
 **Headline:**
 ```
-Your Template Type: Systems / Technical Template Creator
+Your Template Type: Sales Page Checklist
 ```
 
 **Result copy:**
 ```
-Based on your answers, the template most likely hiding in your work
-is a system or technical template — a workflow automation, technical brief,
-testing checklist, or project management framework.
+Based on your answers, the document most likely worth selling
+is a checklist or framework you use when writing or reviewing copy —
+a structured list of what makes sales copy work.
 
 What this looks like:
-→ Project setup checklist (your standard new-project workflow)
-→ Technical specification template (how you document requirements)
-→ QA or testing checklist (what you check before delivery)
-→ Handoff document template (what you give clients when you finish)
+→ Your pre-write research checklist (what you gather before writing)
+→ Your sales page structure framework (the sections you always include)
+→ Your copy review checklist (how you evaluate copy before it goes live)
+→ Your "before I publish" checklist
 
-Why this is valuable:
-Technical people often underestimate how much value is in their process.
-Your "obvious" workflow is someone else's missing system.
+Why this sells:
+Marketers and business owners know their copy is underperforming.
+A checklist from a working copywriter — someone who does this professionally —
+is exactly what they'll pay $17–$29 for.
 
 Your first template idea:
-Your project handoff document. The thing you put together at the end of every project.
-That — cleaned up and generalized — is a $19-$49 template.
+List the 10–15 things you check before you call a piece of copy done.
+Organize by phase: research, structure, review.
+Add one sentence for each explaining why it matters.
+That's your template.
 
-→ The Starter Kit shows you how to package your technical processes for sale:
+→ The Starter Kit shows you how to package and list it fast:
+  {{GUMROAD_LINK}}
+```
+
+---
+
+### Result Type 5: Swipe File Template
+
+**Headline:**
+```
+Your Template Type: Swipe File Template
+```
+
+**Result copy:**
+```
+Based on your answers, the document most likely worth selling
+is a curated swipe file — your personal collection of high-performing
+copy examples, hooks, subject lines, or structures organized for reuse.
+
+What this looks like:
+→ Your curated collection of subject lines that consistently convert
+→ Example opening hooks organized by type (question, bold claim, story)
+→ CTA phrases you've used and tested across clients
+→ Proven email or ad structures with annotations on why they work
+
+Why this sells:
+Writers buy swipe files constantly. The difference between a generic swipe
+file and yours: yours is curated by someone who writes for clients,
+not just collected from the internet.
+
+Your first template idea:
+Look at the examples you've saved over the past year.
+Pick one category (subject lines, hooks, CTAs, landing page openers).
+Curate the best 30–50, add a one-line annotation to each.
+That's a $19 swipe file.
+
+→ The Starter Kit helps you structure and list it on Gumroad:
+  {{GUMROAD_LINK}}
+```
+
+---
+
+### Result Type 6: Onboarding SOP
+
+**Headline:**
+```
+Your Template Type: Onboarding SOP
+```
+
+**Result copy:**
+```
+Based on your answers, the document most likely worth selling
+is your client onboarding process — the step-by-step sequence you run
+at the start of every project to set expectations and gather what you need.
+
+What this looks like:
+→ Your client onboarding checklist (steps 1–15 when a client signs)
+→ Your first-week-of-project SOP
+→ Your revision and approval process document
+→ Your delivery and project close checklist
+
+Why this sells:
+Freelancers spend hours reinventing their onboarding for each client.
+Your SOP — the one that makes your projects run smoothly —
+is something other freelancers would pay $19–$29 to use instead of
+building from scratch.
+
+Your first template idea:
+Write down every step you take in the first week of a new client project.
+Number them 1–20.
+Add a brief note on why each step matters.
+That's a $19 SOP template.
+
+→ The Starter Kit walks you through cleaning it up and listing it on Gumroad:
   {{GUMROAD_LINK}}
 ```
 
@@ -334,7 +351,7 @@ Your template type is ready.
 
 **Sub-heading:**
 ```
-Enter your email to see what's hiding in your client work
+Enter your email to see which of your client docs is worth selling —
 and get a free resource to help you package it.
 ```
 
@@ -358,10 +375,10 @@ No spam. Unsubscribe anytime.
 ## CTA After Result (bottom of result page)
 
 ```
-Ready to turn your client work into your first digital product?
+Ready to turn your best client doc into your first paid template?
 
-The Starter Kit gives you every template, worksheet, and AI prompt
-you need to go from client work to Gumroad listing in under a week.
+The Starter Kit gives you 5 targeted tools to identify, clean up,
+and list your first template on Gumroad — in under a week.
 
 → Get the Starter Kit for $19: {{GUMROAD_LINK}}
 ```
@@ -371,21 +388,22 @@ you need to go from client work to Gumroad listing in under a week.
 ## Tally Setup Instructions
 
 1. Log in to Tally → click **New Form**
-2. Title: `What Paid Template Is Hidden Inside Your Client Work?`
+2. Title: `What Paid Template Is Hidden Inside Your Client Docs?`
 3. Add **Text block** for welcome message (copy from Welcome Text above)
 4. Add **10 Multiple Choice questions** (copy from Questions above)
    — make all required
 5. Add **Email** field with opt-in copy above
 6. Set up 6 conditional result pages based on Q2 answer:
-   - Q2 = A (visual) → Result Type 2: Visual / Design Template Creator
-   - Q2 = B (written) → Result Type 4: Writing / Content Template Creator
-   - Q2 = C (strategy) → Result Type 3: Strategy / Audit Template Creator
-   - Q2 = D (systems) → Result Type 6: Systems / Technical Template Creator
-   - Q2 = E (coaching) → Result Type 5: Coaching / Teaching Template Creator
-   - Default → Result Type 1: Process Template Creator
+   - Q2 = A (proposal) → Result Type 1: Proposal Template
+   - Q2 = B (intake form) → Result Type 2: Client Intake Template
+   - Q2 = C (messaging) → Result Type 3: Messaging Framework Template
+   - Q2 = D (content plan) → Result Type 4: Sales Page Checklist
+   - Q2 = E (checklist/SOP) → Result Type 6: Onboarding SOP
+   - Default → Result Type 1: Proposal Template
+   - Bonus: Q2 = D + Q5 = E → Result Type 5: Swipe File Template
 7. Each result page: paste result copy + replace {{GUMROAD_LINK}} with real URL
 8. Publish → copy quiz URL
-9. Place URL in: X/Threads/LinkedIn bio, all post CTAs, Brevo Day 0 email
+9. Place URL in: LinkedIn bio, Threads bio, all post CTAs, Brevo Day 0 email
 
 ---
 

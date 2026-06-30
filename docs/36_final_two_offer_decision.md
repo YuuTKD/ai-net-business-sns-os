@@ -9,16 +9,25 @@
 
 ### 商品1（主力・最初に売る）
 
-**商品名：** Turn Your Client Work Into Paid Templates with AI
+**商品名：** Sell the Client Docs You Already Use
+**サブタイトル：** Use AI to turn your proposals, intake forms, and messaging frameworks into paid templates.
 **価格：** $19 Starter Kit（10件販売後 → $29）
-**形式：** PDF + AI Prompts + Google Sheets KPI Tracker
+**対象：** Freelance copywriters / Solo marketers
+**形式：** 5アセット（PDF）
 **納品：** Gumroad自動納品（手間ゼロ）
+
+Starter Kit 5アセット：
+1. Client Docs Inventory Sheet
+2. Paid Template Idea Finder
+3. Template Offer Builder
+4. Gumroad Sales Page Template
+5. 7-Day Launch Email + Post Pack
 
 ### 商品2（アップセル・2番手）
 
-**商品名：** Turn Your Client Work Into a Paid Audit with AI
-**価格：** $79〜$99
-**形式：** Audit Template + Process Guide + Scoring Worksheet
+**商品名：** Paid Template Product Audit
+**価格：** $99
+**形式：** 購入者の既存クライアント資料レビュー → 何を売るか・どう売るかを提案
 **タイミング：** 商品1で5件販売後に公開
 
 ---
@@ -27,20 +36,20 @@
 
 | ステップ | 商品 | 価格 | 形式 |
 |---|---|---|---|
-| Free | What Paid Template Is Hidden Inside Your Client Work? | $0 | Tally Quiz |
-| Entry | Turn Your Client Work Into Paid Templates with AI | $19→$29 | Starter Kit |
-| Core | Paid Templates Bundle | $49 | フルキット |
-| Secondary | Turn Your Client Work Into a Paid Audit with AI | $79〜$99 | Audit Kit |
-| Premium | Custom Productization / Audit Review | $249〜$499 | 1on1 |
+| Free | What Paid Template Is Hidden Inside Your Client Docs? | $0 | Tally Quiz |
+| Entry | Sell the Client Docs You Already Use | $19→$29 | Starter Kit（5アセット） |
+| Core | Client Docs to Paid Templates Bundle | $49 | フルキット |
+| Secondary | Paid Template Product Audit | $99 | 個別レビュー |
+| Premium | Custom Review（1on1） | $249〜$499 | 1on1 |
 
 ---
 
 ## 最終ファネル
 
 ```
-LinkedIn / Reddit / Threads / X
-↓（1日1投稿）
-Tally無料診断「What Paid Template Is Hidden Inside Your Client Work?」
+LinkedIn（主力）/ Threads（クロスポスト）/ Reddit（調査コメントのみ）
+↓（1日1投稿・LinkedIn中心）
+Tally無料診断「What Paid Template Is Hidden Inside Your Client Docs?」
 ↓（メール登録）
 Brevo 7日間ステップ配信
 ↓（Day 3〜4でオファー）
