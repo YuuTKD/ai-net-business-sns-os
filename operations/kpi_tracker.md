@@ -1,34 +1,40 @@
 # KPI Tracker — Sell the Client Docs You Already Use
 
-公開日：___________（記入してください）
+公開日：2026-06-29（Gumroad Client Docs Lab $19）/ 2026-07-01（Freelance Client Pipeline Kit $29 公開予定）
 
 ---
 
-## 30日KPI目標
+## 30日KPI目標（2商品体制）
 
 | 指標 | 目標 | 現在値 | 達成率 |
 |---|---|---|---|
-| LinkedIn投稿数 | 30本 | | |
-| Tally診断回答数 | 50件 | | |
-| Brevoメール登録数 | 30件 | | |
-| Gumroadページビュー | 200+ | | |
-| Starter Kit販売数 | 5件 | | |
-| 売上 | $95以上 | | |
+| Threads投稿数 | 30本 | 1 | |
+| LinkedIn投稿数 | 20本 | 2 | |
+| Tally診断回答数（合計） | 50件 | 0 | |
+| Brevoメール登録数 | 30件 | 0 | |
+| Gumroadページビュー（合計） | 200+ | 不明 | |
+| Client Docs Lab $19 販売数 | 5件 | 0 | |
+| Freelance Pipeline Kit $29 販売数 | 3件 | 0 | |
+| 売上合計 | $180以上 | $0 | |
 
 ---
 
 ## 週次記録
 
-### Week 1（公開日 〜 7日後）
+### Week 1（2026-07-01 〜 2026-07-07）
 
-| 指標 | Day 1 | Day 2 | Day 3 | Day 4 | Day 5 | Day 6 | Day 7 |
+| 指標 | 7/1 | 7/2 | 7/3 | 7/4 | 7/5 | 7/6 | 7/7 |
 |---|---|---|---|---|---|---|---|
-| Gumroadビュー | | | | | | | |
-| Tally回答数 | | | | | | | |
-| Brevo登録数 | | | | | | | |
-| LinkedIn投稿数 | | | | | | | |
-| 販売数 | | | | | | | |
-| 売上（累計） | | | | | | | |
+| Threads views | | | | | | | |
+| Threads likes | | | | | | | |
+| Tally visits（合計） | | | | | | | |
+| Tally completions | | | | | | | |
+| Gumroad views（$19） | | | | | | | |
+| Gumroad views（$29） | — | | | | | | |
+| Brevo登録数（累計） | | | | | | | |
+| 販売数（$19） | 0 | | | | | | |
+| 販売数（$29） | 0 | | | | | | |
+| 売上累計 | $0 | | | | | | |
 
 ### Week 2（8〜14日後）
 
@@ -70,7 +76,12 @@
 
 | 日付 | イベント | 内容 |
 |---|---|---|
-| | 公開 | Gumroad / Tally / Brevo 公開 |
+| 2026-06-29 | 公開 | Gumroad Client Docs Lab $19 公開 |
+| 2026-06-29 | 公開 | Tally診断フォーム（MegGeM）公開 |
+| 2026-07-01 | 投稿 | Threads Day 1 @client_docs_lab |
+| 2026-07-01 | 投稿 | LinkedIn Day 1 |
+| 2026-07-01 | 投稿 | LinkedIn Day 2 |
+| 2026-07-01 | MVP完成 | Freelance Client Pipeline Kit（$29）ZIP作成 |
 | | | |
 
 ---

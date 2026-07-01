@@ -1,8 +1,8 @@
 # Launch Posts — 20 English Posts for LinkedIn / Threads
 
 **Product:** Sell the Client Docs You Already Use
-**Primary CTA:** What Paid Template Is Hidden Inside Your Client Docs? ({{TALLY_QUIZ_LINK}})
-**Secondary CTA:** Starter Kit on Gumroad ({{GUMROAD_LINK}})
+**Primary CTA:** What Paid Template Is Hidden Inside Your Client Docs? (https://tally.so/r/MegGeM)
+**Secondary CTA:** Starter Kit on Gumroad (https://tokudatree.gumroad.com/l/qrrtvc)
 
 Replace all placeholders before posting.
 
@@ -33,7 +33,7 @@ copywriter would pay $19 for.
 You've already done the work.
 
 → Find out which of your client docs to sell first:
-{{TALLY_QUIZ_LINK}}
+https://tally.so/r/MegGeM
 ```
 
 ---
@@ -56,7 +56,7 @@ You already have the answer.
 
 You're just not selling it.
 
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -78,7 +78,7 @@ That framework is a $29–$49 template.
 You've explained it 20 times for free.
 You could sell it to the next 200 people who need it.
 
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -98,7 +98,7 @@ Those are products.
 
 You've just been giving them away one client at a time.
 
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -124,7 +124,7 @@ One listing.
 One less document I give away for free.
 
 What's sitting in your Google Drive?
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -148,7 +148,7 @@ A template pays you for as long as it's listed.
 The math isn't complicated.
 The only hard part is packaging it.
 
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -169,7 +169,7 @@ Package it.
 Price it.
 Let the next person pay $29 for the document version.
 
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -202,7 +202,7 @@ and how easy it is to remove the client-specific parts.
 
 Free. 3 minutes. No email required to start.
 
-Take it here: {{TALLY_QUIZ_LINK}}
+Take it here: https://tally.so/r/MegGeM
 
 (Link in first comment)
 ```
@@ -218,7 +218,7 @@ messaging frameworks — is worth selling first on Gumroad.
 
 6 results. No email required to start.
 
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -283,7 +283,7 @@ add a short instruction note, and list it on Gumroad.
 That's it.
 
 What's your most-used client document?
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -304,7 +304,7 @@ That framework — packaged as a self-guided template — is a $29–$49 digital
 You've run it with real clients.
 Other marketers want that structure.
 
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -328,7 +328,7 @@ List it on Gumroad at $19.
 It won't replace client work.
 But it will pay you for the explanation you've been giving away for free.
 
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -350,7 +350,7 @@ that's a $19–$29 template other writers would buy immediately.
 You've been building it for years.
 Time to charge for it.
 
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -373,7 +373,7 @@ That's a $17–$29 checklist other copywriters will buy.
 The expertise is already there.
 It just hasn't been packaged.
 
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -392,7 +392,7 @@ Package your client onboarding process once.
 Sell it to 50 people.
 Stop rewriting it from scratch.
 
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -417,7 +417,7 @@ Doesn't need to be beautiful.
 Just needs to save the buyer an hour of figuring it out themselves.
 
 Which one document do you keep recreating?
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -443,10 +443,10 @@ What's inside:
 $19.
 
 Not sure which doc to sell first? Take the free quiz →
-{{TALLY_QUIZ_LINK}}
+https://tally.so/r/MegGeM
 
 Ready to start? →
-{{GUMROAD_LINK}}
+https://tokudatree.gumroad.com/l/qrrtvc
 ```
 
 ---
@@ -468,7 +468,7 @@ Step 7: Put your quiz link at the end of every post.
 
 That's the whole system.
 
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -504,7 +504,7 @@ That's it.
 
 If you're curious which of your client docs to start with,
 I made a free 3-minute quiz:
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
@@ -526,7 +526,7 @@ would make the best first paid template.
 
 Drop it in the comments — curious to see the patterns.
 
-→ {{TALLY_QUIZ_LINK}}
+→ https://tally.so/r/MegGeM
 ```
 
 ---
