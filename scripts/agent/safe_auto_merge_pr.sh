@@ -196,7 +196,7 @@ PR_DIFF=$(gh pr diff "$PR_NUMBER" 2>/dev/null || true)
 ADDED_LINES=$(echo "$PR_DIFF" | grep -E "^\+" | grep -vE "^\+\+\+" || true)
 
 for pattern in "${SECRET_PATTERNS[@]}"; do
-  if echo "$ADDED_LINES" | grep -qiE "$pattern"; then
+  if echo "$ADDED_LINES" | grep -qiE -- "$pattern"; then
     stop "Secret/APIキーらしき文字列を検出しました。値は表示しません。"
   fi
 done
@@ -207,7 +207,7 @@ echo ""
 echo -e "${BLD}[7/7] 危険語確認${RST}"
 
 for regex in "${DANGER_REGEXES[@]}"; do
-  if echo "$ADDED_LINES" | grep -qiE "$regex"; then
+  if echo "$ADDED_LINES" | grep -qiE -- "$regex"; then
     stop "危険語カテゴリを追加差分内に検出しました。"
   fi
 done
