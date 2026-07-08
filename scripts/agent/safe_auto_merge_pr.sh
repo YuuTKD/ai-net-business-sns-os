@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 # safe_auto_merge_pr.sh
-# 指定PRが安全条件を全て満たす場合のみ squash merge する
-# 使い方: ./scripts/agent/safe_auto_merge_pr.sh <PR番号>
-#         DRY_RUN=1 ./scripts/agent/safe_auto_merge_pr.sh <PR番号>
+# Safe Merge Audit Gate / audit-only mode
+#
+# 目的:
+#   指定PRが「低リスクMerge候補」かを判定する。
+#   この版では自動Mergeは実行しない。Merge可否の監査と人間実行用コマンド表示のみ行う。
+#
+# 使い方:
+#   ./scripts/agent/safe_auto_merge_pr.sh <PR番号>
 
 set -euo pipefail
-
-# ── 定数 ────────────────────────────────────────────────────────────────────
 
 REQUIRED_LABEL="safe-auto-merge"
 
@@ -20,26 +23,56 @@ ALLOWED_PATTERNS=(
   "^\.github/pull_request_template\.md$"
 )
 
-DANGER_KEYWORDS=(
-  "deploy"
-  "scheduler"
-  " send\b"
-  "payment"
-  "auth"
-  "customer"
+BLOCKED_PATH_PATTERNS=(
+  "(^|/)\.env($|\.)"
+  "(^|/)apps/"
+  "(^|/)workflows/"
+  "(^|/)cloudrun/"
+  "(^|/)scheduler/"
+  "(^|/)scripts/send/"
+  "(^|/)scripts/deploy/"
+  "(^|/)gmail/"
+  "(^|/)line/"
+  "(^|/)payment/"
+  "(^|/)auth/"
+  "(^|/)customer/"
+)
+
+DANGER_REGEXES=(
+  "(^|[^[:alnum:]_])secret([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])token([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])credential([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])password([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])private_key([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])deploy([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])scheduler([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])payment([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])auth([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])customer([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])send([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])post([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])dm([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])mail([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])webhook([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])stripe([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])aws([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])firebase([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])line([^[:alnum:]_]|$)"
+  "(^|[^[:alnum:]_])slack([^[:alnum:]_]|$)"
 )
 
 SECRET_PATTERNS=(
-  "[A-Za-z0-9_]{20,}=[A-Za-z0-9+/]{20,}"
   "sk-[A-Za-z0-9]{20,}"
-  "ghp_[A-Za-z0-9]{36}"
-  "xoxb-[0-9]+-[A-Za-z0-9]+"
-  "Bearer [A-Za-z0-9._\-]{20,}"
-  "token[[:space:]]*=[[:space:]]*['\"][A-Za-z0-9._\-]{16,}"
-  "api[_-]?key[[:space:]]*=[[:space:]]*['\"][A-Za-z0-9._\-]{16,}"
+  "ghp_[A-Za-z0-9]{20,}"
+  "gho_[A-Za-z0-9]{20,}"
+  "github_pat_[A-Za-z0-9_]{20,}"
+  "xox[baprs]-[A-Za-z0-9-]{20,}"
+  "Bearer[[:space:]]+[A-Za-z0-9._-]{20,}"
+  "-----BEGIN[[:space:]]+([A-Z0-9 ]+)?PRIVATE[[:space:]]+KEY-----"
+  "api[_-]?key[[:space:]]*[:=][[:space:]]*['\"]?[A-Za-z0-9._-]{16,}['\"]?"
+  "token[[:space:]]*[:=][[:space:]]*['\"]?[A-Za-z0-9._-]{16,}['\"]?"
+  "secret[[:space:]]*[:=][[:space:]]*['\"]?[A-Za-z0-9._-]{16,}['\"]?"
 )
-
-# ── ヘルパー ─────────────────────────────────────────────────────────────────
 
 RED='\033[0;31m'
 GRN='\033[0;32m'
@@ -48,221 +81,143 @@ BLD='\033[1m'
 RST='\033[0m'
 
 ok()   { echo -e "  ${GRN}✓${RST} $*"; }
-fail() { echo -e "  ${RED}✗${RST} $*"; }
 info() { echo -e "  ${YLW}→${RST} $*"; }
 
 stop() {
   echo ""
   echo -e "${RED}${BLD}━━━ STOP ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RST}"
-  echo -e "${RED}${BLD}  自動Mergeを中止しました${RST}"
+  echo -e "${RED}${BLD}  Merge監査で停止しました${RST}"
   echo -e "${RED}  理由: $*${RST}"
   echo -e "${RED}${BLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RST}"
   echo ""
   exit 1
 }
 
-# ── 引数チェック ──────────────────────────────────────────────────────────────
-
 if [[ $# -lt 1 ]]; then
   echo "使い方: $0 <PR番号>"
-  echo "        DRY_RUN=1 $0 <PR番号>"
   exit 1
 fi
 
 PR_NUMBER="$1"
-DRY_RUN="${DRY_RUN:-0}"
 
 echo ""
-echo -e "${BLD}━━━ Safe Auto Merge Gate ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RST}"
-echo -e "  PR番号  : #${PR_NUMBER}"
-echo -e "  DRY_RUN : ${DRY_RUN}"
+echo -e "${BLD}━━━ Safe Merge Audit Gate ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RST}"
+echo -e "  PR番号: #${PR_NUMBER}"
+echo -e "  注意  : このスクリプトはMergeを実行しません"
 echo -e "${BLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RST}"
 echo ""
 
-# gh コマンド確認
-if ! command -v gh &>/dev/null; then
-  stop "gh コマンドが見つかりません。GitHub CLI をインストールしてください。"
-fi
+command -v gh >/dev/null 2>&1 || stop "gh コマンドが見つかりません。"
+command -v python3 >/dev/null 2>&1 || stop "python3 が見つかりません。"
 
-# ── PR情報取得 ───────────────────────────────────────────────────────────────
+REPO=$(gh repo view --json nameWithOwner -q .nameWithOwner 2>/dev/null) \
+  || stop "GitHubリポジトリ情報を取得できません。"
 
-echo -e "${BLD}[1/7] PR情報を取得${RST}"
+echo -e "${BLD}[1/7] PR情報取得${RST}"
 
-PR_JSON=$(gh pr view "$PR_NUMBER" \
-  --json title,state,mergeable,labels,files \
-  2>/dev/null) || stop "PR #${PR_NUMBER} の取得に失敗しました（存在しない or 権限なし）"
+PR_JSON=$(gh pr view "$PR_NUMBER" --json title,state,mergeable,labels 2>/dev/null) \
+  || stop "PR #${PR_NUMBER} を取得できません。"
 
 PR_TITLE=$(echo "$PR_JSON" | python3 -c "import json,sys; print(json.load(sys.stdin)['title'])")
 PR_STATE=$(echo "$PR_JSON" | python3 -c "import json,sys; print(json.load(sys.stdin)['state'])")
 PR_MERGEABLE=$(echo "$PR_JSON" | python3 -c "import json,sys; print(json.load(sys.stdin)['mergeable'])")
 PR_LABELS=$(echo "$PR_JSON" | python3 -c "import json,sys; [print(l['name']) for l in json.load(sys.stdin)['labels']]")
-PR_FILES=$(echo "$PR_JSON" | python3 -c "import json,sys; [print(f['path']) for f in json.load(sys.stdin)['files']]")
+
+PR_FILE_STATUS=$(gh api --paginate "repos/${REPO}/pulls/${PR_NUMBER}/files" \
+  --jq '.[] | "\(.status)\t\(.filename)"' 2>/dev/null) \
+  || stop "PRファイル一覧をGitHub APIから取得できません。"
+
+PR_FILES=$(echo "$PR_FILE_STATUS" | cut -f2-)
 
 info "タイトル : ${PR_TITLE}"
 info "状態     : ${PR_STATE}"
-info "マージ可 : ${PR_MERGEABLE}"
+info "mergeable: ${PR_MERGEABLE}"
 info "ラベル   : $(echo "$PR_LABELS" | tr '\n' ' ')"
-info "変更ファイル数 : $(echo "$PR_FILES" | wc -l | tr -d ' ')件"
+info "ファイル : $(echo "$PR_FILES" | wc -l | tr -d ' ')件"
 
 echo ""
-echo -e "${BLD}[2/7] ラベルチェック: ${REQUIRED_LABEL}${RST}"
+echo -e "${BLD}[2/7] ラベル確認${RST}"
 
-if echo "$PR_LABELS" | grep -qx "$REQUIRED_LABEL"; then
-  ok "ラベル '${REQUIRED_LABEL}' あり"
-else
-  stop "ラベル '${REQUIRED_LABEL}' がありません。自動Mergeは禁止です。"
-fi
-
-# ── PRが open か確認 ──────────────────────────────────────────────────────────
+echo "$PR_LABELS" | grep -qx "$REQUIRED_LABEL" \
+  || stop "必須ラベル '${REQUIRED_LABEL}' がありません。"
+ok "必須ラベルあり"
 
 echo ""
-echo -e "${BLD}[3/7] PR状態チェック${RST}"
+echo -e "${BLD}[3/7] PR状態確認${RST}"
 
-if [[ "$PR_STATE" != "OPEN" ]]; then
-  stop "PRが OPEN ではありません（状態: ${PR_STATE}）"
-fi
-ok "PR は OPEN"
+[[ "$PR_STATE" == "OPEN" ]] || stop "PRがOPENではありません: ${PR_STATE}"
+ok "PRはOPEN"
 
-if [[ "$PR_MERGEABLE" != "MERGEABLE" ]]; then
-  stop "PRがマージ不可能な状態です（mergeable: ${PR_MERGEABLE}）。コンフリクトまたはCI未通過の可能性があります。"
-fi
-ok "PR はマージ可能"
-
-# ── 変更ファイルのパスチェック ────────────────────────────────────────────────
+[[ "$PR_MERGEABLE" == "MERGEABLE" ]] || stop "PRがmergeableではありません: ${PR_MERGEABLE}"
+ok "PRはmergeable"
 
 echo ""
-echo -e "${BLD}[4/7] 変更ファイル パスチェック${RST}"
+echo -e "${BLD}[4/7] 変更ファイル許可範囲確認${RST}"
 
-OUTSIDE_FILES=()
 while IFS= read -r filepath; do
   [[ -z "$filepath" ]] && continue
+
+  for blocked in "${BLOCKED_PATH_PATTERNS[@]}"; do
+    if echo "$filepath" | grep -qiE "$blocked"; then
+      stop "禁止パスを検出: ${filepath}"
+    fi
+  done
+
   matched=0
-  for pattern in "${ALLOWED_PATTERNS[@]}"; do
-    if echo "$filepath" | grep -qE "$pattern"; then
+  for allowed in "${ALLOWED_PATTERNS[@]}"; do
+    if echo "$filepath" | grep -qE "$allowed"; then
       matched=1
       break
     fi
   done
-  if [[ "$matched" -eq 0 ]]; then
-    OUTSIDE_FILES+=("$filepath")
-  fi
+
+  [[ "$matched" -eq 1 ]] || stop "許可範囲外ファイル: ${filepath}"
+  ok "許可: ${filepath}"
 done <<< "$PR_FILES"
 
-if [[ ${#OUTSIDE_FILES[@]} -gt 0 ]]; then
-  echo ""
-  for f in "${OUTSIDE_FILES[@]}"; do
-    fail "許可範囲外: $f"
-  done
-  stop "許可範囲外のファイルが含まれています（${#OUTSIDE_FILES[@]}件）"
-fi
-ok "全ファイルが許可パス内"
-
-# ── 削除ファイルチェック ──────────────────────────────────────────────────────
-
 echo ""
-echo -e "${BLD}[5/7] 削除ファイルチェック${RST}"
+echo -e "${BLD}[5/7] 削除・rename確認${RST}"
 
-DELETED_FILES=$(gh pr diff "$PR_NUMBER" 2>/dev/null \
-  | grep -E "^diff --git" \
-  | awk '{print $3}' \
-  | sed 's|^a/||' \
-  | while read -r f; do
-      if gh pr diff "$PR_NUMBER" 2>/dev/null \
-        | grep -A5 "diff --git a/$f" \
-        | grep -q "^deleted file"; then
-        echo "$f"
-      fi
-    done) || true
-
-if [[ -n "$DELETED_FILES" ]]; then
-  echo ""
-  while IFS= read -r f; do
-    [[ -z "$f" ]] && continue
-    fail "削除ファイル検出: $f"
-  done <<< "$DELETED_FILES"
-  stop "削除ファイルが含まれています。自動Mergeは禁止です。"
-fi
-ok "削除ファイルなし"
-
-# ── .env ファイルチェック ──────────────────────────────────────────────────────
-
-echo ""
-echo -e "${BLD}[6/7] .env / Secret パスチェック${RST}"
-
-ENV_FILES=()
-while IFS= read -r filepath; do
-  [[ -z "$filepath" ]] && continue
-  if echo "$filepath" | grep -qE "(^|/)\.env(\.|$)"; then
-    ENV_FILES+=("$filepath")
+while IFS=$'\t' read -r status filepath; do
+  [[ -z "${status:-}" ]] && continue
+  if [[ "$status" == "removed" || "$status" == "renamed" ]]; then
+    stop "削除またはrenameを検出: ${status} ${filepath}"
   fi
-done <<< "$PR_FILES"
+done <<< "$PR_FILE_STATUS"
 
-if [[ ${#ENV_FILES[@]} -gt 0 ]]; then
-  for f in "${ENV_FILES[@]}"; do
-    fail ".env ファイル検出: $f"
-  done
-  stop ".env ファイルが含まれています。"
-fi
-ok ".env ファイルなし"
-
-# ── Secret / 危険キーワードチェック（diff内容） ────────────────────────────────
+ok "削除・renameなし"
 
 echo ""
-echo -e "${BLD}[7/7] diff内容チェック（Secret / 危険キーワード）${RST}"
+echo -e "${BLD}[6/7] Secret/APIキーらしき内容確認${RST}"
 
-PR_DIFF=$(gh pr diff "$PR_NUMBER" 2>/dev/null) || true
+PR_DIFF=$(gh pr diff "$PR_NUMBER" 2>/dev/null || true)
+ADDED_LINES=$(echo "$PR_DIFF" | grep -E "^\+" | grep -vE "^\+\+\+" || true)
 
-SECRET_FOUND=()
 for pattern in "${SECRET_PATTERNS[@]}"; do
-  matches=$(echo "$PR_DIFF" | grep -E "^\+" | grep -vE "^\+\+\+" | grep -oE "$pattern" | head -3 || true)
-  if [[ -n "$matches" ]]; then
-    SECRET_FOUND+=("パターン: ${pattern} → ${matches:0:40}...")
+  if echo "$ADDED_LINES" | grep -qiE "$pattern"; then
+    stop "Secret/APIキーらしき文字列を検出しました。値は表示しません。"
   fi
 done
 
-if [[ ${#SECRET_FOUND[@]} -gt 0 ]]; then
-  for s in "${SECRET_FOUND[@]}"; do
-    fail "Secret疑い: $s"
-  done
-  stop "Secret/APIキーらしき文字列が検出されました。"
-fi
-ok "Secretパターンなし"
+ok "Secret/APIキーらしき文字列なし"
 
-DANGER_FOUND=()
-for kw in "${DANGER_KEYWORDS[@]}"; do
-  matches=$(echo "$PR_DIFF" | grep -E "^\+" | grep -vE "^\+\+\+" | grep -iE "$kw" | head -3 || true)
-  if [[ -n "$matches" ]]; then
-    DANGER_FOUND+=("キーワード '${kw}' を検出")
+echo ""
+echo -e "${BLD}[7/7] 危険語確認${RST}"
+
+for regex in "${DANGER_REGEXES[@]}"; do
+  if echo "$ADDED_LINES" | grep -qiE "$regex"; then
+    stop "危険語カテゴリを追加差分内に検出しました。"
   fi
 done
 
-if [[ ${#DANGER_FOUND[@]} -gt 0 ]]; then
-  for d in "${DANGER_FOUND[@]}"; do
-    fail "$d"
-  done
-  stop "危険キーワードが diff に含まれています（deploy / scheduler / send / payment / auth / customer 系）"
-fi
-ok "危険キーワードなし"
-
-# ── 全チェック通過 ────────────────────────────────────────────────────────────
+ok "危険語なし"
 
 echo ""
-echo -e "${GRN}${BLD}━━━ 全チェック通過 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RST}"
-
-if [[ "$DRY_RUN" == "1" ]]; then
-  echo -e "${YLW}${BLD}  [DRY_RUN] Merge はスキップされました${RST}"
-  echo -e "${YLW}  実際にMergeするには DRY_RUN なしで再実行してください${RST}"
-  echo -e "${GRN}${BLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RST}"
-  echo ""
-  exit 0
-fi
-
-echo -e "  PR #${PR_NUMBER} を squash merge します..."
+echo -e "${GRN}${BLD}━━━ GO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RST}"
+echo -e "${GRN}${BLD}  低リスクMerge候補として通過しました${RST}"
+echo -e "${GRN}  ただし、このスクリプトは監査専用です。Mergeは実行しません。${RST}"
 echo ""
-
-gh pr merge "$PR_NUMBER" --squash --delete-branch
-
+echo -e "${BLD}人間承認後に実行するコマンド:${RST}"
+echo "  gh pr merge ${PR_NUMBER} --squash"
 echo ""
-echo -e "${GRN}${BLD}  Merge 完了: PR #${PR_NUMBER}${RST}"
 echo -e "${GRN}${BLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RST}"
-echo ""
