@@ -99,11 +99,13 @@ if [[ $# -lt 1 ]]; then
 fi
 
 PR_NUMBER="$1"
+AUTO_MERGE="${AUTO_MERGE:-0}"
 
 echo ""
 echo -e "${BLD}━━━ Safe Merge Audit Gate ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RST}"
 echo -e "  PR番号: #${PR_NUMBER}"
-echo -e "  注意  : このスクリプトはMergeを実行しません"
+echo -e "  AUTO_MERGE: ${AUTO_MERGE}"
+echo -e "  注意  : 通常は監査のみ。AUTO_MERGE=1 の時だけMergeします"
 echo -e "${BLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RST}"
 echo ""
 
@@ -215,9 +217,24 @@ ok "危険語なし"
 echo ""
 echo -e "${GRN}${BLD}━━━ GO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RST}"
 echo -e "${GRN}${BLD}  低リスクMerge候補として通過しました${RST}"
-echo -e "${GRN}  ただし、このスクリプトは監査専用です。Mergeは実行しません。${RST}"
 echo ""
-echo -e "${BLD}人間承認後に実行するコマンド:${RST}"
-echo "  gh pr merge ${PR_NUMBER} --squash"
+
+if [[ "$AUTO_MERGE" == "1" ]]; then
+  echo -e "${YLW}${BLD}  AUTO_MERGE=1 のため squash merge を実行します${RST}"
+  echo -e "${YLW}  ※ --delete-branch は使いません${RST}"
+  echo ""
+  gh pr merge "$PR_NUMBER" --squash
+  echo ""
+  echo -e "${GRN}${BLD}  Merge完了: PR #${PR_NUMBER}${RST}"
+else
+  echo -e "${GRN}  監査のみ完了。Mergeは実行していません。${RST}"
+  echo ""
+  echo -e "${BLD}自動Mergeする場合:${RST}"
+  echo "  AUTO_MERGE=1 ./scripts/agent/safe_auto_merge_pr.sh ${PR_NUMBER}"
+  echo ""
+  echo -e "${BLD}手動Mergeする場合:${RST}"
+  echo "  gh pr merge ${PR_NUMBER} --squash"
+fi
+
 echo ""
 echo -e "${GRN}${BLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RST}"
