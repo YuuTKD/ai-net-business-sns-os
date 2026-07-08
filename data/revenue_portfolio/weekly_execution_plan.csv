@@ -1,0 +1,5 @@
+week,model_id,model_name,weekly_goal,tasks,deliverable,deadline,status,blocker,next_action
+2026-W28,SNS_AFFILIATE,SNS×アフィリエイト,7本投稿完走 + 反応者5件確認,Day2〜Day7投稿作成・手動投稿 / 毎日反応者確認 / KPI記録,week1_sns_pdca.csv更新,2026-07-13,in_progress,,Day2投稿を今日実施
+2026-W28,B2B_AGENT,業務効率化エージェント販売,診断オファー文案完成,OFFER.md執筆 / ターゲット具体化,OFFER.md完成版,2026-07-13,not_started,,OFFER.md着手
+2026-W28,MICRO_SAAS,AI×SaaS・マイクロツール,MVP要件定義完成,入出力フォーマット確定 / プロンプト試作1件,MVP.md更新,2026-07-13,not_started,,オプションA/B選択
+2026-W28,PROGRAMMATIC_SEO,Programmatic SEOブログ,キーワードリスト30本完成,CONTENT_PLAN.mdにKW記入 / 公開場所確定,CONTENT_PLAN.md更新,2026-07-13,not_started,,KWリスト着手

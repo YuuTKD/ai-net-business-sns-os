@@ -1,0 +1,6 @@
+date,model_id,action_type,action_detail,done,result,learning,next_action
+2026-07-07,SNS_AFFILIATE,post,X投稿 Day1 手動投稿,true,投稿済み URL記録,Day1投稿完了,Day2投稿を翌日実施
+2026-07-07,SNS_AFFILIATE,post,Threads投稿 Day1 手動投稿,true,投稿済み URL記録,同上,同上
+2026-07-08,全体,strategy,商品マッチ先AI停止 / インバウンド型設計,true,config.json PAUSED=true / 05_REPLY_SALES.md更新,fake候補問題でスマホ手動検索が必要→方針転換,インバウンド管理フロー稼働
+2026-07-09,全体,planning,Revenue Portfolio OS 4モデル管理基盤構築,true,Obsidian/CSV全ファイル作成,4モデル並走管理の基盤完成,各モデルのTASKS.md実行開始
+2026-07-09,SNS_AFFILIATE,post,X/Threads Day2投稿 手動投稿,false,,, Day2テーマ: 投稿ネタの型

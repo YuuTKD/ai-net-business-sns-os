@@ -1,0 +1,5 @@
+date,model_id,model_name,main_kpi,sub_kpi_1,sub_kpi_2,traffic,leads,clicks,sales,revenue,cost,profit,bottleneck,next_action,memo
+2026-07-09,SNS_AFFILIATE,SNS×アフィリエイト,Brain購入数,投稿本数,リプ送信数,0,0,0,0,0,0,0,Brain閲覧数未確認,Day2投稿を今日手動投稿,Phase1稼働中
+2026-07-09,B2B_AGENT,業務効率化エージェント販売,診断申込み数,告知投稿数,問い合わせ数,0,0,0,0,0,0,0,診断フォーム未設計,OFFER.md完成が先決,設計段階
+2026-07-09,MICRO_SAAS,AI×SaaS・マイクロツール,ツール利用数,Brain誘導クリック,Brain購入数,0,0,0,0,0,0,0,ツール未公開,MVP要件定義,設計段階
+2026-07-09,PROGRAMMATIC_SEO,Programmatic SEOブログ,記事公開数,検索流入PV,Brain CTAクリック,0,0,0,0,0,0,0,記事ゼロ,キーワードリスト作成,設計段階
