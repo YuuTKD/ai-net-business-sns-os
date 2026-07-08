@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # safe_auto_merge_pr.sh
-# Safe Merge Audit Gate
+# Safe Merge Audit Gate / audit-only mode
 #
 # 目的:
 #   指定PRが「低リスクMerge候補」かを判定する。
-#   この初期版では自動Mergeは実行しない。
+#   この版では自動Mergeは実行しない。Merge可否の監査と人間実行用コマンド表示のみ行う。
 #
 # 使い方:
 #   ./scripts/agent/safe_auto_merge_pr.sh <PR番号>
@@ -68,10 +68,10 @@ SECRET_PATTERNS=(
   "github_pat_[A-Za-z0-9_]{20,}"
   "xox[baprs]-[A-Za-z0-9-]{20,}"
   "Bearer[[:space:]]+[A-Za-z0-9._-]{20,}"
-  "-----BEGIN[[:space:]]+(RSA|DSA|EC|OPENSSH|PRIVATE)[[:space:]]+PRIVATE[[:space:]]+KEY-----"
-  "api[_-]?key[[:space:]]*[:=][[:space:]]*['\"][A-Za-z0-9._-]{16,}"
-  "token[[:space:]]*[:=][[:space:]]*['\"][A-Za-z0-9._-]{16,}"
-  "secret[[:space:]]*[:=][[:space:]]*['\"][A-Za-z0-9._-]{16,}"
+  "-----BEGIN[[:space:]]+([A-Z0-9 ]+)?PRIVATE[[:space:]]+KEY-----"
+  "api[_-]?key[[:space:]]*[:=][[:space:]]*['\"]?[A-Za-z0-9._-]{16,}['\"]?"
+  "token[[:space:]]*[:=][[:space:]]*['\"]?[A-Za-z0-9._-]{16,}['\"]?"
+  "secret[[:space:]]*[:=][[:space:]]*['\"]?[A-Za-z0-9._-]{16,}['\"]?"
 )
 
 RED='\033[0;31m'
@@ -215,7 +215,7 @@ ok "危険語なし"
 echo ""
 echo -e "${GRN}${BLD}━━━ GO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RST}"
 echo -e "${GRN}${BLD}  低リスクMerge候補として通過しました${RST}"
-echo -e "${GRN}  ただし、このスクリプトはMergeを実行しません。${RST}"
+echo -e "${GRN}  ただし、このスクリプトは監査専用です。Mergeは実行しません。${RST}"
 echo ""
 echo -e "${BLD}人間承認後に実行するコマンド:${RST}"
 echo "  gh pr merge ${PR_NUMBER} --squash"
