@@ -2,6 +2,8 @@
 
 ← [[../02_PHASE1_DASHBOARD]] | 今日 → [[../01_TODAY_ACTION]] | KPI → [[../06_KPI_PDCA]]
 
+> **リンク注記:** `../01_TODAY_ACTION` / `../02_PHASE1_DASHBOARD` / `../06_KPI_PDCA` / `../00_HOME` はこのリポジトリには未コミット（Obsidian Vault内で管理）。Obsidianで開くと自動解決されます。
+
 最終更新: 2026-07-09
 
 ---
@@ -144,4 +146,4 @@
 
 ---
 
-*← [[../00_HOME]] | 今日 → [[../01_TODAY_ACTION]] | Phase1 → [[../02_PHASE1_DASHBOARD]]*
+*← [[../00_HOME]] | 今日 → [[../01_TODAY_ACTION]] | Phase1 → [[../02_PHASE1_DASHBOARD]]* ← 上記4ファイルは今後作成予定（Vault内管理）
