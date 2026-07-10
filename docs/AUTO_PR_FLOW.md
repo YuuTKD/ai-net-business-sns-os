@@ -27,7 +27,11 @@ PR作成（gh pr create）
   │     └── data/reports/codex_review_pr_<PR番号>.txt に保存
   ├── GO / FIX / STOP 判定
   │     ├── STOP → 即停止（人間確認必須）
-  │     ├── FIX  → data/reports/fix_instruction_pr_<PR番号>.md 生成 → 停止
+  │     ├── FIX  → fix_instruction生成 → Claude Code自動修正ループ（最大3回）
+  │     │         ├── 試行1回目: 修正 → commit → push → 再レビュー
+  │     │         ├── 試行2回目: 修正 → commit → push → 再レビュー
+  │     │         ├── 試行3回目: 修正 → commit → push → 再レビュー
+  │     │         └── 3回目もFIX → 停止（人間確認必須・exit 5）
   │     └── GO   → Safe Merge Gateへ
   ├── Safe Merge Gate実行
   │     └── data/reports/safe_merge_pr_<PR番号>.txt に保存
@@ -62,13 +66,106 @@ PR作成（gh pr create）
 ./scripts/agent/pr_auto_flow.sh --pr <PR番号> --dry-run
 ```
 
+### FIX試行回数リセット（3回使い切った後に人間修正した場合）
+
+```bash
+./scripts/agent/pr_auto_flow.sh --pr <PR番号> --reset-attempts
+```
+
 ### 出力ファイル
 
 | ファイル | 内容 |
 |---|---|
 | `data/reports/codex_review_pr_<PR番号>.txt` | Codexレビュー全文 |
-| `data/reports/fix_instruction_pr_<PR番号>.md` | FIX判定時の修正指示 |
+| `data/reports/fix_instruction_pr_<PR番号>.md` | FIX判定時の修正指示（試行回数付き） |
+| `data/reports/fix_attempt_pr_<PR番号>.txt` | FIX試行回数カウンタ（0〜3） |
 | `data/reports/safe_merge_pr_<PR番号>.txt` | Safe Merge Gate結果 |
+
+---
+
+## FIX最大3回自動修正ループ（2026-07-10追加）
+
+### 概要
+
+Codexが FIX を返した場合、Claude Codeが以下のループを最大3回まで自動実行します。
+
+```
+FIX判定（1回目）
+↓
+fix_instruction_pr_N.md を生成（Codex指摘内容を抽出して記載）
+↓
+Claude Code が fix_instruction を読む
+↓
+許可対象の指摘のみ最小修正
+↓
+対象ファイルだけ git add（git add . 禁止）
+↓
+git commit -m "fix: address pr N codex review findings (attempt 1)"
+↓
+git push
+↓
+./scripts/agent/pr_auto_flow.sh --pr N 再実行
+↓
+GO → Safe Merge Gate → Merge
+FIX → 2回目ループ
+↓
+（最大3回まで繰り返し）
+↓
+3回目もFIX → exit 5（停止・人間確認必須）
+```
+
+### FIX自動修正してよい対象
+
+| 対象 | 例 |
+|---|---|
+| CSV列数不整合 | next_action列欠落、ヘッダー列数≠行列数 |
+| Markdownリンク修正 | 相対パスエラー、Obsidian Vault外参照 |
+| Obsidianリンク修正 | `[[../../docs/...]]` → 注記に変更 |
+| 表記ゆれ・typo | SNS_AFILIATE → SNS_AFFILIATE |
+| 日付・曜日不整合 | 「月〜火」→「07-10（金）〜07-11（土）」 |
+| docs/obsidian/data の整合性 | ファイル間の矛盾修正 |
+| コンプライアンス表現の言い換え | 確認日・参照元の追記 |
+| model_id表記統一 | B2B_AGENT / SNS_AFFILIATE 等 |
+
+### FIX自動修正してはいけない対象（即停止・人間確認）
+
+| 禁止対象 | 理由 |
+|---|---|
+| `scripts/**` ロジック大幅変更 | 動作破壊リスク |
+| `agents/**` 実行処理変更 | エージェント誤動作リスク |
+| `config/**` 本番設定変更 | 本番影響リスク |
+| `.env` / APIキー / Token | Secret漏洩リスク |
+| deploy / Scheduler / Cloud Run | 本番障害リスク |
+| 自動投稿 / DM / リプ / LINE / Gmail | 規約違反リスク |
+| Google Workspace本番書き込み | 承認なし変更リスク |
+| 決済 / 顧客データ | セキュリティリスク |
+| 商品マッチ先AI再開 | PAUSED維持 |
+| 仕様判断が必要な変更 | 人間判断必須 |
+| 法務判断が必要な変更 | 専門家確認必須 |
+
+### 3回FIX時の報告内容（exit 5）
+
+スクリプトが出力する内容：
+1. 何回FIXしたか（3/3）
+2. 試行ごとの commit hash
+3. まだ残るFIX理由（review txtから）
+4. 人間判断が必要な箇所
+5. 次に確認すべきファイル
+6. カウンタリセットコマンド
+
+### STOP判定時（即停止・自動修正禁止）
+
+```
+Codex判定 STOP
+↓
+自動修正禁止
+↓
+Merge禁止
+↓
+exit 3（人間確認待ち）
+↓
+理由を codex_review_pr_N.txt で確認
+```
 
 ---
 
