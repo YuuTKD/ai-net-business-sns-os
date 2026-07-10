@@ -14,4 +14,4 @@ logs/
 private/
 backups/
 data/forms/
-*_responses.csv
+data/forms/*_responses.csv
