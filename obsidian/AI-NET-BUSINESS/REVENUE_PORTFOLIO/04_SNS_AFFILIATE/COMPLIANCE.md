@@ -50,7 +50,11 @@ Google の指針:
 ```
 
 > **参照確認日:** 2026-07-10  
-> **参照先（公開情報）:** Amazonアソシエイト・プログラム運営規約 / 楽天アフィリエイト利用規約 / 消費者庁 ステルスマーケティング規制（2023年10月施行）/ Google Search Central（rel=sponsored）  
+> **参照先（公開情報）:**  
+> - 消費者庁 ステマ規制: https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/  
+> - Google Search Central（rel属性）: https://developers.google.com/search/docs/crawling-indexing/qualify-outbound-links  
+> - Amazonアソシエイト規約（要ログイン）: https://affiliate.amazon.co.jp/help/operating/agreement  
+> - 楽天アフィリエイト: 楽天アフィリエイト公式サイトで最新版確認  
 > ⚠️ 規約・法令は変更される場合があります。公開運用前に必ず公式サイトで最新版をご確認ください。
 
 ---

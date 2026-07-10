@@ -83,10 +83,26 @@ HTML:     rel="sponsored" または rel="nofollow"
 
 ```
 × 審査前にリンクを掲載する（規約違反）
-× #PR なしでアフィリエイト商品を紹介する（景品表示法違反）
+× #PR なしでアフィリエイト商品を紹介する（景品表示法・ステマ規制リスク）
 × 「この商品を使えば必ず集客できます」等の保証表現
 × rel=sponsored/nofollow なしのHTMLリンク（Googleガイドライン違反リスク）
 × Claude Code がリンクを直接コードに埋め込む（人間が実施）
+```
+
+### 参照URL（公開情報）
+
+```
+消費者庁 ステマ規制:
+  https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/
+
+Google Search Central（rel属性）:
+  https://developers.google.com/search/docs/crawling-indexing/qualify-outbound-links
+
+Amazonアソシエイト規約（要ログイン）:
+  https://affiliate.amazon.co.jp/help/operating/agreement
+
+楽天アフィリエイト:
+  楽天アフィリエイト公式サイトで最新版確認
 ```
 
 ---
