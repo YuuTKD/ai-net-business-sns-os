@@ -13,3 +13,5 @@ __pycache__/
 logs/
 private/
 backups/
+data/forms/
+data/forms/*_responses.csv
