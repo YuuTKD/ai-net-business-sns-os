@@ -1,0 +1,14 @@
+workspace_item,type,related_model,purpose,owner,update_frequency,obsidian_link,status,memo
+Revenue Portfolio Dashboard,Sheets,全モデル,4モデルの進捗・KPIを一覧管理,CEO,週次,00_DASHBOARD.md,未作成,本番接続前・設計のみ
+Daily KPI Log,Sheets,全モデル,毎日のKPI数値を記録・集計,CEO,毎日,model_kpi_matrix.csv,未作成,ローカルCSVで代替中
+Content Production Log,Sheets,SNS_AFFILIATE / PROG_SEO,投稿・記事の制作・公開記録,CEO,投稿時,week1_sns_pdca.csv,未作成,ローカルCSVで代替中
+Offer Management Sheet,Sheets,全モデル,商品・価格・状態の一元管理,CEO,変更時,各モデルOFFER.md,未作成,Obsidianで管理中
+Affiliate Product Sheet,Sheets,SNS_AFFILIATE,アフィリエイト候補商品リスト,CEO,検討時,04_SNS_AFFILIATE/OFFER.md,未作成,申請前・設計のみ
+SEO Keyword Map,Sheets,PROGRAMMATIC_SEO,記事キーワード戦略の管理,CEO,週次,03_PROGRAMMATIC_SEO/CONTENT_PLAN.md,未作成,CONTENT_PLAN.mdで代替中
+Micro SaaS Idea Backlog,Sheets,MICRO_SAAS,ツールアイデアの管理,CEO,随時,03_IDEA_BANK.md,未作成,IDEA_BANK.mdで代替中
+B2B Agent Sales Pipeline,Sheets,B2B_AGENT,診断→商談→成約の管理,CEO,商談時,01_B2B_AGENT/SALES_FLOW.md,未作成,設計のみ
+Weekly PDCA Report,Sheets,全モデル,週次振り返り・改善記録,CEO,週次,01_WEEKLY_ACTION.md,未作成,Obsidianで代替中
+診断申込みフォーム,Forms,B2B_AGENT,診断オファー受付,CEO,随時,01_B2B_AGENT/MVP.md,未作成,Google Forms設計段階
+診断レポートテンプレ,Docs,B2B_AGENT,診断後に送付するレポート,CEO,商談時,01_B2B_AGENT/SALES_FLOW.md,未作成,設計のみ
+コンプライアンスチェック,Docs,全モデル,利用規約・表現確認の記録,CEO,月次,05_RISK_LOG.md,未作成,RISK_LOG.mdで管理中
+AI-NET-BUSINESS フォルダ,Drive,全モデル,全ファイルの保管場所,CEO,随時,06_GOOGLE_WORKSPACE_MAP.md,未作成,本番未接続

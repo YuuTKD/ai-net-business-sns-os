@@ -1,0 +1,4 @@
+date,model_id,decision,reason,impact,approved_by,next_review_date
+2026-07-08,商品マッチ先AI,エージェントをPAUSEDに設定,fake/mock候補のみでスマホ手動検索が必要となり「手作業削減」方針に反する,SNS_AFFILIATEをインバウンド型に切替,CEO,2026-07-22
+2026-07-08,SNS_AFFILIATE,インバウンド型（反応者管理）に切替,自分の投稿への反応者を起点にすることで手作業を最小化できる,リプ営業の起点をアウトバウンドからインバウンドへ変更,CEO,2026-07-15
+2026-07-09,全体,4モデル並行設計開始,SNS_AFFILIATE Phase1の安定化タイミングで他3モデルの管理基盤を構築,Revenue Portfolio OS作成・Obsidian/CSV整備,CEO,2026-07-16
