@@ -1,25 +1,25 @@
 idea_id,idea_name,model_id,first_revenue_days,automation_score,unit_price_min,unit_price_max,external_dependency,compatibility_score,priority_rank,status,next_action,compliance_note
-IDEA001,Brain部品商品A_口コミ返信テンプレ30本,SNS_AFFILIATE,3,5,980,980,低,5,P1,設計中,成果保証禁止・Brain規約確認
-IDEA002,Brain部品商品B_ChatGPTプロンプト集50本,SNS_AFFILIATE,3,5,980,980,低,5,P1,設計中,成果保証禁止・Brain規約確認
-IDEA003,Brain部品商品C_GBP改善チェックリスト,B2B_AGENT,5,5,1480,1480,低,5,P1,設計中,成果保証禁止・Brain規約確認
-IDEA004,Brain部品商品D_ホットペッパー脱出ロードマップ,B2B_AGENT,5,5,1980,1980,低,5,P1,設計中,成果保証禁止・Brain規約確認
-IDEA005,Brain部品商品E_AI集客7日間カレンダー単品,SNS_AFFILIATE,5,5,1480,1480,低,5,P1,設計中,成果保証禁止・Brain規約確認
-IDEA006,AI店舗集客診断レポート_無料版,B2B_AGENT,7,4,0,0,低,5,P1,設計中,診断はアドバイスのみ・保証禁止・個人情報管理
-IDEA007,AI店舗集客診断レポート_有料版,B2B_AGENT,14,4,1980,3980,低,5,P1,設計中,診断はアドバイスのみ・保証禁止・医療法的助言禁止
-IDEA008,30分オンライン診断,B2B_AGENT,14,2,3000,5000,低,5,P2,設計中,診断はアドバイスのみ・保証禁止
-IDEA009,診断フォーム→有料レポート→30分診断_フォーム設計,B2B_AGENT,14,5,0,0,低,5,P2,設計中,個人情報収集・プライバシーポリシー確認
-IDEA010,フォローアップメール文案,B2B_AGENT,21,5,0,0,低,4,P2,設計中,手動送信・自動送信禁止
-IDEA011,SEO比較記事_ホットペッパーvsSNS集客,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,成果保証禁止・比較根拠は公開情報のみ・広告表記必須
-IDEA012,SEO比較記事_LINE公式vsGoogle口コミ,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,成果保証禁止・比較根拠は公開情報のみ・広告表記必須
-IDEA013,SEO比較記事_Instagramvsブログ,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,成果保証禁止・広告表記必須
-IDEA014,SEO比較記事_ホットペッパービューティーvs直予約,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,成果保証禁止・アフィリ表記必須
-IDEA015,SEO比較記事_Google広告vs無料Google投稿,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,成果保証禁止・広告表記必須
-IDEA016,SEO比較記事_グルメサイトvsSNS飲食店,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,成果保証禁止・広告表記必須
-IDEA017,SEO比較記事_ChatGPTvsコピーライター,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,成果保証禁止
-IDEA018,SEO比較記事_Googleマップvs広告出稿,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,成果保証禁止・広告表記必須
-IDEA019,SEO比較記事_AIvs人力集客費用,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,成果保証禁止
-IDEA020,SEO比較記事_予約アプリvs電話予約,PROGRAMMATIC_SEO,60,5,0,0,低,3,P3,設計中,成果保証禁止・アフィリ表記必須
-IDEA021,楽天_QRコードスタンド紹介,SNS_AFFILIATE,30,3,0,500,高（審査必要）,3,P3,審査待ち,楽天アフィリエイト表記必須・rel=sponsored・審査前掲載禁止
-IDEA022,Amazon_ラミネーター紹介,SNS_AFFILIATE,30,3,0,1000,高（審査必要）,3,P3,審査待ち,Amazonアソシエイト表記必須・rel=sponsored・審査前掲載禁止
-IDEA023,楽天_タブレットスタンド紹介,SNS_AFFILIATE,30,3,0,500,高（審査必要）,3,P3,審査待ち,楽天アフィリエイト表記必須・rel=sponsored・審査前掲載禁止
-IDEA024,Amazon_店舗集客書籍紹介,SNS_AFFILIATE,30,3,0,300,高（審査必要）,3,P3,審査待ち,Amazonアソシエイト表記必須・rel=sponsored・SNS投稿時#PR必須
+IDEA001,Brain部品商品A_口コミ返信テンプレ30本,SNS_AFFILIATE,3,5,980,980,低,5,P1,設計中,Brain草案生成依頼（Claude Code）,成果保証禁止・Brain規約確認
+IDEA002,Brain部品商品B_ChatGPTプロンプト集50本,SNS_AFFILIATE,3,5,980,980,低,5,P1,設計中,Brain草案生成依頼（Claude Code）,成果保証禁止・Brain規約確認
+IDEA003,Brain部品商品C_GBP改善チェックリスト,B2B_AGENT,5,5,1480,1480,低,5,P1,設計中,Brain草案生成依頼（Claude Code）,成果保証禁止・Brain規約確認
+IDEA004,Brain部品商品D_ホットペッパー脱出ロードマップ,B2B_AGENT,5,5,1980,1980,低,5,P1,設計中,Brain草案生成依頼（Claude Code）,成果保証禁止・Brain規約確認
+IDEA005,Brain部品商品E_AI集客7日間カレンダー単品,SNS_AFFILIATE,5,5,1480,1480,低,5,P1,設計中,Brain草案生成依頼（Claude Code）,成果保証禁止・Brain規約確認
+IDEA006,AI店舗集客診断レポート_無料版,B2B_AGENT,7,4,0,0,低,5,P1,設計中,診断フォーム設計書生成（Claude Code）,診断はアドバイスのみ・保証禁止・個人情報管理
+IDEA007,AI店舗集客診断レポート_有料版,B2B_AGENT,14,4,1980,3980,低,5,P1,設計中,有料レポートコンテンツ草案生成（Claude Code）,診断はアドバイスのみ・保証禁止・医療法的助言禁止
+IDEA008,30分オンライン診断,B2B_AGENT,14,2,3000,5000,低,5,P2,設計中,診断申込みフォーム設計（ゆうさん実施）,診断はアドバイスのみ・保証禁止
+IDEA009,診断フォーム→有料レポート→30分診断_フォーム設計,B2B_AGENT,14,5,0,0,低,5,P2,設計中,Google Forms設計書生成（Claude Code）,個人情報収集・プライバシーポリシー確認
+IDEA010,フォローアップメール文案,B2B_AGENT,21,5,0,0,低,4,P2,設計中,フォローアップ文案テンプレ生成（Claude Code）,手動送信・自動送信禁止
+IDEA011,SEO比較記事_ホットペッパーvsSNS集客,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,記事構成確定→草案生成（Claude Code）,成果保証禁止・比較根拠は公開情報のみ・広告表記必須
+IDEA012,SEO比較記事_LINE公式vsGoogle口コミ,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,記事構成確定→草案生成（Claude Code）,成果保証禁止・比較根拠は公開情報のみ・広告表記必須
+IDEA013,SEO比較記事_Instagramvsブログ,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,記事構成確定→草案生成（Claude Code）,成果保証禁止・広告表記必須
+IDEA014,SEO比較記事_ホットペッパービューティーvs直予約,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,記事構成確定→草案生成（Claude Code）,成果保証禁止・アフィリ表記必須
+IDEA015,SEO比較記事_Google広告vs無料Google投稿,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,記事構成確定→草案生成（Claude Code）,成果保証禁止・広告表記必須
+IDEA016,SEO比較記事_グルメサイトvsSNS飲食店,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,記事構成確定→草案生成（Claude Code）,成果保証禁止・広告表記必須
+IDEA017,SEO比較記事_ChatGPTvsコピーライター,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,記事構成確定→草案生成（Claude Code）,成果保証禁止
+IDEA018,SEO比較記事_Googleマップvs広告出稿,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,記事構成確定→草案生成（Claude Code）,成果保証禁止・広告表記必須
+IDEA019,SEO比較記事_AIvs人力集客費用,PROGRAMMATIC_SEO,60,5,0,0,低,4,P3,設計中,記事構成確定→草案生成（Claude Code）,成果保証禁止
+IDEA020,SEO比較記事_予約アプリvs電話予約,PROGRAMMATIC_SEO,60,5,0,0,低,3,P3,設計中,記事構成確定→草案生成（Claude Code）,成果保証禁止・アフィリ表記必須
+IDEA021,楽天_QRコードスタンド紹介,SNS_AFFILIATE,30,3,0,500,高（審査必要）,3,P3,審査待ち,楽天アソシエイト審査申請（ゆうさん実施）,楽天アフィリエイト表記必須・rel=sponsored・審査前掲載禁止
+IDEA022,Amazon_ラミネーター紹介,SNS_AFFILIATE,30,3,0,1000,高（審査必要）,3,P3,審査待ち,Amazonアソシエイト審査申請（ゆうさん実施）,Amazonアソシエイト表記必須・rel=sponsored・審査前掲載禁止
+IDEA023,楽天_タブレットスタンド紹介,SNS_AFFILIATE,30,3,0,500,高（審査必要）,3,P3,審査待ち,楽天アソシエイト審査申請（ゆうさん実施）,楽天アフィリエイト表記必須・rel=sponsored・審査前掲載禁止
+IDEA024,Amazon_店舗集客書籍紹介,SNS_AFFILIATE,30,3,0,300,高（審査必要）,3,P3,審査待ち,Amazonアソシエイト審査申請（ゆうさん実施）,Amazonアソシエイト表記必須・rel=sponsored・SNS投稿時#PR必須

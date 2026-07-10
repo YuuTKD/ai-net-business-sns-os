@@ -1,6 +1,6 @@
 # 08 FAST REVENUE IDEAS — 即成果型収益導線
 
-← [[07_NEXT_ACTIONS]] | 設計書 → [[../../docs/FAST_REVENUE_AUTOMATION_PLAN]]
+← [[07_NEXT_ACTIONS]] | 設計書 → docs/FAST_REVENUE_AUTOMATION_PLAN.md（リポジトリroot・Vault外）
 
 最終更新: 2026-07-10
 
@@ -236,5 +236,5 @@ rel="sponsored" または rel="nofollow"
 
 ---
 
-*← [[07_NEXT_ACTIONS]] | 設計書 → [[../../docs/FAST_REVENUE_AUTOMATION_PLAN]]*
-*CSV → [[../../data/revenue_portfolio/fast_revenue_ideas.csv]]*
+*← [[07_NEXT_ACTIONS]] | 設計書 → docs/FAST_REVENUE_AUTOMATION_PLAN.md（リポジトリroot・Vault外）*
+*設計書・CSV → リポジトリroot以下（Vault外・Obsidianリンク不可）*
