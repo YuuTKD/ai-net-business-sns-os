@@ -22,6 +22,26 @@
 
 ## 報告ログ
 
+### REPORT-002: Revenue Intelligence OS を products/ へ統合
+- **日時**: 2026-07-30
+- **担当**: Claude Code
+- **関連タスク**: TASK-002
+- **PR**: （作成後に記入）
+- **変更内容**:
+  - `products/revenue-intelligence-os/` を新規作成し、`~/revenue-browser-ops` をコピー統合（110ファイル）
+    - `agents/`（10体）← `.claude/agents`
+    - `policies/`（scoring / attribution / media-rules）← `config`
+    - `content/`（master / drafts / assets、note10本・Substack7本）
+    - `data/`（CSV 10種 + README）
+    - `experiments/`（EXP001-007 + README）
+    - `queues/`（approval / research / content / publishing）
+    - `reports/`（Phase1設計書・公開SOP・LINE設定書。`phase1/` からフラット化、ファイル名衝突なし確認済み）
+    - `README.md`
+  - 空ディレクトリ 5個を `.gitkeep` で保持
+- **影響範囲**: 既存 `products/`（brain_parts / client_acquisition_kit / 30_day_...md）は無変更。新規サブディレクトリの追加のみ。`logs/` は移行対象外。ソース `CLAUDE.md` / `.env.example` / `.gitignore` は移行対象外。
+- **pre-deploy-qa 判定**: 対象外（ドキュメント・データファイルの追加のみ、デプロイ・外部API・Scheduler変更なし）
+- **確認事項**: `main` ベースの新ブランチ `feature/revenue-intelligence-os-integration` で作業。`git add` は新規ディレクトリを明示指定（`git add .` 不使用）。コピー元 `revenue-browser-ops` は検証完了までバックアップとして残す。次アクション: note10本の実測を `data/metrics.csv` に記録（48-72h後）。
+
 ### REPORT-001: Codex × Claude Code × GitHub PR連携 初期セットアップ
 - **日時**: （merge後に記入）
 - **担当**: Claude Code

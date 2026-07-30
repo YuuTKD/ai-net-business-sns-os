@@ -33,6 +33,14 @@
 
 ## タスク一覧
 
+### TASK-002: Revenue Intelligence OS を正式リポジトリへ統合（A案）
+- **担当**: Claude Code
+- **ステータス**: REVIEW
+- **ブランチ**: feature/revenue-intelligence-os-integration
+- **PR**: （作成後に記入）
+- **期限**: 2026-07-30
+- **備考**: `~/revenue-browser-ops`（独立git・未push）を `products/revenue-intelligence-os/` へコピー統合（MIGRATION_TO_OFFICIAL_REPO.md A案）。110ファイル（agents10体 / policies / content note10本・Substack7本 / data CSV10種 / experiments EXP001-007 / queues / reports Phase1一式）。既存 products（brain_parts / client_acquisition_kit / 30_day_...md）は不変、logs/ は移行対象外。コピー元は当面バックアップとして残す。
+
 ### TASK-001: Codex × Claude Code × GitHub PR連携 初期セットアップ
 - **担当**: Claude Code
 - **ステータス**: REVIEW
