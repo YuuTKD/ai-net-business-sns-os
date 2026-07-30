@@ -1,0 +1,9 @@
+id,audience_id,offer_id,hypothesis,channel,angle,expected_metric,created_at,status
+hyp_01,aud_01,off_18,"具体的な固定費削減額の提示＋無料診断CTAは一般論より診断リンクのクリックを増やす",substack+threads,"具体数字＋損失回避フレーム",link_click率>=1.0%,2026-07-29,active
+hyp_02,aud_02,off_17,"時短の実数ビフォーアフター訴求は一般的なAI自動化訴求よりLINE相談への反応が高い",substack+threads,"時間削減×解放フレーム",link_click率>=1.0%,2026-07-29,active
+hyp_03,aud_03,off_01,"設立直後やることリスト＋カード比較表の意思決定支援型は単純紹介より申込クリックが増える",substack+threads,"比較・チェックリスト(意思決定支援)",link_click率>=1.0%,2026-07-29,active
+hyp_04,aud_04,off_06,"自店の月商で手数料実額を試算するシミュレーション型は単純比較より決済端末アフィリンクのクリックが増える",substack+threads,"手数料シミュレーション(自己試算)",link_click率>=1.0%,2026-07-29,active
+hyp_05,aud_05,off_17,"ノーショー対策の導入ステップ/フロー型は一般紹介より無料相談(LINE)への反応が高い",substack+threads,"導入ステップ/フロー型",link_click率>=1.0%,2026-07-29,active
+hyp_06,aud_06,off_03,"青色vs白色 判断ガイド型は単純比較より確定申告ソフト(弥生)への申込クリックが増える",substack+threads,"青色vs白色 判断ガイド(意思決定支援)",link_click率>=1.0%,2026-07-29,active
+hyp_07,aud_06,off_03,"経費にできる/できないの判断ガイド＋記帳をラクにする導線は単純な勘定科目一覧より弥生申込クリックが増える",substack+threads,"経費の線引き判断ガイド",link_click率>=1.0%,2026-07-29,active
+hyp_08,aud_note_gray,off_20,"相談しにくいコンプレックス(発達グレーの仕事術)の匿名ペルソナ¥980記事は有料購入が発生する",note,"匿名当事者ペルソナ×実用ルール",有料購入>=1,2026-07-29,active
