@@ -26,7 +26,7 @@
 - **日時**: 2026-07-30
 - **担当**: Claude Code
 - **関連タスク**: TASK-002
-- **PR**: （作成後に記入）
+- **PR**: #18
 - **変更内容**:
   - `products/revenue-intelligence-os/` を新規作成し、`~/revenue-browser-ops` をコピー統合（110ファイル）
     - `agents/`（10体）← `.claude/agents`
