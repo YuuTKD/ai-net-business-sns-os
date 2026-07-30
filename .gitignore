@@ -15,3 +15,8 @@ private/
 backups/
 data/forms/
 data/forms/*_responses.csv
+
+# Revenue Intelligence OS: 設計成果物のJSONは追跡する（*.json の一括除外を限定的に解除）
+# 注意: Secret類は上位ルール(*secret*/*token*/*credentials*等)で除外継続。これらのdirにSecretを置かないこと。
+!products/revenue-intelligence-os/workflows/n8n/*.json
+!products/revenue-intelligence-os/schemas/*.json

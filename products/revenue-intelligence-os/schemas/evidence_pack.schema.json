@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "rio/evidence_pack.schema.json",
+  "title": "EvidencePack",
+  "description": "実験の根拠パック。design/DATA_MODEL.md / N8N_WORKFLOW_CATALOG.md(DEV_RIO_101) 準拠。推定と実測を分離し、欠損は unknown。",
+  "type": "object",
+  "required": ["evidence_pack_id", "experiment_id", "created_at"],
+  "additionalProperties": true,
+  "properties": {
+    "evidence_pack_id": { "type": "string", "description": "ev-<n>" },
+    "experiment_id": { "type": "string" },
+    "sources": {
+      "type": "array",
+      "description": "根拠URL群",
+      "items": { "type": "string", "format": "uri" }
+    },
+    "facts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["claim", "source_type"],
+        "properties": {
+          "claim": { "type": "string" },
+          "value": { "type": ["string", "number", "null"] },
+          "source_type": { "type": "string", "enum": ["actual", "estimate", "unknown"] },
+          "source_url": { "type": ["string", "null"], "format": "uri" }
+        }
+      }
+    },
+    "notes": { "type": "string" },
+    "assets": { "type": "array", "items": { "type": "string" }, "description": "画像/動画パス" },
+    "created_at": { "type": "string", "format": "date-time" }
+  }
+}

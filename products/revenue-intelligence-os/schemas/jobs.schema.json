@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "rio/jobs.schema.json",
+  "title": "Job",
+  "description": "外部操作ジョブの状態管理レコード。design/JOB_STATE_MACHINE.md / ID_AND_IDEMPOTENCY_POLICY.md 準拠。",
+  "type": "object",
+  "required": ["job_id", "workflow", "state", "idempotency_key", "created_at"],
+  "additionalProperties": true,
+  "properties": {
+    "job_id": { "type": "string", "description": "job-<execution_id>" },
+    "workflow": { "type": "string", "description": "例: DEV_RIO_001_Opportunity_Intake" },
+    "portfolio_id": { "type": "string" },
+    "campaign_id": { "type": "string" },
+    "experiment_id": { "type": ["string", "null"] },
+    "state": {
+      "type": "string",
+      "enum": [
+        "QUEUED", "RESERVED", "PROCESSING", "QA_REVIEW", "WAITING_APPROVAL",
+        "APPROVED", "EXTERNAL_ACTION_STARTED", "EXTERNAL_ACTION_CONFIRMED",
+        "RESULT_RECORDED", "MEASURED", "FAILED_RETRYABLE", "DEAD_LETTER_QUEUE"
+      ]
+    },
+    "retry_count": { "type": "integer", "minimum": 0, "maximum": 2 },
+    "idempotency_key": {
+      "type": "string",
+      "description": "account_id + platform + content_asset_id + action_type"
+    },
+    "owner_yes_no": { "type": "string", "enum": ["PENDING", "YES", "NO"] },
+    "created_at": { "type": "string", "format": "date-time" },
+    "updated_at": { "type": "string", "format": "date-time" }
+  }
+}
