@@ -22,6 +22,21 @@
 
 ## 報告ログ
 
+### REPORT-013: DEV_RIO_101/102/103 のAI応答パース/フォールバック/QA統合ロジックにローカルテストを追加
+- **日時**: 2026-08-01
+- **担当**: Claude Code
+- **関連タスク**: TASK-003
+- **PR**: （作成後に記入）
+- **背景**: `tests/classify_opportunity.test.mjs`（DEV_RIO_001）の既存パターンに倣い、REPORT-010/012で追加したAnthropic応答パース・フォールバック・QA統合ロジックについても、n8nへの再インポート前にローカルでロジックの正しさを検証できるようにした。
+- **変更内容**: `tests/parse_ai_responses.test.mjs` を新規追加。DEV_RIO_101「Parse Research Response」・DEV_RIO_102「Parse Experiment Design」・DEV_RIO_103「Combine QA Result」と同一ロジックを抽出し、13ケースで検証（`node products/revenue-intelligence-os/tests/parse_ai_responses.test.mjs` で実行、13/13 PASS）。特に以下の安全性を担保する分岐を重点的に確認:
+  - AIが`source_type`を`"estimation"`以外（`"fact"`等）で返しても強制的に`"unknown"`へ矯正する（捏造禁止の徹底）
+  - Anthropic APIエラー・JSON解析失敗時は必ず安全なフォールバック値になり、ワークフローを止めない
+  - **AIがQAで`PASS`と判定しても、決定論的ルール（アフィリ+PR表記なし等）に違反していれば`BLOCK`/`FIX_REQUIRED`を優先する**（AI判定への過信防止）
+  - 未差し替えの`【実際の経験に置き換える：...】`プレースホルダーが本文に残っている場合は`FIX_REQUIRED`にする
+- **影響範囲**: `tests/`配下への新規ファイル追加のみ。既存ロジック・Workflow JSONへの変更なし。
+- **pre-deploy-qa 判定**: 対象外（ローカルテストファイルの追加のみ）
+- **確認事項**: 本テストはn8nのCodeノードと同一ロジックをコピーして検証する方式のため、将来Codeノード側を変更した場合はこのテストファイルも同期すること（driftを既存テストと同様に手動管理）。
+
 ### REPORT-012: httpRequestノードのtypeVersion修正 + DEV_RIO_103にLINE通知を追加
 - **日時**: 2026-08-01
 - **担当**: Claude Code
