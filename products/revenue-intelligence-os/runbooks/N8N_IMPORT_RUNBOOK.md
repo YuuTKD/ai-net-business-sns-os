@@ -12,7 +12,10 @@
 1. n8n を開く（`yuu1988.app.n8n.cloud`）
 2. DEV用Project を確認 / 作成候補提示
 3. 新規Workflow作成（右上「+」）
-4. `…`メニュー → **Import from File / URL** で対象JSONをインポート
+4. **JSONインポート方式（重要・実績あり）**: `…`メニューの「ファイルからインポート」はOSネイティブのファイル選択ダイアログを開くため、ブラウザ拡張（Claude in Chrome）からは操作不可。代わりに**クリップボード貼り付け方式**を使う：
+   - ローカルで `cat workflows/n8n/{name}.json | pbcopy`（Bashツールで実行）
+   - n8nのキャンバス空白部をクリックしてフォーカス → `cmd+v` でペースト
+   - n8nがJSONを自動認識し、全ノード・接続が展開される（DEV_RIO_001で検証済み・2026-07-31）
 5. ノード配置・接続順を確認（Manual Trigger → … → NoOp）
 6. ノード名・Expressions・Codeノード内容を確認
 7. Credential 未設定箇所を特定（本Workflowは外部Credential不要）
@@ -34,5 +37,8 @@
 
 ## 失敗時（2回で停止）
 失敗画面 / ノード / 操作 / エラーメッセージ / 原因候補 / 人間操作要否 / 再開手順 を報告。
+
+## 実施記録
+- **DEV_RIO_001_Opportunity_Intake**: 2026-07-31 インポート・dry-run実行・エクスポート検証まで完了（REPORT-005参照）。ペースト方式が有効と確認。
 
 関連: [[N8N_WORKFLOW_CATALOG]] [[BROWSER_USE_POLICY]] [[TEST_PLAN]]

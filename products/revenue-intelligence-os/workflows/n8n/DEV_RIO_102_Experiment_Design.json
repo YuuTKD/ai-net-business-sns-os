@@ -1,0 +1,51 @@
+{
+  "name": "DEV_RIO_102_Experiment_Design",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10102-0000-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_102 Experiment Design — dry-run\n// design/REVENUE_LOOP_MVP.md / DATA_MODEL.md(experiments) 準拠。変更変数は必ず1つ。\nconst i = $input.first().json;\nreturn [{ json: {\n  experiment_id: i.experiment_id ?? 'exp-001',\n  audience_id: i.audience_id ?? 'aud-store-owner',\n  offer_id: i.offer_id ?? 'P-BRAIN-01',\n  angle: i.angle ?? 'AIで雑務を週3時間削減',\n  channel: i.channel ?? 'threads',\n  variable_changed: i.variable_changed ?? 'hook',\n  success_condition: i.success_condition ?? 'note遷移≥50 かつ Brain遷移≥5（14日）',\n  stop_condition: i.stop_condition ?? '≥1000表示 or ≥50クリックで明確な負',\n  min_data: i.min_data ?? '≥1000表示 or ≥50クリック',\n  judge_by: i.judge_by ?? null\n} }];"
+      },
+      "id": "b1a10102-0000-4000-8000-000000000002",
+      "name": "Define Experiment",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// バリデーション: 変更変数が1つか、必須項目が揃っているか。\nconst o = $input.first().json;\nconst required = ['experiment_id','audience_id','offer_id','channel','variable_changed','success_condition','stop_condition'];\nconst missing = required.filter(k => !o[k]);\nconst singleVariable = typeof o.variable_changed === 'string' && !o.variable_changed.includes(',');\nconst valid = missing.length === 0 && singleVariable;\nreturn [{ json: { ...o, valid, missing, singleVariable, state: valid ? 'QA_REVIEW' : 'FAILED_RETRYABLE',\n  note: valid ? 'dry-run OK。experiments へ登録候補。' : `不備: ${missing.join(',') || '変更変数が複数'}` } }];"
+      },
+      "id": "b1a10102-0000-4000-8000-000000000003",
+      "name": "Validate (single variable)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {},
+      "id": "b1a10102-0000-4000-8000-000000000004",
+      "name": "Result (dry-run, no external action)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [940, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Define Experiment", "type": "main", "index": 0 }]] },
+    "Define Experiment": { "main": [[{ "node": "Validate (single variable)", "type": "main", "index": 0 }]] },
+    "Validate (single variable)": { "main": [[{ "node": "Result (dry-run, no external action)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_102 Experiment Design. dry-run. Do NOT activate. Pending DEV_RIO_001 validation." },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }]
+}
