@@ -39,7 +39,7 @@
 - **ブランチ**: feature/rio-real-ai-research
 - **PR**: （作成後に記入）
 - **期限**: -
-- **備考**: 需要リサーチ(101)・実験設計(102)・コンテンツ下書き+QA(103)をダミー入力からAnthropic API（claude-sonnet-4-5）呼び出しに置き換え済み（詳細はREPORT-010）。**BLOCKED理由**: (1) Anthropicアカウントのクレジット残高不足（ゆうさんによるconsole.anthropic.comでの購入待ち）、(2) 更新済みJSON3本のn8nへの再インポートが未実施（ブラウザ自動操作では信頼性の問題があり手動対応が必要）。両方の解消後、実データでのエンドツーエンドテストに進む。
+- **備考**: 需要リサーチ(101)・実験設計(102)・コンテンツ下書き+QA(103)をダミー入力からAnthropic API（claude-sonnet-4-5）呼び出しに置き換え済み（詳細はREPORT-010）。DEV_RIO_103には下書き完成時のLINE通知も追加済み（REPORT-011）。**BLOCKED理由**: (1) Anthropicアカウントのクレジット残高不足（ゆうさんによるconsole.anthropic.comでの購入待ち・後回し方針で合意済み）、(2) 更新済みJSON3本のn8nへの再インポートが未実施（ブラウザ自動操作では信頼性の問題があり手動対応が必要）、(3) LINE Messaging APIのCredential（Header Auth）未作成・通知先line_user_id未設定。全て解消後、実データでのエンドツーエンドテストに進む。
 
 ### TASK-002: Revenue Intelligence OS を正式リポジトリへ統合（A案）
 - **担当**: Claude Code

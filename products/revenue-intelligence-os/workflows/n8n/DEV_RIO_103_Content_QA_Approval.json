@@ -11,7 +11,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// DEV_RIO_103 Content + QA + Approval — 実運用\n// DEV_RIO_102のexperiment設計（angle/channel/offer等）を受け取る。未指定時のみデフォルト値を使う。\nconst i = $input.first().json;\nreturn [{ json: {\n  content_id: i.content_id ?? 'ca-note-001',\n  media: i.media ?? 'note',\n  theme: i.theme ?? '店舗の固定費/決済手数料の見直し',\n  angle: i.angle ?? 'AIで店舗の雑務を減らす手順',\n  cta: i.cta ?? 'Brainで7日分のテンプレを配布中',\n  affiliate: i.affiliate ?? null,\n  ad_disclosure: i.ad_disclosure ?? (i.affiliate ? 'PR' : null),\n  facts: i.facts ?? []\n} }];"
+        "jsCode": "// DEV_RIO_103 Content + QA + Approval — 実運用\n// DEV_RIO_102のexperiment設計（angle/channel/offer等）を受け取る。未指定時のみデフォルト値を使う。\nconst i = $input.first().json;\nreturn [{ json: {\n  content_id: i.content_id ?? 'ca-note-001',\n  media: i.media ?? 'note',\n  theme: i.theme ?? '店舗の固定費/決済手数料の見直し',\n  angle: i.angle ?? 'AIで店舗の雑務を減らす手順',\n  cta: i.cta ?? 'Brainで7日分のテンプレを配布中',\n  affiliate: i.affiliate ?? null,\n  ad_disclosure: i.ad_disclosure ?? (i.affiliate ? 'PR' : null),\n  facts: i.facts ?? [],\n  line_user_id: i.line_user_id ?? null\n} }];"
       },
       "id": "b1a10103-0000-4000-8000-000000000002",
       "name": "Collect Content Brief",
@@ -51,7 +51,7 @@
       "id": "b1a10103-0000-4000-8000-000000000006",
       "name": "Anthropic Draft Call",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "typeVersion": 4.4,
       "position": [880, 220],
       "credentials": {
         "anthropicApi": {
@@ -63,7 +63,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Anthropicの応答をパース。失敗時は空の安全なプレースホルダーにフォールバック（捏造しない）。\nconst input = $input.first().json;\nconst o = $('Build Content Draft Prompt').first().json;\nlet draft = null;\nlet draft_error = null;\n\nif (input.error) {\n  draft_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    draft = JSON.parse(cleaned);\n  } catch (e) {\n    draft_error = 'parse_failed: ' + e.message;\n  }\n}\n\nconst note_body = draft && draft.note_body ? draft.note_body : '【AI下書き生成に失敗。人間による手動執筆が必要】';\nconst threads_post = draft && draft.threads_post ? draft.threads_post : '【AI下書き生成に失敗。人間による手動執筆が必要】';\n\nreturn [{ json: {\n  content_id: o.content_id,\n  media: o.media,\n  note_body,\n  threads_post,\n  cta: o.cta,\n  affiliate: o.affiliate,\n  ad_disclosure: o.ad_disclosure,\n  draft_source: draft ? 'anthropic_ai' : 'fallback_placeholder',\n  draft_error\n} }];"
+        "jsCode": "// Anthropicの応答をパース。失敗時は空の安全なプレースホルダーにフォールバック（捏造しない）。\nconst input = $input.first().json;\nconst o = $('Build Content Draft Prompt').first().json;\nlet draft = null;\nlet draft_error = null;\n\nif (input.error) {\n  draft_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    draft = JSON.parse(cleaned);\n  } catch (e) {\n    draft_error = 'parse_failed: ' + e.message;\n  }\n}\n\nconst note_body = draft && draft.note_body ? draft.note_body : '【AI下書き生成に失敗。人間による手動執筆が必要】';\nconst threads_post = draft && draft.threads_post ? draft.threads_post : '【AI下書き生成に失敗。人間による手動執筆が必要】';\n\nreturn [{ json: {\n  content_id: o.content_id,\n  media: o.media,\n  note_body,\n  threads_post,\n  cta: o.cta,\n  affiliate: o.affiliate,\n  ad_disclosure: o.ad_disclosure,\n  line_user_id: o.line_user_id,\n  draft_source: draft ? 'anthropic_ai' : 'fallback_placeholder',\n  draft_error\n} }];"
       },
       "id": "b1a10103-0000-4000-8000-000000000007",
       "name": "Parse Content Draft",
@@ -103,7 +103,7 @@
       "id": "b1a10103-0000-4000-8000-000000000009",
       "name": "Anthropic QA Call",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "typeVersion": 4.4,
       "position": [1540, 220],
       "credentials": {
         "anthropicApi": {
@@ -124,12 +124,48 @@
       "position": [1760, 220]
     },
     {
+      "parameters": {
+        "jsCode": "// LINE通知メッセージを組み立てる。line_user_id未設定の場合は通知先が無いため、後続ノードは失敗するが\n// continueOnFail(=true)により無視され、パイプライン自体は止まらない（Anthropicノードと同じ安全設計）。\nconst o = $input.first().json;\nconst line_user_id = o.line_user_id ?? null;\nconst line_message = o.state === 'WAITING_APPROVAL'\n  ? `【下書き完成】${o.media}「${o.content_id}」の下書きができました。n8nで内容を確認し、問題なければご自身の操作で投稿してください。(QA: ${o.qa_status})`\n  : `【要対応】${o.media}「${o.content_id}」の下書きが${o.qa_status}判定です。issues: ${(o.issues || []).join(' / ')}`;\nreturn [{ json: { ...o, line_user_id, line_message } }];"
+      },
+      "id": "b1a10103-0000-4000-8000-00000000000a",
+      "name": "Build LINE Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1980, 220]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.line.me/v2/bot/message/push",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { to: $json.line_user_id, messages: [ { type: 'text', text: $json.line_message } ] } }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "b1a10103-0000-4000-8000-00000000000b",
+      "name": "LINE Push Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [2200, 220],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "",
+          "name": "LINE Messaging API"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
       "parameters": {},
       "id": "b1a10103-0000-4000-8000-000000000004",
       "name": "Await Human Approval (no publish)",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
-      "position": [1980, 220]
+      "position": [2420, 220]
     }
   ],
   "connections": {
@@ -140,7 +176,9 @@
     "Parse Content Draft": { "main": [[{ "node": "Build QA Prompt", "type": "main", "index": 0 }]] },
     "Build QA Prompt": { "main": [[{ "node": "Anthropic QA Call", "type": "main", "index": 0 }]] },
     "Anthropic QA Call": { "main": [[{ "node": "Combine QA Result", "type": "main", "index": 0 }]] },
-    "Combine QA Result": { "main": [[{ "node": "Await Human Approval (no publish)", "type": "main", "index": 0 }]] }
+    "Combine QA Result": { "main": [[{ "node": "Build LINE Message", "type": "main", "index": 0 }]] },
+    "Build LINE Message": { "main": [[{ "node": "LINE Push Notification", "type": "main", "index": 0 }]] },
+    "LINE Push Notification": { "main": [[{ "node": "Await Human Approval (no publish)", "type": "main", "index": 0 }]] }
   },
   "settings": { "executionOrder": "v1" },
   "active": false,

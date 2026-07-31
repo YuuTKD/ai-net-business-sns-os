@@ -51,7 +51,7 @@
       "id": "b1a10102-0000-4000-8000-000000000010",
       "name": "Anthropic Design Call",
       "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.2,
+      "typeVersion": 4.4,
       "position": [880, 300],
       "credentials": {
         "anthropicApi": {

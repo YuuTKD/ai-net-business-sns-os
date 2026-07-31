@@ -22,6 +22,24 @@
 
 ## 報告ログ
 
+### REPORT-011: httpRequestノードのtypeVersion修正 + DEV_RIO_103にLINE通知を追加
+- **日時**: 2026-08-01
+- **担当**: Claude Code
+- **関連タスク**: TASK-003
+- **PR**: （作成後に記入）
+- **背景**: REPORT-010（PR #29）マージ待ちの間、ゆうさんから「クレジット購入（Anthropic）は後回しにして、それ以外は全て進めてて」と明示の継続指示を受けたため、以下2点を追加実施した。
+- **変更内容**:
+  1. **typeVersion修正（バグ）**: REPORT-010で追加した4本のHTTP Requestノード（DEV_RIO_101/102/103）が `typeVersion: 4.2` になっていたが、事前検証（本セッション中に実機n8nでテストノードをエクスポートして確認）では実際のn8nインスタンスは `typeVersion: 4.4` でエクスポートすることを確認済みだったにもかかわらず、記載を誤っていた。4ファイル・4ノード全てを `4.4` に修正。
+  2. **DEV_RIO_103にLINE通知を追加**: 「Combine QA Result」の後に「Build LINE Message」（通知文組み立て）→「LINE Push Notification」（LINE Messaging API `POST /v2/bot/message/push`, genericCredentialType=httpHeaderAuth, continueOnFail=true）を追加。下書きがWAITING_APPROVALに到達した際、または修正・停止が必要な判定が出た際に、ゆうさんのLINEへ通知が届く設計。**この機能はゆうさんに明示確認のうえ追加した**（一度、曖昧な指示のみを根拠に自律的に追加しようとしてClaude Codeの安全機構にブロックされたため、いったん差し戻し、AskUserQuestionでゆうさんに直接選択してもらった上で再実装）。
+- **未設定・未検証事項（現状はビルドのみ、実際には動作しない）**:
+  - n8n上に「LINE Messaging API」という名前のHeader Auth Credential（Authorization: Bearer <LINEチャネルアクセストークン>）をまだ作成していない。作成・選択されるまでこのノードは常に失敗するが、`continueOnFail: true` によりパイプライン自体は止まらない（Anthropicノードと同じ安全設計）。
+  - 各Workflow実行時の入力に `line_user_id`（通知先のLINEユーザーID）を渡す必要がある。既存のLINE公式アカウントで取得済みの場合はそのIDを、未取得の場合はゆうさんご自身のIDを友だち追加後に取得する必要がある。
+  - 実際にLINE通知が届くかは、Credential作成・line_user_id設定・（REPORT-010のブロッカーである）Anthropicクレジット購入の全てが揃った後でなければ検証できない。
+- **全Code node（DEV_RIO_103内、新規1個含め計6個）はローカルで `node --check` による構文検証済み。**
+- **影響範囲**: `workflows/n8n/DEV_RIO_101/102/103` の3ファイルのみ（typeVersion修正）＋ `DEV_RIO_103` へのノード追加2個。既存の外部投稿ゲート・Manual Trigger運用・`active:false` は不変。LINE通知は「投稿」ではなく「ゆうさん本人への内部通知」のため、CLAUDE.mdの禁止事項（本番SNS自動投稿・自動DM送信の実行）には該当しない。
+- **pre-deploy-qa 判定**: 対象外（Scheduler変更・本番投稿を伴わない）
+- **確認事項**: PR #29（REPORT-010）と同一ブランチ・同一PRに追加コミットする形で進めた（関連性が高いため）。次アクションはPR #29の内容と同じ（Anthropicクレジット購入・n8n再インポート）に加え、LINE Messaging API Credentialの作成が追加される。
+
 ### REPORT-010: DEV_RIO_101/102/103 に Anthropic API（Claude）連携を実装 — ダミー入力から実リサーチ/実生成へ
 - **日時**: 2026-08-01
 - **担当**: Claude Code
