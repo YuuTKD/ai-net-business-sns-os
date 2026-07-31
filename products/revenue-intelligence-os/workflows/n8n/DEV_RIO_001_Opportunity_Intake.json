@@ -1,0 +1,74 @@
+{
+  "name": "DEV_RIO_001_Opportunity_Intake",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10001-0000-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_001 — 案件入力（dry-run用サンプル。実運用では上流から差し込む）\n// design/DATA_MODEL.md / ID_AND_IDEMPOTENCY_POLICY.md 準拠\nconst input = $input.first().json;\nreturn [{ json: {\n  idea: input.idea ?? 'Threads→note→Brain 計測1本目',\n  source: input.source ?? 'owner',\n  platform: input.platform ?? 'threads',\n  est_revenue_30d: input.est_revenue_30d ?? 3980,\n  effort_hours: input.effort_hours ?? 4,\n  risk_level: input.risk_level ?? 'medium',\n  compliance_flag: input.compliance_flag ?? 'OK',\n  duplicate_of: input.duplicate_of ?? null,\n  wip_revenue_experiments: input.wip_revenue_experiments ?? 1,\n  wip_cap_revenue: 2\n} }];"
+      },
+      "id": "b1a10001-0000-4000-8000-000000000002",
+      "name": "Define Opportunity",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 分類ロジック: EXECUTE_NOW / MERGE / VALIDATE / HOLD / STOP\n// 基準: design/PORTFOLIO_INVENTORY.md §8 + WIP_POLICY.md\nconst o = $input.first().json;\nlet classification, rationale;\n\nif (o.compliance_flag && o.compliance_flag !== 'OK') {\n  classification = 'STOP';\n  rationale = 'compliance_flag が NG（規約/法令リスク）。offer_score 無効。';\n} else if (o.duplicate_of) {\n  classification = 'MERGE';\n  rationale = `既存案件 ${o.duplicate_of} と重複。統合する。`;\n} else if (o.wip_revenue_experiments >= o.wip_cap_revenue) {\n  classification = 'HOLD';\n  rationale = `収益実験WIPが上限(${o.wip_cap_revenue})に到達。先に既存を完了/停止する。`;\n} else if (o.est_revenue_30d >= 3000 && o.effort_hours <= 8 && o.risk_level !== 'high') {\n  classification = 'EXECUTE_NOW';\n  rationale = '30日期待収益が閾値以上・低工数・高リスクでない。計測付きで実行候補。';\n} else if (o.est_revenue_30d === null || o.risk_level === 'unknown') {\n  classification = 'VALIDATE';\n  rationale = '需要/収益性が未確定。小規模検証が必要。';\n} else {\n  classification = 'HOLD';\n  rationale = 'いずれの実行条件も満たさず、停止するほど負でもない。データ待ち。';\n}\n\nreturn [{ json: { ...o, classification, rationale } }];"
+      },
+      "id": "b1a10001-0000-4000-8000-000000000003",
+      "name": "Classify",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Job レコード生成（冪等性キー付き）: design/JOB_STATE_MACHINE.md / ID_AND_IDEMPOTENCY_POLICY.md\n// ※ Date.now/新規UUIDは実行時に付与。ここでは決定的フォールバックも用意。\nconst o = $input.first().json;\nconst execId = $execution?.id ?? 'dryrun';\nconst ts = ($now ? $now.toISO() : new Date().toISOString());\nconst account_id = 'ai_store_lab';\nconst content_asset_id = 'intake-' + execId;\nconst action_type = 'opportunity_intake';\nconst idempotency_key = [account_id, o.platform, content_asset_id, action_type].join('|');\n\nreturn [{ json: {\n  job_id: 'job-' + execId,\n  workflow: 'DEV_RIO_001_Opportunity_Intake',\n  portfolio_id: 'port-rio',\n  campaign_id: 'camp-store-ai',\n  state: 'QUEUED',\n  retry_count: 0,\n  idempotency_key,\n  classification: o.classification,\n  rationale: o.rationale,\n  idea: o.idea,\n  est_revenue_30d: o.est_revenue_30d,\n  owner_yes_no: 'PENDING',\n  created_at: ts,\n  updated_at: ts,\n  note: 'dry-run。実運用では jobs テーブルへ append し、重複キーは再実行前チェックでスキップ。'\n} }];"
+      },
+      "id": "b1a10001-0000-4000-8000-000000000004",
+      "name": "Build Job Record",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 300]
+    },
+    {
+      "parameters": {},
+      "id": "b1a10001-0000-4000-8000-000000000005",
+      "name": "Result (dry-run, no external action)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1120, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [[{ "node": "Define Opportunity", "type": "main", "index": 0 }]]
+    },
+    "Define Opportunity": {
+      "main": [[{ "node": "Classify", "type": "main", "index": 0 }]]
+    },
+    "Classify": {
+      "main": [[{ "node": "Build Job Record", "type": "main", "index": 0 }]]
+    },
+    "Build Job Record": {
+      "main": [[{ "node": "Result (dry-run, no external action)", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "pinData": {},
+  "meta": {
+    "description": "DEV_RIO_001 Opportunity Intake. Manual Trigger + dry-run. No external action. Do NOT activate. See design/N8N_WORKFLOW_CATALOG.md."
+  },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }]
+}
