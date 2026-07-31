@@ -1,0 +1,62 @@
+{
+  "name": "DEV_RIO_301_Performance_Revenue_Decision",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10301-0000-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_301 Performance & Revenue Decision — dry-run\n// 実運用では metrics.csv / attribution / YU HOLDINGS AI MCP から実測を投入。\n// 欠損は unknown、推定と実測を分離（design/SECURITY_POLICY.md）。\nconst i = $input.first().json;\nreturn [{ json: {\n  experiment_id: i.experiment_id ?? 'exp-001',\n  impressions: i.impressions ?? 0,\n  clicks: i.clicks ?? 0,\n  note_visits: i.note_visits ?? 0,\n  brain_visits: i.brain_visits ?? 0,\n  purchases: i.purchases ?? 0,\n  confirmed_revenue: i.confirmed_revenue ?? 0,\n  api_cost: i.api_cost ?? 0,\n  browser_cost: i.browser_cost ?? 0,\n  owner_hours: i.owner_hours ?? 0,\n  source: i.source ?? 'actual'\n} }];"
+      },
+      "id": "b1a10301-0000-4000-8000-000000000002",
+      "name": "Ingest Metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// KPI・費用集計。最上位KPI=承認粗利益÷オーナー稼働（design/REVENUE_LOOP_MVP.md）。\nconst o = $input.first().json;\nconst total_cost = (o.api_cost || 0) + (o.browser_cost || 0);\nconst gross_profit = (o.confirmed_revenue || 0) - total_cost;\nconst kpi = o.owner_hours > 0 ? +(gross_profit / o.owner_hours).toFixed(1) : null; // 円/時\nconst enough_data = (o.impressions >= 1000) || (o.clicks >= 50);\nreturn [{ json: { ...o, total_cost, gross_profit, kpi_profit_per_hour: kpi, enough_data } }];"
+      },
+      "id": "b1a10301-0000-4000-8000-000000000003",
+      "name": "Compute KPI + Cost",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 判定: SCALE / ITERATE / HOLD / STOP（少データは HOLD。因果断定しない）。\nconst o = $input.first().json;\nlet decision, rationale;\nif (!o.enough_data) {\n  decision = 'HOLD';\n  rationale = '最小データ未達（≥1000表示 or ≥50クリック）。継続観察。';\n} else if (o.purchases > 0 && (o.kpi_profit_per_hour ?? 0) > 0) {\n  decision = 'SCALE';\n  rationale = '購入発生＋粗利/稼働が正。再現確認のうえ増産/多媒体。';\n} else if (o.brain_visits > 0 && o.purchases === 0) {\n  decision = 'ITERATE';\n  rationale = '遷移はあるが未購入。単一レバー(価格/CTA/オファー)を1つ変更。';\n} else {\n  decision = 'STOP';\n  rationale = '十分データで明確な負。archive候補（削除はしない・人間承認）。';\n}\nreturn [{ json: { ...o, decision, rationale, owner_yes_no: 'PENDING',\n  note: 'dry-run。data/decisions.csv 追記候補。実行(拡大/停止)は人間Yes後。' } }];"
+      },
+      "id": "b1a10301-0000-4000-8000-000000000004",
+      "name": "Decide SCALE/ITERATE/HOLD/STOP",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [920, 300]
+    },
+    {
+      "parameters": {},
+      "id": "b1a10301-0000-4000-8000-000000000005",
+      "name": "Result (dry-run, proposal only)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1160, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Ingest Metrics", "type": "main", "index": 0 }]] },
+    "Ingest Metrics": { "main": [[{ "node": "Compute KPI + Cost", "type": "main", "index": 0 }]] },
+    "Compute KPI + Cost": { "main": [[{ "node": "Decide SCALE/ITERATE/HOLD/STOP", "type": "main", "index": 0 }]] },
+    "Decide SCALE/ITERATE/HOLD/STOP": { "main": [[{ "node": "Result (dry-run, proposal only)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_301 Performance & Revenue Decision. dry-run. Proposal only. Do NOT activate." },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }]
+}
