@@ -22,6 +22,29 @@
 
 ## 報告ログ
 
+### REPORT-010: DEV_RIO_101/102/103 に Anthropic API（Claude）連携を実装 — ダミー入力から実リサーチ/実生成へ
+- **日時**: 2026-08-01
+- **担当**: Claude Code
+- **関連タスク**: TASK-002 / n8n実運用移行（需要リサーチ〜コンテンツQAの自動化）
+- **PR**: （作成後に記入）
+- **背景**: n8nの6 Workflowはこれまで全てManual Trigger + ダミー/デフォルト値のdry-runのみだった。ゆうさんがn8nにAnthropic API Credentialを登録したため、`DEV_RIO_101`（需要リサーチ）・`DEV_RIO_102`（実験設計）・`DEV_RIO_103`（コンテンツ下書き+QA）の3 Workflowを、実際にAnthropic API（claude-sonnet-4-5）を呼び出すロジックに置き換えた。
+- **n8n Credential名の誤訳について**: 登録されたCredentialは日本語UI上「人間中心主義的説明」（Credential種別表示も「人間」）と表示されるが、これはn8nの日本語ローカライズが"Anthropic"を誤訳した表示上の問題であり、Credential種別自体は正しくAnthropicである（HTTP Requestノードの「事前定義された認証情報タイプ」からAnthropicを選択すると自動的にこのCredentialが紐付くことを実機で確認済み）。改名は必須ではないため、現状名のまま使用する。
+- **実機検証で判明した重要事項（ブロッカー）**: n8n上でHTTP RequestノードからAnthropic APIへ実際にテストリクエストを送信したところ、Anthropic側から `"Your credit balance is too low to access the Anthropic API."` というエラーが返った。**認証自体は正常**（Credential/APIキーの登録は成功）だが、**Anthropicアカウントの課金クレジットが未購入のため、実際のAPI呼び出しは1件も成功しない状態**。ゆうさんに確認の上、「クレジット購入は後回しにして、先にWorkflow本体を完成させる」方針で合意し、実装を継続した。**クレジット購入（console.anthropic.com → Plans & Billing）は引き続き未完了のタスクとして残る。**
+- **変更内容**:
+  - `workflows/n8n/DEV_RIO_101_Evidence_Build.json`: 「Collect Inputs」の後に「Build Research Prompt」（プロンプト組立）→「Anthropic Research Call」（HTTP Request, predefinedCredentialType=anthropicApi）→「Parse Research Response」（応答パース。失敗時は捏造せず`source_type='unknown'`にフォールバック）を追加。既存の`raw_sources`優先ロジックは維持し、AIリサーチ結果（`source_type='estimation'`固定）を補完する形に変更。
+  - `workflows/n8n/DEV_RIO_102_Experiment_Design.json`: evidence_pack（theme/audience/facts）を受け取り、単一変数の成長実験を1件AIに設計させる「Build Experiment Design Prompt」→「Anthropic Design Call」→「Parse Experiment Design」を追加。AI応答が取得/解析できない場合は既存の安全なデフォルト値にフォールバックし`design_source`で明示。既存のバリデーション（変更変数が1つか等）はそのまま維持。
+  - `workflows/n8n/DEV_RIO_103_Content_QA_Approval.json`: content brief（theme/angle/cta/affiliate等）からAIに下書き（note本文+Threads投稿文）を生成させる「Build Content Draft Prompt」→「Anthropic Draft Call」→「Parse Content Draft」を追加。下書き生成プロンプトには**note_067インシデント（REPORT-009）の教訓を明示的にルール化**（実在しない一人称体験談の創作禁止、実体験が必要な箇所は`【実際の経験に置き換える：...】`のプレースホルダーを残すこと、断定的な効果保証表現の禁止）。さらに「Build QA Prompt」→「Anthropic QA Call」でAI自己QA（quality-reviewer.mdの根拠/誤情報/PR表記/アフィリ規約/著作権/金融税務表現の観点）を実行し、「Combine QA Result」で既存の決定論的ルールチェック（アフィリ+PR表記漏れ=BLOCK等）と統合。**AIがPASSと判定してもルール違反があればFIX_REQUIRED/BLOCK側を優先**する設計とし、AI判定への過信を防止。プレースホルダー未差し替えの検出ルールも追加。
+  - 全Workflow共通: `continueOnFail: true` をHTTP Requestノードに設定し、API失敗時もワークフローが停止せずエラー内容を後続ノードに引き渡す設計。Credential IDは空文字（`""`）のままとし、**インポート後にn8n UI上で既存のAnthropic Credentialを手動選択する必要がある**（Credential IDはインスタンス固有のためJSONにハードコードしない）。
+  - 全Code node（13個）はローカルで `node --check` による構文検証済み。
+- **未実施（次アクション）**:
+  1. ゆうさんによるAnthropicクレジット購入（console.anthropic.com）
+  2. 3 WorkflowのJSONをn8n UIで再インポート（「...」メニュー→「ファイルからインポート...」。ブラウザ自動操作では信頼性の問題（クリップボード権限・ネイティブファイル選択ダイアログ）により本セッションでは実施できず、手動対応が必要）
+  3. 再インポート後、各HTTP Requestノード（Anthropic Research Call / Anthropic Design Call / Anthropic Draft Call / Anthropic QA Call、計4箇所）でCredentialを「Anthropic account」に手動選択し直す
+  4. クレジット購入後、Manual Triggerで実データによるエンドツーエンドテストを実施し、出力品質をゆうさんと確認
+- **影響範囲**: `workflows/n8n/` 配下の3ファイルのみ。既存のDEV_RIO_001/201/301・Manual Trigger運用・`active:false`・外部投稿ゲート（[[BROWSER_USE_POLICY]] [[RISK_APPROVAL_POLICY]]）は不変。
+- **pre-deploy-qa 判定**: 対象外（Scheduler変更・本番投稿を伴わない。Manual Trigger + dry-run同等の検証のみ）
+- **確認事項**: 実際のAI応答を用いた動作確認はAnthropicクレジット購入後に別途実施が必要。それまでは「HTTP Requestノードのcredit不足エラー→エラーハンドリング経由でfallback値が返る」という経路のみ論理的に検証済み（実行はしていない）。
+
 ### REPORT-008: 3回連続テスト Test 2 実施 — 画像・リンク候補付き note下書き（公開なし）
 - **日時**: 2026-07-31
 - **担当**: Claude Code（Browser Use / Claude in Chrome、browser-publishing-operator相当）
