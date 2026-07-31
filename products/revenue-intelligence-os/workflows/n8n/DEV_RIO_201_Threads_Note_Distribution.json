@@ -1,0 +1,51 @@
+{
+  "name": "DEV_RIO_201_Threads_Note_Distribution",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10201-0000-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_201 Distribution — dry-run。UTM付きリンクを組み立て、下書き準備まで。\n// design/REVENUE_LOOP_MVP.md(UTM) / ID_AND_IDEMPOTENCY_POLICY.md 準拠。公開はしない。\nconst i = $input.first().json;\nconst experiment_id = i.experiment_id ?? 'exp-001';\nconst theme = i.theme ?? 'store-ai';\nconst variant = i.variant ?? 'a';\nconst utm = `utm_source=note&utm_medium=organic&utm_campaign=${theme}-${experiment_id}&utm_content=${variant}`;\nconst brand_url = i.brand_url ?? 'https://brain-market.com/u/ai_store_yuya/a/b1MTM1UjMgoTZsNWa0JXY';\nreturn [{ json: {\n  content_id: i.content_id ?? 'ca-note-001',\n  threads_post: i.threads_post ?? '雑務、AIに投げてます。手順はnoteに（プロフから）。',\n  note_draft_body: i.note_draft_body ?? '（note本文サンプル）… 末尾CTA↓',\n  brain_link_with_utm: `${brand_url}?${utm}`,\n  account_id: 'ai_store_lab',\n  platform: 'threads',\n  action_type: 'prepare_distribution'\n} }];"
+      },
+      "id": "b1a10201-0000-4000-8000-000000000002",
+      "name": "Prepare Distribution",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 冪等性キー付与＋公開直前で停止（外部アクションなし）。\nconst o = $input.first().json;\nconst execId = $execution?.id ?? 'dryrun';\nconst content_asset_id = o.content_id;\nconst idempotency_key = [o.account_id, o.platform, content_asset_id, o.action_type].join('|');\nreturn [{ json: { ...o, idempotency_key, state: 'WAITING_APPROVAL', published: false,\n  note: 'dry-run。Threads投稿候補・note下書き・UTMリンクを準備。★公開・投稿はしない（人間Yes後にBrowser Useで下書き入力→公開は別途Yes）。' } }];"
+      },
+      "id": "b1a10201-0000-4000-8000-000000000003",
+      "name": "Stop Before Publish",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [700, 300]
+    },
+    {
+      "parameters": {},
+      "id": "b1a10201-0000-4000-8000-000000000004",
+      "name": "Result (no publish, no external action)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [940, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Prepare Distribution", "type": "main", "index": 0 }]] },
+    "Prepare Distribution": { "main": [[{ "node": "Stop Before Publish", "type": "main", "index": 0 }]] },
+    "Stop Before Publish": { "main": [[{ "node": "Result (no publish, no external action)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_201 Threads/Note Distribution. dry-run. Prepares drafts + UTM only. NEVER publish/activate." },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }]
+}
