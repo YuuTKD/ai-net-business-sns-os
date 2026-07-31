@@ -1,0 +1,51 @@
+{
+  "name": "DEV_RIO_103_Content_QA_Approval",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10103-0000-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_103 Content + QA + Approval — dry-run\n// 実運用ではAI生成を上流に置く。dry-runでは入力をそのまま検査。\nconst i = $input.first().json;\nreturn [{ json: {\n  content_id: i.content_id ?? 'ca-note-001',\n  media: i.media ?? 'note',\n  note_body: i.note_body ?? '（本文サンプル）AIで店舗の雑務を減らす手順…',\n  threads_post: i.threads_post ?? '雑務、AIに投げてます。手順はnoteに。',\n  cta: i.cta ?? 'Brainで7日分のテンプレを配布中',\n  affiliate: i.affiliate ?? null,\n  ad_disclosure: i.ad_disclosure ?? (i.affiliate ? 'PR' : null)\n} }];"
+      },
+      "id": "b1a10103-0000-4000-8000-000000000002",
+      "name": "Draft Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// QA: PR表記・アフィリ規約・空本文などの最低限チェック → PASS/FIX_REQUIRED/BLOCK\n// 本格判定は quality-reviewer / sns-post-quality-check に委譲（design/RISK_APPROVAL_POLICY.md）。\nconst o = $input.first().json;\nconst issues = [];\nif (o.affiliate && !o.ad_disclosure) issues.push('アフィリ掲載だがPR表記なし');\nif (!o.note_body || o.note_body.length < 20) issues.push('本文が短すぎ/空');\nif (!o.cta) issues.push('CTAなし');\nlet qa_status;\nif (o.affiliate && !o.ad_disclosure) qa_status = 'BLOCK';\nelse if (issues.length) qa_status = 'FIX_REQUIRED';\nelse qa_status = 'PASS';\nconst state = qa_status === 'PASS' ? 'WAITING_APPROVAL' : (qa_status === 'BLOCK' ? 'DEAD_LETTER_QUEUE' : 'FAILED_RETRYABLE');\nreturn [{ json: { ...o, qa_status, issues, state, owner_yes_no: 'PENDING',\n  note: 'dry-run。PASS→人間承認待ち(WAITING_APPROVAL)。公開はしない。' } }];"
+      },
+      "id": "b1a10103-0000-4000-8000-000000000003",
+      "name": "QA Check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {},
+      "id": "b1a10103-0000-4000-8000-000000000004",
+      "name": "Await Human Approval (no publish)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [920, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Draft Content", "type": "main", "index": 0 }]] },
+    "Draft Content": { "main": [[{ "node": "QA Check", "type": "main", "index": 0 }]] },
+    "QA Check": { "main": [[{ "node": "Await Human Approval (no publish)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_103 Content QA Approval. dry-run. Stops at WAITING_APPROVAL. Do NOT publish/activate." },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }]
+}
