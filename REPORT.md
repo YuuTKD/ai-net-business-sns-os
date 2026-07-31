@@ -22,6 +22,22 @@
 
 ## 報告ログ
 
+### REPORT-005: n8n へ DEV_RIO_001 をインポート・dry-run実行・検証成功
+- **日時**: 2026-07-31
+- **担当**: Claude Code（Browser Use / Claude in Chrome）
+- **関連タスク**: TASK-002 / Phase 2〜3（§16 n8n画面構築の初回実施）
+- **PR**: （作成後に記入）
+- **背景**: ゆうさんの承認（n8nインポートを進めてよいか＝Yes）を受け、`workflows/n8n/DEV_RIO_001_Opportunity_Intake.json` を実際の n8n ワークスペース `yuu1988.app.n8n.cloud` へ導入・検証した。
+- **実施内容**:
+  1. 新規Workflow作成 → JSONインポート（**ファイルダイアログはブラウザ拡張から操作不可のため、クリップボード貼り付け方式を採用**。`pbcopy`→キャンバスへ`cmd+v`で成功。手順書に反映済み）
+  2. 全5ノード（Manual Trigger → Define Opportunity → Classify → Build Job Record → Result）が正しくインポートされたことを確認
+  3. **Activateがオフ（`公開`トグルOFF）であることを確認**した上でManual Trigger dry-run実行 → 全ノード緑チェック・データ正常通過
+  4. 出力検証: `classification: EXECUTE_NOW`・`rationale`・`job_id: job-1` 等が **ローカルテスト(`tests/classify_opportunity.test.mjs` 9/9 PASS)の期待値と完全一致**
+  5. `…→ダウンロード`でJSONエクスポート → 正本(`workflows/n8n/`内のファイル)と**プログラム的に完全一致**（`active:false`・ノード構成・Classifyロジック全て同一）を確認
+- **影響範囲**: 外部アクションなし（下書き作成・投稿・送信は一切なし）。n8n上に検証用Workflowが1本保存された状態（Activate=false・実行回数消費は1のみ）。リポジトリ変更はドキュメント（本報告＋runbook追記）のみ。
+- **pre-deploy-qa 判定**: 対象外（Activateなし・本番影響なし）
+- **確認事項**: 残り5 Workflow（DEV_RIO_101〜301）も同じペースト方式でインポート可能と見込まれる。3回連続テスト（[[TEST_PLAN]]）はnote/Threads実投稿を伴う段階のため、その前にDEV_RIO_101〜301の同様検証を推奨。n8n無料試用は残り約13日。
+
 ### REPORT-003: ネット事業 実測棚卸しによる実績記載の訂正（§3 正確性）
 - **日時**: 2026-07-30
 - **担当**: Claude Code
