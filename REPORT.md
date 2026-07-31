@@ -22,7 +22,7 @@
 
 ## 報告ログ
 
-### REPORT-011: httpRequestノードのtypeVersion修正 + DEV_RIO_103にLINE通知を追加
+### REPORT-012: httpRequestノードのtypeVersion修正 + DEV_RIO_103にLINE通知を追加
 - **日時**: 2026-08-01
 - **担当**: Claude Code
 - **関連タスク**: TASK-003
