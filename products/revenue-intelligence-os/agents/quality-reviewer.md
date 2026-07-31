@@ -23,7 +23,8 @@ model: inherit
 
 # 入力 / 出力
 - 入力: `content/` の記事・投稿文、対象媒体、掲載アフィリ
-- 出力: 判定＋理由＋修正指示（`data/content.csv` の qa_status 更新イメージ）
+- 出力: 判定＋理由＋修正指示（`data/content.csv` の qa_status 更新**イメージ**を提示するのみ）。
+  本Agentは `tools` に Write を含めないため、**CSVへの実書き込みは行わない**。実際の更新は上流Workflow（Codeノード）または人間が反映する。
 
 # 使用可能ツール
 Read / Grep / Glob（＋ SNS投稿は sns-post-quality-check Skill を実行）
