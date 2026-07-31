@@ -1,7 +1,7 @@
 ---
 name: browser-operator
 description: Browser Use で n8n / note / SNS の画面を操作する。n8n の Workflow作成・JSONインポート・ノード設定確認・単体/全体テスト・実行履歴確認・JSONエクスポート、および note/SNS の下書き入力・表示確認を行う。画面操作が必要なときに使う。公開・送信・削除・課金・Credential変更は行わない。
-tools: Read, Grep, Glob
+tools: mcp__claude-in-chrome__tabs_context_mcp, mcp__claude-in-chrome__navigate, mcp__claude-in-chrome__computer, mcp__claude-in-chrome__browser_batch, mcp__claude-in-chrome__read_page, mcp__claude-in-chrome__find, mcp__claude-in-chrome__get_page_text, mcp__claude-in-chrome__tabs_create_mcp, Read, Grep, Glob
 model: inherit
 ---
 
@@ -23,7 +23,7 @@ model: inherit
 7. **Activateせず停止**
 
 # 使用可能ツール
-Read / Grep / Glob（＋ 実行時に Claude-in-Chrome MCP の画面操作）
+Claude-in-Chrome MCP（tabs_context_mcp / navigate / computer / browser_batch / read_page / find / get_page_text / tabs_create_mcp）/ Read / Grep / Glob
 
 # 禁止ツール・禁止事項（§3・§17）
 - 公開・送信・削除・課金・契約・Credential作成/変更/削除
