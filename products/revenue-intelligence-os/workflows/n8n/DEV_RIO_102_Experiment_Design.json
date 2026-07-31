@@ -11,41 +11,96 @@
     },
     {
       "parameters": {
-        "jsCode": "// DEV_RIO_102 Experiment Design — dry-run\n// design/REVENUE_LOOP_MVP.md / DATA_MODEL.md(experiments) 準拠。変更変数は必ず1つ。\nconst i = $input.first().json;\nreturn [{ json: {\n  experiment_id: i.experiment_id ?? 'exp-001',\n  audience_id: i.audience_id ?? 'aud-store-owner',\n  offer_id: i.offer_id ?? 'P-BRAIN-01',\n  angle: i.angle ?? 'AIで雑務を週3時間削減',\n  channel: i.channel ?? 'threads',\n  variable_changed: i.variable_changed ?? 'hook',\n  success_condition: i.success_condition ?? 'note遷移≥50 かつ Brain遷移≥5（14日）',\n  stop_condition: i.stop_condition ?? '≥1000表示 or ≥50クリックで明確な負',\n  min_data: i.min_data ?? '≥1000表示 or ≥50クリック',\n  judge_by: i.judge_by ?? null\n} }];"
+        "jsCode": "// DEV_RIO_102 Experiment Design — 実運用\n// DEV_RIO_101のevidence_pack（theme/audience/facts）を受け取る。未指定時のみデフォルト値を使う。\nconst i = $input.first().json;\nreturn [{ json: {\n  experiment_id: i.experiment_id ?? 'exp-001',\n  theme: i.theme ?? '店舗の固定費/決済手数料の見直し',\n  audience: i.audience ?? '小規模店舗経営者(飲食・美容)',\n  facts: i.facts ?? [],\n  judge_by: i.judge_by ?? null\n} }];"
       },
-      "id": "b1a10102-0000-4000-8000-000000000002",
-      "name": "Define Experiment",
+      "id": "b1a10102-0000-4000-8000-000000000008",
+      "name": "Collect Evidence Input",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [460, 300]
+      "position": [440, 300]
     },
     {
       "parameters": {
-        "jsCode": "// バリデーション: 変更変数が1つか、必須項目が揃っているか。\nconst o = $input.first().json;\nconst required = ['experiment_id','audience_id','offer_id','channel','variable_changed','success_condition','stop_condition'];\nconst missing = required.filter(k => !o[k]);\nconst singleVariable = typeof o.variable_changed === 'string' && !o.variable_changed.includes(',');\nconst valid = missing.length === 0 && singleVariable;\nreturn [{ json: { ...o, valid, missing, singleVariable, state: valid ? 'QA_REVIEW' : 'FAILED_RETRYABLE',\n  note: valid ? 'dry-run OK。experiments へ登録候補。' : `不備: ${missing.join(',') || '変更変数が複数'}` } }];"
+        "jsCode": "// 単一変数の成長実験を1件設計させるプロンプトを組み立てる。\nconst i = $input.first().json;\nconst factsText = (i.facts && i.facts.length) ? i.facts.map(f => `- ${f.claim}`).join('\\n') : '（参考情報なし）';\nconst prompt = `あなたは growth marketer です。以下の情報から、単一変数のみを変える成長実験を1つ設計してください（A/Bテストの片側案ではなく、次に試す1実験）。\n\nテーマ: ${i.theme}\n想定読者: ${i.audience}\n参考情報:\n${factsText}\n\n出力は必ず次のJSON形式のみで返してください（説明文・コードブロック記号なし）。\n{\n  \"audience_id\": \"string(半角英数とハイフンのみ)\",\n  \"offer_id\": \"string\",\n  \"angle\": \"string(訴求の切り口。日本語1文)\",\n  \"channel\": \"threads/note/x/instagram のいずれか\",\n  \"variable_changed\": \"hook/format/cta/timing のいずれか1つのみ\",\n  \"success_condition\": \"測定可能な成功条件(日本語)\",\n  \"stop_condition\": \"測定可能な停止条件(日本語)\",\n  \"min_data\": \"最低必要データ量(日本語)\"\n}\n\n注意:\n- variable_changed は必ず1つだけ選ぶこと（複数指定・カンマ区切り禁止）。\n- \"必ず売れる\"等の断定的な成果予測を書かないこと。`;\nconst anthropic_body = {\n  model: 'claude-sonnet-4-5',\n  max_tokens: 512,\n  messages: [ { role: 'user', content: prompt } ]\n};\nreturn [{ json: { ...i, design_prompt: prompt, anthropic_body } }];"
+      },
+      "id": "b1a10102-0000-4000-8000-000000000009",
+      "name": "Build Experiment Design Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.anthropic_body }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "b1a10102-0000-4000-8000-000000000010",
+      "name": "Anthropic Design Call",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [880, 300],
+      "credentials": {
+        "anthropicApi": {
+          "id": "",
+          "name": "Anthropic account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Anthropicの応答をパース。失敗時はデフォルト値にフォールバックし、design_sourceで明示する（捏造しない）。\nconst input = $input.first().json;\nconst o = $('Build Experiment Design Prompt').first().json;\nlet design = null;\nlet design_error = null;\n\nif (input.error) {\n  design_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    design = JSON.parse(cleaned);\n  } catch (e) {\n    design_error = 'parse_failed: ' + e.message;\n  }\n}\n\nconst fallback = {\n  audience_id: 'aud-store-owner',\n  offer_id: 'P-BRAIN-01',\n  angle: 'AIで雑務を週3時間削減',\n  channel: 'threads',\n  variable_changed: 'hook',\n  success_condition: 'note遷移≥50 かつ Brain遷移≥5（14日）',\n  stop_condition: '≥1000表示 or ≥50クリックで明確な負',\n  min_data: '≥1000表示 or ≥50クリック'\n};\nconst d = design || {};\n\nreturn [{ json: {\n  experiment_id: o.experiment_id,\n  audience_id: d.audience_id ?? fallback.audience_id,\n  offer_id: d.offer_id ?? fallback.offer_id,\n  angle: d.angle ?? fallback.angle,\n  channel: d.channel ?? fallback.channel,\n  variable_changed: d.variable_changed ?? fallback.variable_changed,\n  success_condition: d.success_condition ?? fallback.success_condition,\n  stop_condition: d.stop_condition ?? fallback.stop_condition,\n  min_data: d.min_data ?? fallback.min_data,\n  judge_by: o.judge_by ?? null,\n  design_source: design ? 'anthropic_ai' : 'fallback_default',\n  design_error\n} }];"
+      },
+      "id": "b1a10102-0000-4000-8000-000000000011",
+      "name": "Parse Experiment Design",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// バリデーション: 変更変数が1つか、必須項目が揃っているか。\nconst o = $input.first().json;\nconst required = ['experiment_id','audience_id','offer_id','channel','variable_changed','success_condition','stop_condition'];\nconst missing = required.filter(k => !o[k]);\nconst singleVariable = typeof o.variable_changed === 'string' && !o.variable_changed.includes(',');\nconst valid = missing.length === 0 && singleVariable;\nreturn [{ json: { ...o, valid, missing, singleVariable, state: valid ? 'QA_REVIEW' : 'FAILED_RETRYABLE',\n  note: valid ? `experiments へ登録候補（設計元: ${o.design_source}）` : `不備: ${missing.join(',') || '変更変数が複数'}` } }];"
       },
       "id": "b1a10102-0000-4000-8000-000000000003",
       "name": "Validate (single variable)",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [700, 300]
+      "position": [1320, 300]
     },
     {
       "parameters": {},
       "id": "b1a10102-0000-4000-8000-000000000004",
-      "name": "Result (dry-run, no external action)",
+      "name": "Result (no external action)",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
-      "position": [940, 300]
+      "position": [1540, 300]
     }
   ],
   "connections": {
-    "Manual Trigger": { "main": [[{ "node": "Define Experiment", "type": "main", "index": 0 }]] },
-    "Define Experiment": { "main": [[{ "node": "Validate (single variable)", "type": "main", "index": 0 }]] },
-    "Validate (single variable)": { "main": [[{ "node": "Result (dry-run, no external action)", "type": "main", "index": 0 }]] }
+    "Manual Trigger": { "main": [[{ "node": "Collect Evidence Input", "type": "main", "index": 0 }]] },
+    "Collect Evidence Input": { "main": [[{ "node": "Build Experiment Design Prompt", "type": "main", "index": 0 }]] },
+    "Build Experiment Design Prompt": { "main": [[{ "node": "Anthropic Design Call", "type": "main", "index": 0 }]] },
+    "Anthropic Design Call": { "main": [[{ "node": "Parse Experiment Design", "type": "main", "index": 0 }]] },
+    "Parse Experiment Design": { "main": [[{ "node": "Validate (single variable)", "type": "main", "index": 0 }]] },
+    "Validate (single variable)": { "main": [[{ "node": "Result (no external action)", "type": "main", "index": 0 }]] }
   },
   "settings": { "executionOrder": "v1" },
   "active": false,
   "pinData": {},
-  "meta": { "description": "DEV_RIO_102 Experiment Design. dry-run. Do NOT activate. Pending DEV_RIO_001 validation." },
+  "meta": { "description": "DEV_RIO_102 Experiment Design. Anthropic API（claude-sonnet-4-5）でDEV_RIO_101のevidence_packから単一変数の成長実験を1件設計。AI応答が取得/解析できない場合は安全なデフォルト値にフォールバックしdesign_sourceで明示。Manual Triggerのみ・active:false・外部投稿なし。要Anthropicクレジット。" },
   "tags": [{ "name": "DEV" }, { "name": "RIO" }]
 }
