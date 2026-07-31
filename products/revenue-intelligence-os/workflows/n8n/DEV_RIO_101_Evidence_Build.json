@@ -1,0 +1,51 @@
+{
+  "name": "DEV_RIO_101_Evidence_Build",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10101-0000-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_101 Evidence Build — dry-run\n// 実運用では上流(需要調査/MCP/検索)から差し込む。dry-runでは未取得は unknown。\n// schemas/evidence_pack.schema.json 準拠。推定/実測/unknown を分離。\nconst i = $input.first().json;\nreturn [{ json: {\n  experiment_id: i.experiment_id ?? 'exp-001',\n  theme: i.theme ?? '店舗の固定費/決済手数料の見直し',\n  audience: i.audience ?? '小規模店舗経営者(飲食・美容)',\n  raw_sources: i.raw_sources ?? []\n} }];"
+      },
+      "id": "b1a10101-0000-4000-8000-000000000002",
+      "name": "Collect Inputs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Evidence Pack 組み立て。未取得の事実は source_type='unknown'（捏造しない）。\nconst o = $input.first().json;\nconst execId = $execution?.id ?? 'dryrun';\nconst facts = (o.raw_sources && o.raw_sources.length)\n  ? o.raw_sources.map(s => ({ claim: s.claim, value: s.value ?? null, source_type: s.source_type ?? 'unknown', source_url: s.source_url ?? null }))\n  : [{ claim: '需要・競合・報酬条件は未取得', value: null, source_type: 'unknown', source_url: null }];\nreturn [{ json: {\n  evidence_pack_id: 'ev-' + execId,\n  experiment_id: o.experiment_id,\n  sources: (o.raw_sources || []).map(s => s.source_url).filter(Boolean),\n  facts,\n  notes: 'dry-run。実運用ではDEV_RIO_101が需要調査結果を投入。',\n  assets: []\n} }];"
+      },
+      "id": "b1a10101-0000-4000-8000-000000000003",
+      "name": "Assemble Evidence Pack",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {},
+      "id": "b1a10101-0000-4000-8000-000000000004",
+      "name": "Result (dry-run, no external action)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [920, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Collect Inputs", "type": "main", "index": 0 }]] },
+    "Collect Inputs": { "main": [[{ "node": "Assemble Evidence Pack", "type": "main", "index": 0 }]] },
+    "Assemble Evidence Pack": { "main": [[{ "node": "Result (dry-run, no external action)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_101 Evidence Build. dry-run. Do NOT activate. Pending DEV_RIO_001 validation." },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }]
+}
