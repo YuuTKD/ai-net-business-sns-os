@@ -22,6 +22,23 @@
 
 ## 報告ログ
 
+### REPORT-006: n8n へ残り5 Workflow（DEV_RIO_101〜301）をインポート・dry-run検証完了
+- **日時**: 2026-07-31
+- **担当**: Claude Code（Browser Use / Claude in Chrome）
+- **関連タスク**: TASK-002 / Phase 3（§15 全6 DEV Workflowの初回検証を完了）
+- **PR**: （作成後に記入）
+- **背景**: REPORT-005 で確立したクリップボード貼り付け方式を用い、残り5 Workflow（DEV_RIO_101_Evidence_Build / 102_Experiment_Design / 103_Content_QA_Approval / 201_Threads_Note_Distribution / 301_Performance_Revenue_Decision）を同様にインポート・dry-run実行した。
+- **実施内容**: 各Workflowについて (a)新規Workflow作成→JSONペーストインポート (b)ノード構成確認 (c)**`公開`(Activate)トグルがOFFであることを確認した上で**実行 (d)全ノード緑チェック・エラーなしを確認、を実施。
+  - `DEV_RIO_101_Evidence_Build`: 4ノード（手動トリガー→入力データ収集→証拠品パック組立→結果）正常実行
+  - `DEV_RIO_102_Experiment_Design`: 4ノード（→実験定義→単一変数検証→結果）正常実行
+  - `DEV_RIO_103_Content_QA_Approval`: 4ノード（→下書きコンテンツ→品質保証チェック→**人間の承認待ち（公開不可）**）正常実行
+  - `DEV_RIO_201_Threads_Note_Distribution`: 4ノード（→配布準備→**公開前に停止**→結果（公開なし・外部アクションなし））正常実行
+  - `DEV_RIO_301_Performance_Revenue_Decision`: 5ノード（→メトリクス取込→KPI/コスト計算→SCALE/ITERATE/HOLD/STOP判定→結果（提案のみ））正常実行・成功トースト確認
+- **最終確認**: n8n概要画面で **合計6 Workflow・製品実行(本番実行)0・本番実行失敗0** を確認。全Workflowが `active:false`（未Activate）のまま。外部アクション（投稿・送信・課金）は一切発生していない。
+- **影響範囲**: n8n上に検証用Workflow計6本が保存された状態（すべてActivate=false）。リポジトリ変更はドキュメント（本報告）のみ。実行回数消費は6のみ（無料枠1000中）。
+- **pre-deploy-qa 判定**: 対象外（Activateなし・本番影響なし）
+- **確認事項**: これで §15 の全DEV Workflow(6本)の初回インポート・動作検証が完了。次段階は本設計に沿った本番相当のデータ連携（実CSV読み込み等）または3回連続テスト（[[TEST_PLAN]]、note/Threads実投稿を伴うため人間承認が都度必要）。n8n無料試用は残り約13日、継続課金の要否は期限前に別途判断。
+
 ### REPORT-005: n8n へ DEV_RIO_001 をインポート・dry-run実行・検証成功
 - **日時**: 2026-07-31
 - **担当**: Claude Code（Browser Use / Claude in Chrome）
