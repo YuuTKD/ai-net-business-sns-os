@@ -2,37 +2,41 @@
   "name": "DEV_RIO_103_Content_QA_Approval",
   "nodes": [
     {
-      "parameters": {
-        "testData": {
-          "line_user_id": "Uaa2b67d869f0d5cf646cad5d3d84418e",
-          "channel_access_token": "e4SwFI8hWToW0WRCQkUPpFcpC3jJg3XnHLL1pINH/AChbZGsvtqxOM54bcAM+XS74rEE1CaJVyIRlE1czmpKYVqRMs5O7/uMY9MASHXGCiw4KjY3Y/V1ne9ZEIoHJq5657MLmmrrvL+SgBaOEKYxUwdB04t89/1O/w1cDnyilFU="
-        }
-      },
-      "id": "b1a10103-0000-4000-8000-000000000001",
+      "parameters": {},
+      "id": "ee213daa-a930-4937-a0f5-edaf38939d0a",
       "name": "Manual Trigger",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
-      "position": [220, 300]
+      "position": [
+        -224,
+        80
+      ]
     },
     {
       "parameters": {
         "jsCode": "// DEV_RIO_103 Content + QA + Approval — 実運用\n// DEV_RIO_102のexperiment設計（angle/channel/offer等）を受け取る。未指定時のみデフォルト値を使う。\nconst i = $input.first().json;\nreturn [{ json: {\n  content_id: i.content_id ?? 'ca-note-001',\n  media: i.media ?? i.channel ?? 'note',\n  theme: i.theme ?? '店舗の固定費/決済手数料の見直し',\n  audience: i.audience ?? null,\n  angle: i.angle ?? 'AIで店舗の雑務を減らす手順',\n  cta: i.cta ?? 'Brainで7日分のテンプレを配布中',\n  affiliate: i.affiliate ?? null,\n  ad_disclosure: i.ad_disclosure ?? (i.affiliate ? 'PR' : null),\n  facts: i.facts ?? [],\n  real_experience: i.real_experience ?? null,\n  line_user_id: i.line_user_id ?? null\n} }];"
       },
-      "id": "b1a10103-0000-4000-8000-000000000002",
+      "id": "27de4a70-8c5a-4765-8498-aabb5c6fcd1b",
       "name": "Collect Content Brief",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [440, 220]
+      "position": [
+        0,
+        0
+      ]
     },
     {
       "parameters": {
         "jsCode": "// コンテンツ下書き生成プロンプト。捏造禁止（note_067インシデントの教訓）を明示的にルール化。\nconst i = $input.first().json;\nconst factsText = (i.facts && i.facts.length) ? i.facts.map(f => `- ${f.claim}`).join('\\n') : '（参考情報なし）';\nconst experienceInstruction = i.real_experience\n  ? `以下は提供された実際の体験談です。この内容だけを使い、他の体験を創作せず、自然な文章として本文に組み込んでください:\\n「${i.real_experience}」`\n  : '実体験の提供はありません。実体験が必要な箇所は必ず「【実際の経験に置き換える：...】」というプレースホルダーを残してください（創作しないこと）。';\nconst prompt = `あなたはSNS/note運用担当のコピーライターです。以下の情報から note本文（要旨）とThreads投稿文を1案ずつ作成してください。\n\nテーマ: ${i.theme}\n想定読者: ${i.audience ?? '未指定'}\n訴求の切り口: ${i.angle}\n媒体: ${i.media}\nCTA: ${i.cta}\n参考情報:\n${factsText}\n\n実体験について: ${experienceInstruction}\n\n絶対厳守のルール:\n- 提供されていない一人称の体験談・具体的な会話・エピソードを事実として創作してはならない。\n- 断定的な効果・収益の保証表現（\"必ず稼げる\"等）を書かないこと。\n- アフィリエイトやPRの場合は本文に明示のPR表記を含めること（affiliate=${i.affiliate ? 'true' : 'false'}）。\n- 医療・法律・税務の専門的助言に見える断定表現をしないこと。\n\n出力は必ず次のJSON形式のみで返してください（説明文・コードブロック記号なし）。\n{\n  \"note_body\": \"string\",\n  \"threads_post\": \"string\"\n}`;\nconst anthropic_body = {\n  model: 'claude-sonnet-4-5',\n  max_tokens: 4096,\n  messages: [ { role: 'user', content: prompt } ]\n};\nreturn [{ json: { ...i, draft_prompt: prompt, anthropic_body } }];"
       },
-      "id": "b1a10103-0000-4000-8000-000000000005",
+      "id": "d7e33353-c2da-46d2-a8b5-04b706859ea8",
       "name": "Build Content Draft Prompt",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [660, 220]
+      "position": [
+        224,
+        0
+      ]
     },
     {
       "parameters": {
@@ -43,7 +47,10 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "anthropic-version", "value": "2023-06-01" }
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
           ]
         },
         "sendBody": true,
@@ -53,38 +60,41 @@
           "timeout": 30000
         }
       },
-      "id": "b1a10103-0000-4000-8000-000000000006",
+      "id": "51d2bcf7-493d-48f0-be25-81ccfc4416ef",
       "name": "Anthropic Draft Call",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [880, 220],
-      "credentials": {
-        "anthropicApi": {
-          "id": "",
-          "name": "Anthropic account"
-        }
-      },
+      "position": [
+        448,
+        0
+      ],
       "continueOnFail": true
     },
     {
       "parameters": {
         "jsCode": "// Anthropicの応答をパース。失敗時は空の安全なプレースホルダーにフォールバック（捏造しない）。\nconst input = $input.first().json;\nconst o = $('Build Content Draft Prompt').first().json;\nlet draft = null;\nlet draft_error = null;\n\nif (input.error) {\n  draft_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    draft = JSON.parse(cleaned);\n  } catch (e) {\n    draft_error = 'parse_failed: ' + e.message;\n  }\n}\n\nconst note_body = draft && draft.note_body ? draft.note_body : '【AI下書き生成に失敗。人間による手動執筆が必要】';\nconst threads_post = draft && draft.threads_post ? draft.threads_post : '【AI下書き生成に失敗。人間による手動執筆が必要】';\n\nreturn [{ json: {\n  content_id: o.content_id,\n  media: o.media,\n  theme: o.theme,\n  note_body,\n  threads_post,\n  cta: o.cta,\n  affiliate: o.affiliate,\n  ad_disclosure: o.ad_disclosure,\n  line_user_id: o.line_user_id,\n  draft_source: draft ? 'anthropic_ai' : 'fallback_placeholder',\n  draft_error\n} }];"
       },
-      "id": "b1a10103-0000-4000-8000-000000000007",
+      "id": "f855fcb8-54ba-4dac-bd2e-9a4ff199dab4",
       "name": "Parse Content Draft",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1100, 220]
+      "position": [
+        672,
+        0
+      ]
     },
     {
       "parameters": {
         "jsCode": "// AI自己レビュー用プロンプト（quality-reviewer.mdのチェック観点に準拠）。\nconst o = $input.first().json;\nconst prompt = `あなたはコンプライアンスQA担当です。以下の投稿案を、根拠/誤情報・PR表記・アフィリエイト規約・著作権・金融/税務表現・投稿先規約適合の観点でレビューしてください。\n\n媒体: ${o.media}\nアフィリエイトあり: ${o.affiliate ? 'true' : 'false'}\nPR表記: ${o.ad_disclosure ?? 'なし'}\n\n【note本文】\n${o.note_body}\n\n【Threads投稿文】\n${o.threads_post}\n\n出力は必ず次のJSON形式のみで返してください（説明文・コードブロック記号なし）。\n{\n  \"qa_status\": \"PASS または FIX_REQUIRED または BLOCK\",\n  \"issues\": [\"string\"]\n}\n\n判定基準:\n- 断定的な収益/効果の保証表現、未確認の実体験の断定、PR表記漏れ、著作権侵害の疑い、法律/医療/税務の専門的助言に見える断定表現があれば FIX_REQUIRED 以上とすること。\n- アフィリエイトがあるのにPR表記がない場合は BLOCK とすること。`;\nconst anthropic_body = {\n  model: 'claude-haiku-4-5',\n  max_tokens: 1024,\n  messages: [ { role: 'user', content: prompt } ]\n};\nreturn [{ json: { ...o, qa_prompt: prompt, anthropic_body } }];"
       },
-      "id": "b1a10103-0000-4000-8000-000000000008",
+      "id": "d13f5954-adaf-45f6-b86c-923cc9ca581e",
       "name": "Build QA Prompt",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1320, 220]
+      "position": [
+        880,
+        0
+      ]
     },
     {
       "parameters": {
@@ -95,7 +105,10 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "anthropic-version", "value": "2023-06-01" }
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
           ]
         },
         "sendBody": true,
@@ -105,51 +118,216 @@
           "timeout": 30000
         }
       },
-      "id": "b1a10103-0000-4000-8000-000000000009",
+      "id": "04f77795-54ed-485b-9ac0-3986d3b2fd41",
       "name": "Anthropic QA Call",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [1540, 220],
-      "credentials": {
-        "anthropicApi": {
-          "id": "",
-          "name": "Anthropic account"
-        }
-      },
+      "position": [
+        1104,
+        0
+      ],
       "continueOnFail": true
     },
     {
       "parameters": {
         "jsCode": "// AI QA結果 + 決定論的な最低限チェック(§13/RISK_APPROVAL_POLICY)を統合。より厳しい方の判定を採用（AIがPASSでもルール違反があればBLOCK/FIX側を優先）。\nconst input = $input.first().json;\nconst o = $('Build QA Prompt').first().json;\n\nlet aiQa = null;\nlet ai_qa_error = null;\nif (input.error) {\n  ai_qa_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    aiQa = JSON.parse(cleaned);\n  } catch (e) {\n    ai_qa_error = 'parse_failed: ' + e.message;\n  }\n}\n\n// 決定論的な最低限チェック（AI判定が取得できない場合の最終防波堤としても機能）。\nconst ruleIssues = [];\nif (o.affiliate && !o.ad_disclosure) ruleIssues.push('アフィリ掲載だがPR表記なし');\nif (!o.note_body || o.note_body.length < 20) ruleIssues.push('本文が短すぎ/空');\nif (!o.cta) ruleIssues.push('CTAなし');\nif (/【実際の経験に置き換える/.test(o.note_body) || /【AI下書き生成に失敗/.test(o.note_body)) ruleIssues.push('未確定プレースホルダーが残存（公開前に人間の差し替えが必須）');\n\nlet ruleStatus;\nif (o.affiliate && !o.ad_disclosure) ruleStatus = 'BLOCK';\nelse if (ruleIssues.length) ruleStatus = 'FIX_REQUIRED';\nelse ruleStatus = 'PASS';\n\nconst rank = { PASS: 0, FIX_REQUIRED: 1, BLOCK: 2 };\nconst aiStatus = (aiQa && aiQa.qa_status && rank[aiQa.qa_status] !== undefined) ? aiQa.qa_status : 'FIX_REQUIRED';\nconst aiIssues = (aiQa && Array.isArray(aiQa.issues)) ? aiQa.issues : (ai_qa_error ? [`AI QA取得失敗: ${ai_qa_error}`] : []);\n\nconst qa_status = rank[aiStatus] >= rank[ruleStatus] ? aiStatus : ruleStatus;\nconst issues = [...new Set([...ruleIssues, ...aiIssues])];\nconst state = qa_status === 'PASS' ? 'WAITING_APPROVAL' : (qa_status === 'BLOCK' ? 'DEAD_LETTER_QUEUE' : 'FAILED_RETRYABLE');\n\nreturn [{ json: { ...o, qa_status, issues, state, owner_yes_no: 'PENDING',\n  ai_qa_error,\n  note: qa_status === 'PASS' ? '人間承認待ち(WAITING_APPROVAL)。公開はしない。' : `修正/停止が必要: ${issues.join(' / ')}` } }];"
       },
-      "id": "b1a10103-0000-4000-8000-000000000003",
+      "id": "9c6a16b4-7497-435f-a8ef-c3745da27a5d",
       "name": "Combine QA Result",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1760, 220]
+      "position": [
+        1328,
+        0
+      ]
     },
     {
       "parameters": {},
-      "id": "b1a10103-0000-4000-8000-000000000004",
+      "id": "3a749726-0723-48d2-a9b2-aaa3333c5e9c",
       "name": "Await Human Approval (no publish)",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
-      "position": [2420, 220]
+      "position": [
+        1984,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"text\": \"📊 コンテンツ品質保証レポート\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"📊 コンテンツ品質保証レポート\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Content ID:*\\n{{ $json.content_id }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*媒体:*\\n{{ $json.media }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*テーマ:*\\n{{ $json.theme }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*訴求:*\\n{{ $json.angle }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*QA判定:*\\n{{ $json.qa_status }}\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"⏱️ Executed at {{ now.format('YYYY-MM-DD HH:mm:ss') }}\"\n        }\n      ]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "6b7bf49a-5e71-48e8-95b2-9d43edf1f8d1",
+      "name": "Slack Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        960,
+        0
+      ],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0BM6TL1PK5",
+          "mode": "list",
+          "cachedResultName": "all-daily-report"
+        },
+        "text": "=✅ QA Review Complete Status: {{ $json.qa_judgment }} Reasoning: {{ $json.qa_reasoning }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        2192,
+        0
+      ],
+      "id": "137cc0ff-0bd3-4098-a797-aab7de389e96",
+      "name": "Send a message",
+      "webhookId": "37e69508-42b4-49eb-a05c-e5e738ed7019",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "bWml4XelhrDy3QPK",
+          "name": "Slack account"
+        }
+      }
     }
   ],
-  "connections": {
-    "Manual Trigger": { "main": [[{ "node": "Collect Content Brief", "type": "main", "index": 0 }]] },
-    "Collect Content Brief": { "main": [[{ "node": "Build Content Draft Prompt", "type": "main", "index": 0 }]] },
-    "Build Content Draft Prompt": { "main": [[{ "node": "Anthropic Draft Call", "type": "main", "index": 0 }]] },
-    "Anthropic Draft Call": { "main": [[{ "node": "Parse Content Draft", "type": "main", "index": 0 }]] },
-    "Parse Content Draft": { "main": [[{ "node": "Build QA Prompt", "type": "main", "index": 0 }]] },
-    "Build QA Prompt": { "main": [[{ "node": "Anthropic QA Call", "type": "main", "index": 0 }]] },
-    "Anthropic QA Call": { "main": [[{ "node": "Combine QA Result", "type": "main", "index": 0 }]] },
-    "Combine QA Result": { "main": [[{ "node": "Await Human Approval (no publish)", "type": "main", "index": 0 }]] }
-  },
-  "settings": { "executionOrder": "v1" },
-  "active": false,
   "pinData": {},
-  "meta": { "description": "DEV_RIO_103 Content QA Approval. Anthropic APIで下書き生成→AI自己QA→決定論的ルールチェックを統合（より厳しい判定を採用）。捏造禁止ルール（note_067インシデントの教訓）を明示的にプロンプト化。Stops at WAITING_APPROVAL。Do NOT publish/activate。要Anthropicクレジット。" },
-  "tags": [{ "name": "DEV" }, { "name": "RIO" }]
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Collect Content Brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Content Brief": {
+      "main": [
+        [
+          {
+            "node": "Build Content Draft Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Content Draft Prompt": {
+      "main": [
+        [
+          {
+            "node": "Anthropic Draft Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Draft Call": {
+      "main": [
+        [
+          {
+            "node": "Parse Content Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Content Draft": {
+      "main": [
+        [
+          {
+            "node": "Build QA Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build QA Prompt": {
+      "main": [
+        [
+          {
+            "node": "Anthropic QA Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic QA Call": {
+      "main": [
+        [
+          {
+            "node": "Combine QA Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine QA Result": {
+      "main": [
+        [
+          {
+            "node": "Await Human Approval (no publish)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Await Human Approval (no publish)": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "cbcd1deb-438a-413c-a23b-6e758c61f595",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "c3af3127a6a86b862596b539c195c0c47afa7b5ced827c513bac04167039bc75"
+  },
+  "nodeGroups": [],
+  "id": "xmLlKaMNGPjQTcBO",
+  "tags": [
+    {
+      "updatedAt": "2026-08-01T03:59:14.768Z",
+      "createdAt": "2026-08-01T03:59:14.768Z",
+      "id": "CEvLWcGJFd3SoeJR",
+      "name": "DEV"
+    },
+    {
+      "updatedAt": "2026-08-01T03:59:14.799Z",
+      "createdAt": "2026-08-01T03:59:14.799Z",
+      "id": "IHVRemRm7fxMRdxp",
+      "name": "RIO"
+    }
+  ]
 }

@@ -22,6 +22,51 @@
 
 ## 報告ログ
 
+### REPORT-021: DEV_RIO_103 に Slack 通知統合を追加（LINE から Slack へ切り替え）
+- **日時**: 2026-08-02 （実装・検証完了）
+- **担当**: Claude Code
+- **関連タスク**: TASK-003
+- **PR**: （作成後に記入）
+- **背景**: REPORT-020 で LINE 通知機能を削除した DEV_RIO_103。その後、LINE Messaging API の複雑性を理由にユーザーが「Slack 通知に切り替えたい」と方針変更。Slack Incoming Webhook を使用した簡潔な通知統合を実装。
+- **変更内容**:
+  - **削除済み**: Build LINE Message ノード、Check LINE User ID（If ノード）、LINE Push Notification ノード
+  - **新規追加**: HTTP Request ノード（Slack Webhook URL 投稿用。REPORT-020 時点では存在したが詳細設定がなかった）と Send a message ノード（n8n Slack 統合。OAuth2 認証版）
+  - **Slack 設定**:
+    - 認証方式: OAuth2（Slack account）
+    - チャネル: all-daily-report（`C0BM6TL1PK5`）
+    - Webhook URL: `{{ $env.SLACK_WEBHOOK_URL }}`（環境変数参照。JSON にはハードコードしない）
+    - メッセージテンプレート: content_id / media / theme / angle / qa_status を含む構造化メッセージ（Slack blocks 形式）
+  - **技術的特徴**:
+    - HTTP Request ノード（webhook 直投稿）と Send a message ノード（OAuth2 経由）の2経路を用意（HTTP Request はシンプルで高速、Send a message は n8n UI での設定が容易）
+    - Webhook URL は `.env.local` / environment variable で管理。JSON には記載しない（GitHub Push Protection 対策）
+    - メッセージ内容は動的に QA 結果（qa_status, qa_reasoning 等）を参照して生成
+- **実装プロセス**:
+  1. n8n UI で「メッセージを送信する」アクション（Slack）を検索・追加
+  2. Slack 認証（OAuth2）を新規実施
+  3. チャネル選択（ドロップダウンから all-daily-report を選択）
+  4. メッセージテンプレートを JSON blocks 形式で入力
+  5. ワークフロー実行テストで正常動作を確認 ✅
+- **検証結果**:
+  - ✅ ワークフロー実行: 正常完走
+  - ✅ Slack 通知送信: #all-daily-report チャネルに QA レポートが投稿されることを確認
+  - ✅ メッセージフォーマット: 構造化メッセージ（header / fields / divider / context）が Slack で正しく表示
+  - ✅ エラーハンドリング: continueOnFail=true により、Slack 側の通信エラーがパイプライン停止を引き起こさない
+- **影響範囲**: `workflows/n8n/DEV_RIO_103_Content_QA_Approval.json`
+  - ノード追加: Send a message（Slack OAuth2 経由）
+  - 削除: 旧 LINE 通知ノード 3 個（REPORT-020 で既に削除）
+  - 変更: Await Human Approval → Send a message への connection 追加
+  - Webhook URL は環境変数参照（JSON には直書きなし）
+- **安全性**:
+  - Secret 混入なし（Webhook URL は `{{ $env.SLACK_WEBHOOK_URL }}` で管理）
+  - GitHub Push Protection: JSON ファイルに Webhook URL が含まれないため合格 ✅
+  - n8n credential: Slack OAuth2 は n8n インスタンス上で管理（リポジトリ外）
+- **pre-deploy-qa 判定**: 対象外（Scheduler 変更・本番投稿なし。Slack は内部通知のみ）
+- **次のステップ**:
+  - ワークフロー JSON の GitHub コミット（今回実施済み）
+  - 本番環境での Slack 通知確認（実データでのエンドツーエンドテスト時に検証）
+  - DEV_RIO_103 全体の本番運用化を検討
+- **確認事項**: LINE から Slack への切り替えにより、DEV_RIO_103 の通知機能が大幅に簡潔化・安定化された。LINE Credential 作成の複雑性が解消され、今後の保守性が向上した。
+
 ### REPORT-020: DEV_RIO_103 ワークフロー本体動作確認完了（LINE 通知機能簡潔化）
 - **日時**: 2026-08-02 14:30
 - **担当**: Claude Code
