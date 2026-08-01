@@ -12,7 +12,10 @@
       "name": "Manual Trigger",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
-      "position": [220, 300]
+      "position": [
+        220,
+        300
+      ]
     },
     {
       "parameters": {
@@ -22,7 +25,10 @@
       "name": "Collect Content Brief",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [440, 220]
+      "position": [
+        440,
+        220
+      ]
     },
     {
       "parameters": {
@@ -32,7 +38,10 @@
       "name": "Build Content Draft Prompt",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [660, 220]
+      "position": [
+        660,
+        220
+      ]
     },
     {
       "parameters": {
@@ -43,7 +52,10 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "anthropic-version", "value": "2023-06-01" }
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
           ]
         },
         "sendBody": true,
@@ -57,7 +69,10 @@
       "name": "Anthropic Draft Call",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [880, 220],
+      "position": [
+        880,
+        220
+      ],
       "credentials": {
         "anthropicApi": {
           "id": "",
@@ -74,7 +89,10 @@
       "name": "Parse Content Draft",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1100, 220]
+      "position": [
+        1100,
+        220
+      ]
     },
     {
       "parameters": {
@@ -84,7 +102,10 @@
       "name": "Build QA Prompt",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1320, 220]
+      "position": [
+        1320,
+        220
+      ]
     },
     {
       "parameters": {
@@ -95,7 +116,10 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "anthropic-version", "value": "2023-06-01" }
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
           ]
         },
         "sendBody": true,
@@ -109,7 +133,10 @@
       "name": "Anthropic QA Call",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [1540, 220],
+      "position": [
+        1540,
+        220
+      ],
       "credentials": {
         "anthropicApi": {
           "id": "",
@@ -126,7 +153,10 @@
       "name": "Combine QA Result",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1760, 220]
+      "position": [
+        1760,
+        220
+      ]
     },
     {
       "parameters": {},
@@ -134,22 +164,117 @@
       "name": "Await Human Approval (no publish)",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
-      "position": [2420, 220]
+      "position": [
+        2420,
+        220
+      ]
     }
   ],
   "connections": {
-    "Manual Trigger": { "main": [[{ "node": "Collect Content Brief", "type": "main", "index": 0 }]] },
-    "Collect Content Brief": { "main": [[{ "node": "Build Content Draft Prompt", "type": "main", "index": 0 }]] },
-    "Build Content Draft Prompt": { "main": [[{ "node": "Anthropic Draft Call", "type": "main", "index": 0 }]] },
-    "Anthropic Draft Call": { "main": [[{ "node": "Parse Content Draft", "type": "main", "index": 0 }]] },
-    "Parse Content Draft": { "main": [[{ "node": "Build QA Prompt", "type": "main", "index": 0 }]] },
-    "Build QA Prompt": { "main": [[{ "node": "Anthropic QA Call", "type": "main", "index": 0 }]] },
-    "Anthropic QA Call": { "main": [[{ "node": "Combine QA Result", "type": "main", "index": 0 }]] },
-    "Combine QA Result": { "main": [[{ "node": "Await Human Approval (no publish)", "type": "main", "index": 0 }]] }
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Collect Content Brief",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Content Brief": {
+      "main": [
+        [
+          {
+            "node": "Build Content Draft Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Content Draft Prompt": {
+      "main": [
+        [
+          {
+            "node": "Anthropic Draft Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Draft Call": {
+      "main": [
+        [
+          {
+            "node": "Parse Content Draft",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Content Draft": {
+      "main": [
+        [
+          {
+            "node": "Build QA Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build QA Prompt": {
+      "main": [
+        [
+          {
+            "node": "Anthropic QA Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic QA Call": {
+      "main": [
+        [
+          {
+            "node": "Combine QA Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine QA Result": {
+      "main": [
+        [
+          {
+            "node": "Await Human Approval (no publish)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
   },
-  "settings": { "executionOrder": "v1" },
+  "settings": {
+    "executionOrder": "v1"
+  },
   "active": false,
   "pinData": {},
-  "meta": { "description": "DEV_RIO_103 Content QA Approval. Anthropic APIで下書き生成→AI自己QA→決定論的ルールチェックを統合（より厳しい判定を採用）。捏造禁止ルール（note_067インシデントの教訓）を明示的にプロンプト化。Stops at WAITING_APPROVAL。Do NOT publish/activate。要Anthropicクレジット。" },
-  "tags": [{ "name": "DEV" }, { "name": "RIO" }]
+  "meta": {
+    "description": "DEV_RIO_103 Content QA Approval. Anthropic APIで下書き生成→AI自己QA→決定論的ルールチェックを統合（より厳しい判定を採用）。捏造禁止ルール（note_067インシデントの教訓）を明示的にプロンプト化。Stops at WAITING_APPROVAL。Do NOT publish/activate。要Anthropicクレジット。"
+  },
+  "tags": [
+    {
+      "name": "DEV"
+    },
+    {
+      "name": "RIO"
+    }
+  ],
+  "id": "e3b0a410-3159-4c57-8385-f2dca9509818"
 }
