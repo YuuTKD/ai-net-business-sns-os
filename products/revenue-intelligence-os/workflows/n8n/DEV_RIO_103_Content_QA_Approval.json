@@ -135,24 +135,6 @@
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
       "position": [2420, 220]
-    },
-    {
-      "parameters": {
-        "channel": "#daily-report",
-        "text": "=`✅ DEV_RIO_103 実行完了（QA済み）\n📝 ドラフト: {{$json.note_body.substring(0, 50)}}...\n✔️ QA判定: {{$json.qa_status}}\n🔗 詳細: https://yuu1988.app.n8n.cloud/workflow/dsF9UV8ENKMmawrI`",
-        "otherOptions": {}
-      },
-      "id": "b1a10103-0000-4000-8000-000000000010",
-      "name": "Send to Slack",
-      "type": "n8n-nodes-base.slack",
-      "typeVersion": 3.0,
-      "position": [2650, 220],
-      "credentials": {
-        "slackApi": {
-          "id": "",
-          "name": "Slack account"
-        }
-      }
     }
   ],
   "connections": {
@@ -163,8 +145,7 @@
     "Parse Content Draft": { "main": [[{ "node": "Build QA Prompt", "type": "main", "index": 0 }]] },
     "Build QA Prompt": { "main": [[{ "node": "Anthropic QA Call", "type": "main", "index": 0 }]] },
     "Anthropic QA Call": { "main": [[{ "node": "Combine QA Result", "type": "main", "index": 0 }]] },
-    "Combine QA Result": { "main": [[{ "node": "Await Human Approval (no publish)", "type": "main", "index": 0 }]] },
-    "Await Human Approval (no publish)": { "main": [[{ "node": "Send to Slack", "type": "main", "index": 0 }]] }
+    "Combine QA Result": { "main": [[{ "node": "Await Human Approval (no publish)", "type": "main", "index": 0 }]] }
   },
   "settings": { "executionOrder": "v1" },
   "active": false,
