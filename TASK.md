@@ -57,6 +57,20 @@
 - **期限**: 2026-07-08
 - **備考**: CLAUDE.md / AGENTS.md / TEAM_RULES.md / TASK.md / REPORT.md / .github/pull_request_template.md の6ファイルを新規作成
 
+### TASK-004: DEV_RIO_101/102/103 の本番化準備（パイプライン全体）
+- **担当**: Claude Code
+- **ステータス**: IN_PROGRESS
+- **ブランチ**: feature/rio-production-readiness
+- **PR**: （作成後に記入）
+- **期限**: 2026-08-10
+- **備考**: TASK-003（Slack通知統合）の完了後、DEV_RIO_101→102→103の3ワークフロー全体を本番環境として機能させるための準備。以下を順次実施：
+  1. ワークフロー JSON の最新化・リポジトリ登録（n8n UI での設定確認）
+  2. 環境変数管理の確認（Anthropic API key・Slack Webhook URL・その他 Credential）
+  3. n8n インスタンスの本番化計画（active フラグ ON・スケジューラー設定・ロギング）
+  4. pre-deploy-qa による最終安全確認
+  5. GO_LIVE_RUNBOOK に基づいた本番デプロイ手順の確認
+  6. 実データでのエンドツーエンドテスト（3ワークフロー通し実行）
+
 ---
 
 <!-- 新しいタスクは上記フォーマットに従ってここに追加する -->
