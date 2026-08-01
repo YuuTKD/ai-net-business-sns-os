@@ -22,6 +22,18 @@
 
 ## 報告ログ
 
+### REPORT-025: DEV_RIO_103 の Anthropicクレデンシャル欠落を修正（再インポート時に401になる不具合）
+- **日時**: 2026-08-02
+- **担当**: Claude Code
+- **関連タスク**: TASK-016
+- **PR**: fix/rio-103-credentials（レビュー待ち・未マージ）
+- **背景**: 構造検証ツール（validate_workflows_structure.mjs）の警告を追跡して発見。
+- **不具合**: DEV_RIO_103 の「Anthropic Draft Call」「Anthropic QA Call」は `authentication: predefinedCredentialType` / `nodeCredentialType: anthropicApi` を宣言しているが、`credentials` バインドが空だった。ライブ環境ではUIで手動選択済みのため動作していたが、**リポジトリのJSONを再インポートするとクレデンシャル未選択となり、Anthropic呼び出しが401で失敗**する（101・700系は明示バインド済みで再インポート可能）。
+- **修正**: 101/700系と同一の anthropicApi クレデンシャル（id: gSjvXXaj0OLWBIza / name: Anthropic account）を両ノードに明示バインド。
+- **検証**: 103 JSON構文OK / 構造検証の該当2警告が解消（残る警告は孤立ノード1件のみ）/ 既存・700系テスト全PASS（回帰なし）。実効化には n8n 再インポートが必要。
+- **影響範囲**: DEV_RIO_103 の2 HTTPノードの credentials 参照のみ。ロジック・フロー不変。
+- **pre-deploy-qa 判定**: 対象外（ワークフローJSONのクレデンシャル参照追加のみ。Secret値の直書きなし＝n8n内クレデンシャルIDの参照）。
+
 ### REPORT-024: DEV_RIO_103 Slack通知のフィールド不一致を修正（QA状態が空欄で投稿される不具合）
 - **日時**: 2026-08-02
 - **担当**: Claude Code
