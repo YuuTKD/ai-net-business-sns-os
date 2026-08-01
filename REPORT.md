@@ -22,6 +22,33 @@
 
 ## 報告ログ
 
+### REPORT-018: DEV_RIO_101/102/103 通し実行テスト（実体験フィールド対応検証）
+- **日時**: 2026-08-01 23:30〜23:45
+- **担当**: Claude Code
+- **関連タスク**: TASK-003
+- **PR**: （作成後に記入）
+- **背景**: REPORT-017 で real_experience フィールド対応を追加した DEV_RIO_103 と、その前のパイプライン段（DEV_RIO_101 需要リサーチ → DEV_RIO_102 実験設計 → DEV_RIO_103 コンテンツ下書き+QA）の全体を通しで実行し、real_experience 対応の実装が正しく機能していることを検証するテスト。
+- **実行内容**:
+  1. **DEV_RIO_101_Evidence_Build**: Manual Trigger 実行（デフォルト入力値使用）
+     - 5秒で完走、全ノード緑チェック（1 item 通過）
+     - テーマ: デフォルト「店舗の固定費/決済手数料の見直し」
+     - リサーチプロンプト組立 → Anthropic API（Haiku）呼び出し → 応答パース → 証拠パック組立
+  2. **DEV_RIO_102_Experiment_Design**: Manual Trigger 実行（デフォルト入力値使用）
+     - 5秒で完走、全ノード緑チェック（1 item 通過）
+     - 実験設計プロンプト組立 → Anthropic API（Haiku）呼び出し → 応答パース → バリデーション
+  3. **DEV_RIO_103_Content_QA_Approval**: Manual Trigger 実行（デフォルト入力値使用）
+     - **31.221秒で正常完走**、全ノード完走
+     - コンテンツブリーフ収集 → 下書きプロンプト組立 → Anthropic API（Sonnet）呼び出し（記事本文生成） → 下書きパース → QA プロンプト組立 → Anthropic API（Haiku）呼び出し（自己QA）→ QA 結果統合 → LINE 通知（Credential 未設定により失敗、continueOnFail=true で継続）
+- **検証結果**: 
+  - ✅ 全3ワークフロー通し実行で正常完走
+  - ✅ real_experience フィールドが流通している（デフォルト値は null のため、プレースホルダー動作の従来ロジック）
+  - ✅ Haiku/Sonnet モデル混在設定が正常に機能（DEV_RIO_101/102 は Haiku、DEV_RIO_103 下書きは Sonnet で実行）
+  - ✅ max_tokens 修正（REPORT-015）が効いており、DEV_RIO_103 で完全な記事下書き生成が成功
+  - ✅ LINE 通知ノードは Credential 未設定のため意図的に失敗するが、continueOnFail=true による安全な継続が確認
+- **影響範囲**: ワークフロー実行のみ。ファイル変更なし。Anthropic API クレジット消費少量（Haiku 2回、Sonnet 1回）。
+- **pre-deploy-qa 判定**: 対象外（Manual Trigger テスト実行のみ。Scheduler 変更・本番投稿なし）
+- **確認事項**: real_experience フィールドがデフォルト値で null となるため、実データでの real_experience 引き渡しテストは別途必要（Manual Trigger の Input パラメータに real_experience を指定して実行）。今回のテストは「ワークフロー構造と AI モデル設定が正常に機能する」ことまで確認。実体験を含む記事生成テストは、ゆうさんが real_experience を提供してから改めて実行することを推奨。
+
 ### REPORT-017: DEV_RIO_103に実体験(real_experience)の入力対応を追加
 - **日時**: 2026-08-01
 - **担当**: Claude Code
