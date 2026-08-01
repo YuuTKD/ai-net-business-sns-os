@@ -103,6 +103,95 @@
      - 実データでの 1 週間試験運用
      - GO_LIVE_RUNBOOK 実行
 
+### TASK-006: 2 並行トラック・4 週間本番化戦闘（¥1M 月間売上達成）
+- **担当**: Claude Code / ゆうさん
+- **ステータス**: IN_PROGRESS
+- **ブランチ**: feature/parallel-monetization-execution
+- **PR**: （本番化実行中）
+- **期限**: 2026-08-29（4 週間後）
+- **備考**: PARALLEL_EXECUTION_ROADMAP.md に基づき、トラック A（グレードアップ）+ トラック B（新規チャネル 5 つ）を並行実行。Week 4 終了時点で月間売上 ¥1.3M 達成を目標。
+  - **トラック A（グレードアップ）**: DEV_RIO_101-403 本番化 + 売上ルート確認 + Lead/Funnel/Retention 自動化（DEV_RIO_601-603）
+    - Week 1: 本番化実施 + 売上検証（¥300k → ¥350k）
+    - Week 2: Lead/Funnel 自動化（¥350k → ¥500k）
+    - Week 3: Retention 自動化 + DEV_RIO_301/402 拡張（¥500k → ¥650k）
+    - Week 4: KPI 検証・ダッシュボード確立（¥650k → ¥750k）
+  - **トラック B（新規チャネル）**: 5 つのワークフロー段階的実装
+    - Phase 1（Week 1-2）: DEV_RIO_702/701/705 同時実装（+¥400k）
+    - Phase 2（Week 3）: DEV_RIO_704 実装（複合効果 +¥120k）
+    - Phase 3（Month 2）: DEV_RIO_703 YouTube 自動化実装
+
+### TASK-007: DEV_RIO_702 実装（X 投稿自動化・広告収益化）
+- **担当**: Claude Code
+- **ステータス**: IN_PROGRESS
+- **ブランチ**: feature/x-monetization-automation
+- **PR**: （作成待ち）
+- **期限**: 2026-08-07（5 日以内）
+- **備考**: 毎日 3 本の X（Twitter）投稿を自動生成・自動投稿。インプレッション数 × ¥0.0001-0.0002 の広告収益化。期待売上 ¥150-300k/月。
+
+### TASK-008: DEV_RIO_701 実装（アフィリエイト統合・楽天・Amazon）
+- **担当**: Claude Code
+- **ステータス**: IN_PROGRESS
+- **ブランチ**: feature/affiliate-integration
+- **PR**: （作成待ち）
+- **期限**: 2026-08-07（5 日以内）
+- **備考**: note・Threads のコンテンツに楽天・Amazon アフィリエイトリンクを自動埋め込み。クリック数・購買数・紹介報酬を自動計測。期待売上 ¥30-50k/月。
+
+### TASK-009: DEV_RIO_705 実装（Threads × 楽天アフィリエイト）
+- **担当**: Claude Code
+- **ステータス**: IN_PROGRESS
+- **ブランチ**: feature/threads-rakuten-affiliate
+- **PR**: （作成待ち）
+- **期限**: 2026-08-06（4 日以内）
+- **備考**: Threads 投稿に楽天アフィリエイトリンクを自動リプライで提案。SNS ユーザーからの直接購買を促進。期待売上 ¥50-150k/月。
+
+### TASK-010: DEV_RIO_601 実装（Lead Generation 自動化）
+- **担当**: Claude Code
+- **ステータス**: TODO
+- **ブランチ**: feature/lead-generation-automation
+- **PR**: （作成待ち）
+- **期限**: 2026-08-14（Week 2）
+- **備考**: コンテンツ投稿時に自動で CTA を埋め込み、メール登録フォームに自動リンク。登録者を Google Sheets + Convertkit に自動記録。トラッキング自動化。
+
+### TASK-011: DEV_RIO_602 実装（Sales Funnel メール自動化）
+- **担当**: Claude Code
+- **ステータス**: TODO
+- **ブランチ**: feature/sales-funnel-automation
+- **PR**: （作成待ち）
+- **期限**: 2026-08-14（Week 2）
+- **備考**: Lead → 購買への 3 段階メール自動化（Day 1 ウェルカム、Day 3 事例、Day 5 限定割）。A/B テスト自動実施。転換率 2-3x 向上目標。
+
+### TASK-012: DEV_RIO_603 実装（Retention フォローアップ自動化）
+- **担当**: Claude Code
+- **ステータス**: TODO
+- **ブランチ**: feature/retention-automation
+- **PR**: （作成待ち）
+- **期限**: 2026-08-21（Week 3）
+- **備考**: 購買後フォローアップ（Day 0/7/30/90）・リピート割提案・Churn 防止。リピート率 30-50% 目標。LTV 2-2.5x 向上。
+
+### TASK-013: DEV_RIO_704 実装（Threads × note クロスプラットフォーム）
+- **担当**: Claude Code
+- **ステータス**: TODO
+- **ブランチ**: feature/threads-note-crossplatform
+- **PR**: （作成待ち）
+- **期限**: 2026-08-21（Week 3）
+- **備考**: note 記事 → Threads 自動投稿 → バイラル投稿自動短編化 → YouTube Shorts/TikTok/Reels 自動展開。複合効果 +20%。
+
+### TASK-014: DEV_RIO_703 実装（YouTube 動画自動生成・自動編集・自動アップロード）
+- **担当**: Claude Code
+- **ステータス**: TODO
+- **ブランチ**: feature/youtube-automation
+- **PR**: （作成待ち）
+- **期限**: 2026-09-11（Month 2）
+- **備考**: Remotion で動画テンプレート自動生成 → Cap Cut で自動編集 → YouTube に自動アップロード。毎日 1 本のペースで動画量産。初期 ¥5-15k → 6 ヶ月後 ¥50-100k/月。最高難易度（2-3 週間実装）。
+
+### TASK-015: DEV_RIO_800 実装（全チャネル統合ダッシュボード）
+- **担当**: Claude Code
+- **ステータス**: TODO
+- **ブランチ**: feature/omnichannel-dashboard
+- **PR**: （作成待ち）
+- **期限**: 2026-08-28（Week 4）
+- **備考**: 5 チャネルの売上・クリック・エンゲージメント自動集計。日次ダッシュボード生成 → Slack 自動配信。ROI 分析・最適化提案。
+
 ---
 
 <!-- 新しいタスクは上記フォーマットに従ってここに追加する -->
