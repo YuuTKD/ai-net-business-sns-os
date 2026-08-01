@@ -22,6 +22,29 @@
 
 ## 報告ログ
 
+### REPORT-019: DEV_RIO_103 の LINE Push Notification ノードの無効リクエスト問題を修正
+- **日時**: 2026-08-02 09:00
+- **担当**: Claude Code
+- **関連タスク**: TASK-003
+- **PR**: （作成後に記入）
+- **背景**: REPORT-018 で通し実行テストを実施したところ、ワークフロー全体は正常完走（36.378秒で成功）と表示されたにもかかわらず、ゆうさんのLINEに通知が到達しないという現象が発生。ログを確認したところ、LINE Push Notification ノードが LINE API から 400 Bad Request エラーを受け取っていることが判明。
+- **根本原因**: `line_user_id` が `null` の場合、LINE Push Notification ノードが `{ to: null, messages: [...] }` という無効な JSON リクエストボディを LINE API に送信していた。LINE API は `to` フィールドを必須とし null 値を受け入れないため、400 エラーを返す。`continueOnFail: true` がこのエラーを隠していたため、ワークフロー全体は成功扱いになっていたが、実際には LINE 通知は送信されていなかった。
+- **設計意図との乖離**: ワークフロー全体は「`line_user_id` が未設定の場合は通知をスキップし、パイプライン自体は止めない」という設計だったが、実装は「LINE API にエラーリクエストを送信し、`continueOnFail` でエラーを隠す」という誤った方式になっていた。
+- **修正内容**:
+  1. **Build LINE Message ノード**: `should_send_line` フラグを追加（`line_user_id !== null` を判定）
+  2. **Check LINE User ID（If ノード）**: 新規追加。`should_send_line` が true の場合のみ LINE Push Notification に進む、false の場合は直接 Await Human Approval（最終ノード）に進むよう条件分岐。
+  3. **コネクション更新**: If ノードの true/false 出力パスを正しく接続
+- **修正による動作**:
+  - `line_user_id` が null の場合: LINE Push Notification ノードをスキップ、無効なリクエストは送信されない
+  - `line_user_id` が設定されている場合: LINE Push Notification ノードが実行、正しい JSON リクエスト `{ to: "Uaa2b...", messages: [...] }` が LINE API に送信される
+- **安全性**: 修正前後いずれもパイプライン全体は常に完走（`continueOnFail: true` により LINE 側のエラーがプロセス停止を引き起こさない）。ただし、修正後は「スキップ」と「失敗+無視」の違いが明確になり、デバッグが容易になる。
+- **影響範囲**: `workflows/n8n/DEV_RIO_103_Content_QA_Approval.json` のノード追加1個（If）、既存ノード（Build LINE Message）の修正、コネクション定義の更新。ロジック・プロンプト・Anthropic 呼び出しは無変更。
+- **pre-deploy-qa 判定**: 対象外（ワークフロー構造の修正のみ。Scheduler 変更・本番投稿なし）
+- **確認事項**: 修正後の検証は以下の2ケースで実施予定:
+  1. `line_user_id` が null の状態で実行 → LINE Push Notification ノードが実行されず、パイプライン正常完走を確認
+  2. `line_user_id` が正しい値（ゆうさんのLINEユーザーID）を設定して実行 → LINE 通知が正常に送信されることを確認
+  修正前は「continueOnFail で失敗を隠す」という設計のため、LINE 通知の成否を区別できなかったが、修正後は「通知送信のスキップ」と「通知送信の失敗」を明確に区別できるようになる。
+
 ### REPORT-018: DEV_RIO_101/102/103 通し実行テスト（実体験フィールド対応検証）
 - **日時**: 2026-08-01 23:30〜23:45
 - **担当**: Claude Code
