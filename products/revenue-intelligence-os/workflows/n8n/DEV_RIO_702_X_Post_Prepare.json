@@ -1,0 +1,123 @@
+{
+  "name": "DEV_RIO_702_X_Post_Prepare",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10702-0000-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-848, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_702 X(Twitter)投稿【下書き準備のみ・dry-run】。\n// DEV_RIO_103 の出力を受け取る。103には title フィールドが無いため theme を話題ヒントに使う。\n// qa_status が無い手動テスト時は 'PASS' 扱い（実チェインでは103が必ず設定する）。\nconst i = $input.first().json;\nreturn [{ json: {\n  content_id: i.content_id ?? 'ca-x-001',\n  theme: i.theme ?? '（テーマ未設定）',\n  note_body: i.note_body ?? i.note_draft_body ?? '',\n  threads_post: i.threads_post ?? '',\n  qa_status: i.qa_status ?? 'PASS',\n  platform: 'x',\n  action_type: 'prepare_x_drafts'\n} }];"
+      },
+      "id": "b1a10702-0000-4000-8000-000000000002",
+      "name": "Collect Inputs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-624, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "id": "gate-qa-pass",
+              "leftValue": "={{ $json.qa_status }}",
+              "rightValue": "PASS",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b1a10702-0000-4000-8000-000000000003",
+      "name": "QA Gate (PASS only)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-400, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// X投稿の下書き生成プロンプトを Anthropic body オブジェクトとして組み立てる。\n// テキストはJS文字列に安全に埋め込む（jsonBodyへの直接文字列補間は壊れやすいため回避）。\nconst i = $input.first().json;\nconst excerpt = String(i.note_body || '').slice(0, 500);\nconst prompt = `以下の記事から、X(Twitter)投稿の下書きを3パターン作成してください。\\n\\nテーマ: ${i.theme}\\n本文抜粋: ${excerpt}\\n\\n条件:\\n- 各140字以内、日本語。\\n- ハッシュタグ2〜3個。\\n- 誇張・虚偽の数値・断定的な成果保証は禁止。\\n- 出力は次のJSON配列のみ（前後に説明・コードブロック記号を付けない）:\\n[{\"angle\":\"string\",\"text\":\"string\"}]`;\nconst anthropic_body = {\n  model: 'claude-haiku-4-5',\n  max_tokens: 1024,\n  messages: [ { role: 'user', content: prompt } ]\n};\nreturn [{ json: { ...i, anthropic_body } }];"
+      },
+      "id": "b1a10702-0000-4000-8000-000000000004",
+      "name": "Build X Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-176, -112]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.anthropic_body }}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "b1a10702-0000-4000-8000-000000000005",
+      "name": "Generate X Drafts (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [48, -112],
+      "credentials": {
+        "anthropicApi": { "id": "gSjvXXaj0OLWBIza", "name": "Anthropic account" }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Claude応答をパース。失敗時は捏造せず parse_error を明示。冪等性キー付与。公開直前で停止。\nconst input = $input.first().json;\nconst ctx = $('Collect Inputs').first().json;\nlet drafts = [];\nlet parse_error = null;\nif (input.error) {\n  parse_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    const match = cleaned.match(/\\[[\\s\\S]*\\]/);\n    drafts = JSON.parse(match ? match[0] : cleaned);\n    if (!Array.isArray(drafts) || drafts.length === 0) throw new Error('drafts missing/empty');\n    drafts = drafts.map(d => ({ angle: d.angle ?? '', text: d.text ?? '' }));\n  } catch (e) {\n    parse_error = 'parse_failed: ' + e.message;\n  }\n}\nif (parse_error) drafts = [{ angle: 'manual', text: '（AI応答の取得/解析に失敗。手動で下書きを作成してください）' }];\nconst idempotency_key = [ctx.platform, ctx.content_id, ctx.action_type].join('|');\nreturn [{ json: {\n  content_id: ctx.content_id,\n  platform: 'x',\n  drafts,\n  draft_count: drafts.length,\n  idempotency_key,\n  state: 'WAITING_APPROVAL',\n  published: false,\n  draft_error: parse_error,\n  note: 'dry-run。X投稿の下書き候補のみ生成。★自動投稿はしない。人間が内容を確認し、問題なければ手動でXに投稿する（CLAUDE.md 準拠）。'\n} }];"
+      },
+      "id": "b1a10702-0000-4000-8000-000000000006",
+      "name": "Stop Before Publish",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [272, -112]
+    },
+    {
+      "parameters": {},
+      "id": "b1a10702-0000-4000-8000-000000000007",
+      "name": "Result (drafts only, no publish)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [496, -112]
+    },
+    {
+      "parameters": {
+        "jsCode": "// QAゲート不通過（qa_status != PASS）。下書き生成をスキップ。\nconst i = $input.first().json;\nreturn [{ json: {\n  content_id: i.content_id,\n  platform: 'x',\n  skipped: true,\n  qa_status: i.qa_status,\n  state: 'SKIPPED_NOT_PASS',\n  published: false,\n  note: 'qa_status が PASS ではないため X下書き生成をスキップ（品質未達コンテンツは配布準備しない）。'\n} }];"
+      },
+      "id": "b1a10702-0000-4000-8000-000000000008",
+      "name": "Skip (not PASS)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-176, 176]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Collect Inputs", "type": "main", "index": 0 }]] },
+    "Collect Inputs": { "main": [[{ "node": "QA Gate (PASS only)", "type": "main", "index": 0 }]] },
+    "QA Gate (PASS only)": { "main": [[{ "node": "Build X Prompt", "type": "main", "index": 0 }], [{ "node": "Skip (not PASS)", "type": "main", "index": 0 }]] },
+    "Build X Prompt": { "main": [[{ "node": "Generate X Drafts (Claude)", "type": "main", "index": 0 }]] },
+    "Generate X Drafts (Claude)": { "main": [[{ "node": "Stop Before Publish", "type": "main", "index": 0 }]] },
+    "Stop Before Publish": { "main": [[{ "node": "Result (drafts only, no publish)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_702 X Post Prepare. dry-run. qa_status=PASS のときのみ Claude で X投稿下書き3案を生成し公開直前で停止。NEVER publish/activate. 自動投稿はしない（CLAUDE.md 準拠）。人間が確認後、手動投稿。" },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "X" }]
+}

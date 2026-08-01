@@ -3,31 +3,27 @@
   "nodes": [
     {
       "parameters": {},
-      "id": "b1a10101-0000-4000-8000-000000000001",
+      "id": "58533a2d-4fc5-4d20-817f-3d8277f1baa8",
       "name": "Manual Trigger",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
-      "position": [220, 300]
-    },
-    {
-      "parameters": {
-        "jsCode": "// DEV_RIO_101 Evidence Build — 実運用\n// 入力（テーマ/読者像）を受け取る。未指定時のみデフォルト値を使う。\nconst i = $input.first().json;\nreturn [{ json: {\n  experiment_id: i.experiment_id ?? 'exp-001',\n  theme: i.theme ?? '店舗の固定費/決済手数料の見直し',\n  audience: i.audience ?? '小規模店舗経営者(飲食・美容)',\n  raw_sources: i.raw_sources ?? []\n} }];"
-      },
-      "id": "b1a10101-0000-4000-8000-000000000002",
-      "name": "Collect Inputs",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [440, 300]
+      "position": [
+        -848,
+        -144
+      ]
     },
     {
       "parameters": {
         "jsCode": "// Anthropic向けリサーチ依頼プロンプトを組み立てる。\n// 出力は必ずJSONのみ、source_typeは'estimation'（一般知識に基づく推測）に限定させ、\n// 実測データであるかのような断定を防ぐ（捏造禁止の原則を守る）。\nconst i = $input.first().json;\nconst prompt = `あなたは市場調査アシスタントです。以下のテーマについて、一般的に知られている傾向・想定される顧客の悩み・競合となりうるアプローチを、日本語で整理してください。\n\nテーマ: ${i.theme}\n想定読者/顧客: ${i.audience}\n\n出力は必ず次のJSON形式のみで返してください（前後に説明文・コードブロック記号を付けない）。\n{\n  \"facts\": [\n    { \"claim\": \"string\", \"value\": null, \"source_type\": \"estimation\", \"source_url\": null }\n  ]\n}\n\n注意:\n- source_type は必ず \"estimation\" のみを使用すること（実測・確認済みの事実であるかのような値は禁止）。\n- claim は一般的な傾向としてわかる書き方にし、具体的な社名・個人名・断定的な数値は書かないこと。\n- facts は3〜6件返すこと。`;\nconst anthropic_body = {\n  model: 'claude-haiku-4-5',\n  max_tokens: 1024,\n  messages: [ { role: 'user', content: prompt } ]\n};\nreturn [{ json: { ...i, research_prompt: prompt, anthropic_body } }];"
       },
-      "id": "b1a10101-0000-4000-8000-000000000005",
+      "id": "5c41849f-cff8-460a-bc6a-a95926b3b7d9",
       "name": "Build Research Prompt",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [660, 300]
+      "position": [
+        560,
+        0
+      ]
     },
     {
       "parameters": {
@@ -38,7 +34,10 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "anthropic-version", "value": "2023-06-01" }
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
           ]
         },
         "sendBody": true,
@@ -48,14 +47,17 @@
           "timeout": 30000
         }
       },
-      "id": "b1a10101-0000-4000-8000-000000000006",
+      "id": "e8be2d8b-a3ce-42fa-9b9a-82696016e1c7",
       "name": "Anthropic Research Call",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [880, 300],
+      "position": [
+        784,
+        0
+      ],
       "credentials": {
         "anthropicApi": {
-          "id": "",
+          "id": "gSjvXXaj0OLWBIza",
           "name": "Anthropic account"
         }
       },
@@ -65,42 +67,146 @@
       "parameters": {
         "jsCode": "// Anthropicの応答をパースする。失敗時・エラー時は捏造せず source_type='unknown' として明示する。\nconst input = $input.first().json;\nconst o = $('Build Research Prompt').first().json;\nlet facts = null;\nlet parse_error = null;\n\nif (input.error) {\n  parse_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    const parsed = JSON.parse(cleaned);\n    if (!Array.isArray(parsed.facts) || parsed.facts.length === 0) throw new Error('facts missing/empty');\n    facts = parsed.facts.map(f => ({\n      claim: f.claim ?? '（応答からclaimを取得できず）',\n      value: f.value ?? null,\n      source_type: f.source_type === 'estimation' ? 'estimation' : 'unknown',\n      source_url: f.source_url ?? null\n    }));\n  } catch (e) {\n    parse_error = 'parse_failed: ' + e.message;\n  }\n}\n\nif (!facts) {\n  facts = [{ claim: '需要・競合・報酬条件は未取得（AI応答の取得/解析に失敗）', value: null, source_type: 'unknown', source_url: null }];\n}\n\nreturn [{ json: {\n  experiment_id: o.experiment_id,\n  theme: o.theme,\n  audience: o.audience,\n  raw_sources: o.raw_sources,\n  research_facts: facts,\n  research_error: parse_error\n} }];"
       },
-      "id": "b1a10101-0000-4000-8000-000000000007",
+      "id": "7aa91c77-eb91-41ce-b218-f0ae47e2cacb",
       "name": "Parse Research Response",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1100, 300]
+      "position": [
+        992,
+        0
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "075287c4-e0c4-4d4c-9223-5f393b07fc29",
+      "name": "Result (no external action)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_101 Evidence Build — 実運用\n// 入力（テーマ/読者像）を受け取る。未指定時のみデフォルト値を使う。\nconst i = $input.first().json;\nreturn [{ json: {\n  experiment_id: i.experiment_id ?? 'exp-001',\n  theme: i.theme ?? '店舗の固定費/決済手数料の見直し',\n  audience: i.audience ?? '小規模店舗経営者(飲食・美容)',\n  raw_sources: i.raw_sources ?? []\n} }];"
+      },
+      "id": "bb0467f1-adb6-4ce6-8dfd-17ed29c50aba",
+      "name": "Collect Inputs1",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        336,
+        0
+      ]
     },
     {
       "parameters": {
         "jsCode": "// Evidence Pack 組み立て。未取得・未検証の事実は source_type='unknown'（捏造しない）。\n// raw_sourcesがあれば優先し、AIリサーチの推測(estimation)はそれを補完する形で合成する。\nconst o = $input.first().json;\nconst execId = $execution?.id ?? 'run';\nconst rawFacts = (o.raw_sources && o.raw_sources.length)\n  ? o.raw_sources.map(s => ({ claim: s.claim, value: s.value ?? null, source_type: s.source_type ?? 'unknown', source_url: s.source_url ?? null }))\n  : [];\nconst facts = rawFacts.length ? rawFacts.concat(o.research_facts || []) : (o.research_facts || [{ claim: '需要・競合・報酬条件は未取得', value: null, source_type: 'unknown', source_url: null }]);\nreturn [{ json: {\n  evidence_pack_id: 'ev-' + execId,\n  experiment_id: o.experiment_id,\n  theme: o.theme,\n  audience: o.audience,\n  sources: (o.raw_sources || []).map(s => s.source_url).filter(Boolean),\n  facts,\n  notes: o.research_error ? ('AIリサーチ取得に問題あり: ' + o.research_error) : 'AIリサーチ(Anthropic API)による一般的傾向の推測を含む。実測データではない。',\n  assets: []\n} }];"
       },
-      "id": "b1a10101-0000-4000-8000-000000000003",
-      "name": "Assemble Evidence Pack",
+      "id": "626d0a6c-00b9-4c5c-8e0d-40597d5caba5",
+      "name": "Assemble Evidence Pack1",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1320, 300]
-    },
-    {
-      "parameters": {},
-      "id": "b1a10101-0000-4000-8000-000000000004",
-      "name": "Result (no external action)",
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [1540, 300]
+      "position": [
+        1216,
+        0
+      ]
     }
   ],
-  "connections": {
-    "Manual Trigger": { "main": [[{ "node": "Collect Inputs", "type": "main", "index": 0 }]] },
-    "Collect Inputs": { "main": [[{ "node": "Build Research Prompt", "type": "main", "index": 0 }]] },
-    "Build Research Prompt": { "main": [[{ "node": "Anthropic Research Call", "type": "main", "index": 0 }]] },
-    "Anthropic Research Call": { "main": [[{ "node": "Parse Research Response", "type": "main", "index": 0 }]] },
-    "Parse Research Response": { "main": [[{ "node": "Assemble Evidence Pack", "type": "main", "index": 0 }]] },
-    "Assemble Evidence Pack": { "main": [[{ "node": "Result (no external action)", "type": "main", "index": 0 }]] }
-  },
-  "settings": { "executionOrder": "v1" },
-  "active": false,
   "pinData": {},
-  "meta": { "description": "DEV_RIO_101 Evidence Build. Anthropic API（claude-sonnet-4-5）で需要/競合の一般的傾向をリサーチし、evidence_packを組み立てる。source_typeはestimation/unknownのみ（捏造禁止）。Manual Triggerのみ・active:false・外部投稿なし。要Anthropicクレジット。" },
-  "tags": [{ "name": "DEV" }, { "name": "RIO" }]
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Collect Inputs1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Research Prompt": {
+      "main": [
+        [
+          {
+            "node": "Anthropic Research Call",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Anthropic Research Call": {
+      "main": [
+        [
+          {
+            "node": "Parse Research Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Research Response": {
+      "main": [
+        [
+          {
+            "node": "Assemble Evidence Pack1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Collect Inputs1": {
+      "main": [
+        [
+          {
+            "node": "Build Research Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Assemble Evidence Pack1": {
+      "main": [
+        [
+          {
+            "node": "Result (no external action)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "eede54de-f772-4634-9260-bd7a35bf6285",
+  "meta": {
+    "instanceId": "c3af3127a6a86b862596b539c195c0c47afa7b5ced827c513bac04167039bc75"
+  },
+  "nodeGroups": [],
+  "id": "8R3CFEwFVgALNGIH",
+  "tags": [
+    {
+      "updatedAt": "2026-08-01T03:59:14.768Z",
+      "createdAt": "2026-08-01T03:59:14.768Z",
+      "id": "CEvLWcGJFd3SoeJR",
+      "name": "DEV"
+    },
+    {
+      "updatedAt": "2026-08-01T03:59:14.799Z",
+      "createdAt": "2026-08-01T03:59:14.799Z",
+      "id": "IHVRemRm7fxMRdxp",
+      "name": "RIO"
+    }
+  ]
 }

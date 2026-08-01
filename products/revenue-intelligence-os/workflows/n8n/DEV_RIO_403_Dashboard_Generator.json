@@ -1,0 +1,79 @@
+{
+  "name": "DEV_RIO_403_Dashboard_Generator",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10403-0000-4000-8000-000000000001",
+      "name": "Monthly Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 月次ダッシュボード生成。metrics.csv から月間データ集計。\nconst i = $input.first().json;\nreturn [{ json: {\n  month: i.month ?? new Date().toISOString().slice(0, 7),\n  include_revenue_graph: i.include_revenue_graph ?? true,\n  include_kpi_trend: i.include_kpi_trend ?? true,\n  include_scaling_proposal: i.include_scaling_proposal ?? true,\n  send_to_slack: i.send_to_slack ?? true,\n  send_to_email: i.send_to_email ?? false\n} }];"
+      },
+      "id": "b1a10403-0000-4000-8000-000000000002",
+      "name": "Collect Dashboard Config",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 月間集計: 売上・ROI・KPI を計算\nconst o = $input.first().json;\nconst month = o.month;\n\n// サンプルデータ（実運用では metrics.csv から読み込み）\nconst daily_revenues = [2000, 3500, 1800, 4200, 2900, 3100, 2500]; // 7日間\nconst total_revenue = daily_revenues.reduce((a, b) => a + b, 0);\nconst avg_daily = (total_revenue / daily_revenues.length).toFixed(0);\nconst peak_day = Math.max(...daily_revenues);\n\nconst total_cost = 1200; // API + Browser Automation\nconst gross_profit = total_revenue - total_cost;\nconst owner_hours = 16;\nconst kpi_profit_per_hour = (gross_profit / owner_hours).toFixed(1);\n\nconst roi_percentage = ((gross_profit / total_cost) * 100).toFixed(1);\n\nreturn [{ json: { ...o,\n  total_revenue, avg_daily, peak_day,\n  total_cost, gross_profit, kpi_profit_per_hour,\n  roi_percentage,\n  summary: `${month}: 売上 ¥${total_revenue} / ROI ${roi_percentage}% / KPI ¥${kpi_profit_per_hour}/時`\n} }];"
+      },
+      "id": "b1a10403-0000-4000-8000-000000000003",
+      "name": "Aggregate Monthly Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ダッシュボード HTML/Markdown 生成\nconst o = $input.first().json;\n\nconst dashboard_markdown = `\n# 📊 月次ダッシュボード - ${o.month}\n\n## 💰 売上サマリー\n| 指標 | 値 |\n|------|-----|\n| 月間売上 | ¥${o.total_revenue} |\n| 平均日売上 | ¥${o.avg_daily} |\n| ピーク日売上 | ¥${o.peak_day} |\n\n## 📈 ROI・費用\n| 指標 | 値 |\n|------|-----|\n| 総費用 | ¥${o.total_cost} |\n| 粗利益 | ¥${o.gross_profit} |\n| ROI | ${o.roi_percentage}% |\n| KPI(粗利/時) | ¥${o.kpi_profit_per_hour}/時 |\n\n## 🎯 次月の提案\n- ✅ 継続: ROI が ${o.roi_percentage >= 100 ? 'POSITIVE' : 'NEGATIVE'} のため、戦略を維持\n- 🔧 最適化: CTA・価格・オファーの A/B テスト実施\n- 📢 拡大: 好調メディア（Threads/Instagram）に投資を倍増\n\n---\n*Generated at ${new Date().toISOString()}*\n`;\n\nreturn [{ json: { ...o, dashboard_markdown, state: 'READY_SEND' } }];"
+      },
+      "id": "b1a10403-0000-4000-8000-000000000004",
+      "name": "Generate Dashboard",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [920, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"text\": \"📊 月次ダッシュボード - {{ $json.month }}\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": { \"type\": \"plain_text\", \"text\": \"📊 月次ダッシュボード - {{ $json.month }}\" }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        { \"type\": \"mrkdwn\", \"text\": \"*月間売上*\\n¥{{ $json.total_revenue }}\" },\n        { \"type\": \"mrkdwn\", \"text\": \"*ROI*\\n{{ $json.roi_percentage }}%\" },\n        { \"type\": \"mrkdwn\", \"text\": \"*粗利益*\\n¥{{ $json.gross_profit }}\" },\n        { \"type\": \"mrkdwn\", \"text\": \"*KPI*\\n¥{{ $json.kpi_profit_per_hour }}/時\" }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": { \"type\": \"mrkdwn\", \"text\": \"{{ $json.dashboard_markdown }}\" }\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "b1a10403-0000-4000-8000-000000000005",
+      "name": "Send Slack Dashboard",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1160, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {},
+      "id": "b1a10403-0000-4000-8000-000000000006",
+      "name": "Result (dashboard sent)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1400, 300]
+    }
+  ],
+  "connections": {
+    "Monthly Trigger": { "main": [[{ "node": "Collect Dashboard Config", "type": "main", "index": 0 }]] },
+    "Collect Dashboard Config": { "main": [[{ "node": "Aggregate Monthly Data", "type": "main", "index": 0 }]] },
+    "Aggregate Monthly Data": { "main": [[{ "node": "Generate Dashboard", "type": "main", "index": 0 }]] },
+    "Generate Dashboard": { "main": [[{ "node": "Send Slack Dashboard", "type": "main", "index": 0 }]] },
+    "Send Slack Dashboard": { "main": [[{ "node": "Result (dashboard sent)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_403 Dashboard Generator. 月間売上・ROI・KPI トレンド・スケーリング提案レポートを自動生成・Slack 配信。Manual Trigger のみ・active:false（月次スケジューラーで自動実行）。" },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "REVENUE" }, { "name": "DASHBOARD" }]
+}

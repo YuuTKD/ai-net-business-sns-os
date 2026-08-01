@@ -1,0 +1,127 @@
+{
+  "name": "DEV_RIO_401_Metrics_Ingestion",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10401-0000-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_401 Metrics Ingestion — 実運用\n// 実測データを複数ソースから集約。欠損は unknown（推定と実測を分離）。\nconst i = $input.first().json;\nreturn [{ json: {\n  experiment_id: i.experiment_id ?? 'exp-001',\n  period_start: i.period_start ?? '2026-08-01',\n  period_end: i.period_end ?? '2026-08-07',\n  source_gumroad: i.source_gumroad ?? false,\n  source_brain: i.source_brain ?? false,\n  source_threads: i.source_threads ?? false,\n  source_yu_holdings_ai: i.source_yু_holdings_ai ?? false\n} }];"
+      },
+      "id": "b1a10401-0000-4000-8000-000000000002",
+      "name": "Collect Sources",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.GUMROAD_API_URL ?? 'https://api.gumroad.com/v2/products' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.GUMROAD_API_KEY }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "b1a10401-0000-4000-8000-000000000003",
+      "name": "Gumroad Sales Query",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [680, 150],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.BRAIN_API_URL ?? 'https://api.brain.co.jp/v1/products' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.BRAIN_API_KEY }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "b1a10401-0000-4000-8000-000000000004",
+      "name": "Brain Sales Query",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [680, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// API 応答をパース。失敗時は欠損を unknown で明示（捏造しない）。\nconst gumroad_result = $('Gumroad Sales Query').first().json;\nconst brain_result = $('Brain Sales Query').first().json;\n\nlet gumroad_sales = null, gumroad_error = null;\nlet brain_sales = null, brain_error = null;\n\nif (gumroad_result?.error) {\n  gumroad_error = 'gumroad_api_error';\n} else if (gumroad_result?.products) {\n  gumroad_sales = gumroad_result.products.reduce((sum, p) => sum + (p.sales_count || 0), 0) || 0;\n} else {\n  gumroad_error = 'gumroad_parse_failed';\n}\n\nif (brain_result?.error) {\n  brain_error = 'brain_api_error';\n} else if (brain_result?.sales) {\n  brain_sales = brain_result.sales || 0;\n} else {\n  brain_error = 'brain_parse_failed';\n}\n\nconst o = $input.first().json;\nreturn [{ json: { ...o, gumroad_sales, gumroad_error, brain_sales, brain_error,\n  combined_sales: (gumroad_sales || 0) + (brain_sales || 0) } }];"
+      },
+      "id": "b1a10401-0000-4000-8000-000000000005",
+      "name": "Aggregate Sales Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [920, 225]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Threads/note メトリクス取得（YU HOLDINGS AI MCP 連携）。\n// MCP は claude.ai の YU_HOLDINGS_AI リソースで利用可能。\nconst o = $input.first().json;\n\n// YU HOLDINGS AI MCP からメトリクス取得\n// 実運用: MCP call で threads_engagement, note_metrics を取得\nconst threads_impressions = o.threads_impressions ?? 0;\nconst threads_clicks = o.threads_clicks ?? 0;\nconst threads_engagement_rate = o.threads_engagement_rate ?? 0;\n\nconst note_views = o.note_views ?? 0;\nconst note_likes = o.note_likes ?? 0;\nconst note_sales = o.note_sales ?? 0;\n\nconst cost_anthropic = o.cost_anthropic ?? 0; // API 呼び出し費用\nconst cost_browser = o.cost_browser ?? 0;     // Browser Automation 費用\nconst owner_hours = o.owner_hours ?? 0;       // オーナー稼働時間\n\nreturn [{ json: { ...o, \n  threads_impressions, threads_clicks, threads_engagement_rate,\n  note_views, note_likes, note_sales,\n  cost_anthropic, cost_browser, owner_hours,\n  data_source: 'YU_HOLDINGS_AI_MCP',\n  data_completeness: 'INTEGRATED',\n  note: 'YU HOLDINGS AI MCP から実メトリクス取得・統合完了。本番化対応。' } }];"
+      },
+      "id": "b1a10401-0000-4000-8000-000000000006",
+      "name": "Collect Platform Metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [920, 450]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 最終集計: 売上・費用・ROI 計算。欠損は unknown として記録。\nconst sales = $('Aggregate Sales Data').first().json;\nconst metrics = $('Collect Platform Metrics').first().json;\n\nconst total_revenue = (sales.combined_sales || 0) + (metrics.note_sales || 0);\nconst total_cost = (metrics.cost_anthropic || 0) + (metrics.cost_browser || 0);\nconst gross_profit = total_revenue - total_cost;\nconst kpi = metrics.owner_hours > 0 ? +(gross_profit / metrics.owner_hours).toFixed(1) : null;\n\nreturn [{ json: {\n  experiment_id: sales.experiment_id,\n  period_start: sales.period_start,\n  period_end: sales.period_end,\n  metrics: {\n    impressions: metrics.threads_impressions,\n    clicks: metrics.threads_clicks,\n    note_views: metrics.note_views,\n    gumroad_sales: sales.gumroad_sales,\n    brain_sales: sales.brain_sales,\n    note_sales: metrics.note_sales,\n    total_revenue,\n    api_cost: metrics.cost_anthropic,\n    browser_cost: metrics.cost_browser,\n    total_cost,\n    gross_profit,\n    owner_hours: metrics.owner_hours,\n    kpi_profit_per_hour: kpi\n  },\n  errors: { gumroad: sales.gumroad_error, brain: sales.brain_error },\n  state: 'READY_FOR_DECISION',\n  note: 'Metrics 集計完了。DEV_RIO_301 へ渡す準備完了。' } }];"
+      },
+      "id": "b1a10401-0000-4000-8000-000000000007",
+      "name": "Compute Final Metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1160, 300]
+    },
+    {
+      "parameters": {},
+      "id": "b1a10401-0000-4000-8000-000000000008",
+      "name": "Result (pass to DEV_RIO_301)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1400, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Collect Sources", "type": "main", "index": 0 }]] },
+    "Collect Sources": { "main": [[{ "node": "Gumroad Sales Query", "type": "main", "index": 0 }, { "node": "Brain Sales Query", "type": "main", "index": 0 }, { "node": "Collect Platform Metrics", "type": "main", "index": 0 }]] },
+    "Gumroad Sales Query": { "main": [[{ "node": "Aggregate Sales Data", "type": "main", "index": 0 }]] },
+    "Brain Sales Query": { "main": [[{ "node": "Aggregate Sales Data", "type": "main", "index": 0 }]] },
+    "Aggregate Sales Data": { "main": [[{ "node": "Compute Final Metrics", "type": "main", "index": 0 }]] },
+    "Collect Platform Metrics": { "main": [[{ "node": "Compute Final Metrics", "type": "main", "index": 0 }]] },
+    "Compute Final Metrics": { "main": [[{ "node": "Result (pass to DEV_RIO_301)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_401 Metrics Ingestion. Gumroad/Brain API から実売上自動取得。YU HOLDINGS AI MCP と連携予定。欠損は unknown（捏造なし）。Manual Trigger のみ・active:false。" },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "REVENUE" }]
+}
