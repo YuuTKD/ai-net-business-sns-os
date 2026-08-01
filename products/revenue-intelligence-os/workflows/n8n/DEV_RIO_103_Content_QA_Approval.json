@@ -181,7 +181,7 @@
           "mode": "list",
           "cachedResultName": "all-daily-report"
         },
-        "text": "=✅ QA Review Complete Status: {{ $json.qa_judgment }} Reasoning: {{ $json.qa_reasoning }}",
+        "text": "=✅ QA Review Complete Status: {{ $json.qa_status }} Reasoning: {{ $json.note }}",
         "otherOptions": {}
       },
       "type": "n8n-nodes-base.slack",
