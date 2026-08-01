@@ -22,6 +22,20 @@
 
 ## 報告ログ
 
+### REPORT-015: 実データによる初回ライブテストで判明したmax_tokens不足を修正（DEV_RIO_103）
+- **日時**: 2026-08-01
+- **担当**: Claude Code（ゆうさんと画面操作を分担しながら実施）
+- **関連タスク**: TASK-003
+- **PR**: （作成後に記入）
+- **背景**: Anthropicクレジット購入完了後、ゆうさんと一緒にDEV_RIO_101/102/103をn8nへ再インポートし、実データによる初回ライブテストを実施した。DEV_RIO_101・102は一発で成功（実際のリサーチ結果・実験設計が生成され、REPORT-014のフィールド不整合修正が効いていることも確認）。DEV_RIO_103の初回実行で新たな不具合を発見した。
+- **発見した不具合**: 「Build Content Draft Prompt」ノードの`max_tokens: 1024`が、実際に生成しようとした完全な記事本文（複数セクション構成のnote記事）に対して小さすぎたため、Anthropicの応答が`stop_reason: "max_tokens"`で途中で打ち切られ、不完全なJSONとなってパースに失敗、安全側のプレースホルダー（「【AI下書き生成に失敗。人間による手動執筆が必要】」）にフォールバックしていた。**捏造防止のフォールバック自体は設計通り正しく機能した**が、根本原因であるmax_tokens不足を修正する必要があった。あわせて「Build QA Prompt」ノードの`max_tokens: 512`も同一実行で`stop_reason: "max_tokens"`に達しており（今回はJSON構造が壊れる前に収まり偶然パース成功したが、issuesが長くなれば同様に失敗しうる）、再発防止のため合わせて修正した。
+- **変更内容**:
+  - `workflows/n8n/DEV_RIO_103_Content_QA_Approval.json`: 「Build Content Draft Prompt」の`max_tokens`を`1024`→`4096`、「Build QA Prompt」の`max_tokens`を`512`→`1024`に変更。
+- **修正後の再テスト結果**: DEV_RIO_103を再実行し、実際に完全なnote記事本文（固定費見直しの具体的手順を含む複数セクション構成、末尾に`【実際の経験に置き換える：...】`プレースホルダー付き）とThreads投稿文が生成されることを確認。AI自己QAも正しく`qa_status: "FIX_REQUIRED"`（未差し替えプレースホルダーを検出）を返し、`state: "FAILED_RETRYABLE"`のまま`WAITING_APPROVAL`に進まないことを確認。LINE通知ノードのみ、Credential未作成のため引き続き失敗するが`continueOnFail: true`によりパイプライン全体は完走。
+- **影響範囲**: `workflows/n8n/DEV_RIO_103_Content_QA_Approval.json`のmax_tokens値2箇所のみ。ロジック・プロンプト内容・ノード構成は無変更。
+- **pre-deploy-qa 判定**: 対象外（設定値の微修正のみ。Scheduler変更・本番投稿を伴わない）
+- **確認事項**: DEV_RIO_101・102・103の3本とも実データでのライブ実行に成功。LINE通知（Credential未作成）以外は[[GO_LIVE_RUNBOOK]]の手順5「実データでのエンドツーエンドテスト」が完了。次はLINE Messaging APIのCredential作成のみ残タスク。
+
 ### REPORT-014: パイプライン段間のフィールド不整合を修正 + ローカル擬似実行シミュレーターを追加 + GO_LIVE_RUNBOOK作成
 - **日時**: 2026-08-01（夜間・ゆうさん就寝中の自律作業）
 - **担当**: Claude Code

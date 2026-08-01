@@ -35,11 +35,11 @@
 
 ### TASK-003: DEV_RIO_101/102/103 に Anthropic API 連携を実装
 - **担当**: Claude Code
-- **ステータス**: BLOCKED
-- **ブランチ**: feature/rio-real-ai-research（マージ済み#29）→ feature/rio-pipeline-simulation（レビュー待ち）
-- **PR**: #29（マージ済み）、続き（作成後に記入）
+- **ステータス**: REVIEW（LINE通知のみ残タスク）
+- **ブランチ**: feature/rio-real-ai-research（マージ済み#29）→ feature/rio-pipeline-simulation（マージ済み#30）→ fix/rio-max-tokens（レビュー待ち）
+- **PR**: #29（マージ済み）、#30（マージ済み）、続き（作成後に記入）
 - **期限**: -
-- **備考**: 需要リサーチ(101)・実験設計(102)・コンテンツ下書き+QA(103)をダミー入力からAnthropic API（claude-sonnet-4-5）呼び出しに置き換え済み（詳細はREPORT-010、PR #29でマージ済み）。DEV_RIO_103には下書き完成時のLINE通知も追加済み（REPORT-012）。夜間の自律作業でパイプライン段間のフィールド不整合3件を修正＋ローカル擬似実行シミュレーター＋GO_LIVE_RUNBOOKを追加（REPORT-014、レビュー待ち）。**BLOCKED理由**: (1) Anthropicアカウントのクレジット残高不足（ゆうさんによるconsole.anthropic.comでの購入待ち・後回し方針で合意済み）、(2) 更新済みJSON4本（101/102/103/201）のn8nへの再インポートが未実施（手順は`design/GO_LIVE_RUNBOOK.md`参照。スマホでも実施可能）、(3) LINE Messaging APIのCredential（Header Auth）未作成・通知先line_user_id未設定。全て解消後、実データでのエンドツーエンドテストに進む。
+- **備考**: 需要リサーチ(101)・実験設計(102)・コンテンツ下書き+QA(103)をダミー入力からAnthropic API（claude-sonnet-4-5）呼び出しに置き換え済み（REPORT-010）。DEV_RIO_103には下書き完成時のLINE通知も追加済み（REPORT-012）。パイプライン段間のフィールド不整合3件を修正＋ローカル擬似実行シミュレーター＋GO_LIVE_RUNBOOKを追加（REPORT-014）。**Anthropicクレジット購入完了・n8n再インポート完了・実データでのライブテスト実施済み**。DEV_RIO_101・102は一発で成功、103は初回実行でmax_tokens不足による不具合を発見しREPORT-015で修正、再テストで完全な記事下書き生成とQA判定（プレースホルダー検出→FIX_REQUIRED）を確認。**残タスク**: LINE Messaging APIのCredential（Header Auth）作成・通知先line_user_id設定のみ（任意。無くてもcontinueOnFail:trueによりパイプラインは正常動作）。
 
 ### TASK-002: Revenue Intelligence OS を正式リポジトリへ統合（A案）
 - **担当**: Claude Code
