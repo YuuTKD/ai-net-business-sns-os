@@ -1,0 +1,76 @@
+{
+  "name": "DEV_RIO_702_X_Post_Prepare",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10702-0000-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_702 X(Twitter)投稿【下書き準備のみ・dry-run】。\n// DEV_RIO_201 と同一方針: 公開・自動投稿はしない。人間が内容を確認し、別途手動で公開する。\n// CLAUDE.md 絶対禁止事項『本番SNS自動投稿の実行』に準拠。★このワークフローは投稿APIを呼ばない。\n// 入力: DEV_RIO_103 の記事下書き（note_body / title / theme 等）。\nconst i = $input.first().json;\nconst title = i.title ?? '（タイトル未設定）';\nconst note_body = i.note_body ?? i.note_draft_body ?? '';\nconst theme = i.theme ?? 'store-ai';\nconst experiment_id = i.experiment_id ?? 'exp-001';\nreturn [{ json: {\n  content_id: i.content_id ?? 'ca-x-001',\n  title, theme, experiment_id,\n  source_excerpt: note_body.slice(0, 400),\n  platform: 'x',\n  action_type: 'prepare_x_drafts'\n} }];"
+      },
+      "id": "b1a10702-0000-4000-8000-000000000002",
+      "name": "Ingest Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $env.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"model\": \"claude-haiku-4-5-20251001\",\n  \"max_tokens\": 1024,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"以下の記事から、X(Twitter)投稿の下書きを3パターン作成してください。各140字以内、日本語、ハッシュタグ2-3個。誇張・虚偽の数値は禁止。JSON配列のみ出力: [{\\\"angle\\\":\\\"...\\\",\\\"text\\\":\\\"...\\\"}]。\\n\\nタイトル: {{ $json.title }}\\n本文抜粋: {{ $json.source_excerpt }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "b1a10702-0000-4000-8000-000000000003",
+      "name": "Generate X Drafts (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [700, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Claude応答をパースし、下書き候補を整形。冪等性キー付与。公開直前で停止。\nconst prev = $input.first().json;\nlet drafts = [];\ntry {\n  const text = prev?.content?.[0]?.text ?? '[]';\n  const match = text.match(/\\[[\\s\\S]*\\]/);\n  drafts = match ? JSON.parse(match[0]) : [];\n} catch (e) {\n  drafts = [{ angle: 'parse_error', text: 'Claude応答のパースに失敗。手動で下書きを作成してください。', error: String(e) }];\n}\nconst ctx = $('Ingest Content').first().json;\nconst idempotency_key = [ctx.platform, ctx.content_id, ctx.action_type].join('|');\nreturn [{ json: {\n  content_id: ctx.content_id,\n  platform: 'x',\n  drafts,\n  draft_count: drafts.length,\n  idempotency_key,\n  state: 'WAITING_APPROVAL',\n  published: false,\n  note: 'dry-run。X投稿の下書き候補のみ生成。★自動投稿はしない。人間が内容を確認し、問題なければ手動でXに投稿する（CLAUDE.md 準拠）。'\n} }];"
+      },
+      "id": "b1a10702-0000-4000-8000-000000000004",
+      "name": "Stop Before Publish",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [940, 300]
+    },
+    {
+      "parameters": {},
+      "id": "b1a10702-0000-4000-8000-000000000005",
+      "name": "Result (drafts only, no publish)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1180, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Ingest Content", "type": "main", "index": 0 }]] },
+    "Ingest Content": { "main": [[{ "node": "Generate X Drafts (Claude)", "type": "main", "index": 0 }]] },
+    "Generate X Drafts (Claude)": { "main": [[{ "node": "Stop Before Publish", "type": "main", "index": 0 }]] },
+    "Stop Before Publish": { "main": [[{ "node": "Result (drafts only, no publish)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_702 X Post Prepare. dry-run. Claudeで X投稿の下書き候補を3つ生成し、公開直前で停止。NEVER publish/activate. 自動投稿はしない（CLAUDE.md 準拠）。人間が確認後、手動で投稿する。" },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "X" }]
+}
