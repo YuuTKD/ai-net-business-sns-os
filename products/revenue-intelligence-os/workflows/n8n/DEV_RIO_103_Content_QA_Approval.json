@@ -168,6 +168,24 @@
         2420,
         220
       ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"text\": \"📊 コンテンツ品質保証レポート\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": {\n        \"type\": \"plain_text\",\n        \"text\": \"📊 コンテンツ品質保証レポート\"\n      }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*Content ID:*\\n{{ $json.content_id }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*媒体:*\\n{{ $json.media }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*テーマ:*\\n{{ $json.theme }}\"\n        },\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"*訴求:*\\n{{ $json.angle }}\"\n        }\n      ]\n    },\n    {\n      \"type\": \"divider\"\n    },\n    {\n      \"type\": \"section\",\n      \"text\": {\n        \"type\": \"mrkdwn\",\n        \"text\": \"*QA判定:*\\n{{ $json.qa_status }}\"\n      }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [\n        {\n          \"type\": \"mrkdwn\",\n          \"text\": \"⏱️ Executed at {{ now.format('YYYY-MM-DD HH:mm:ss') }}\"\n        }\n      ]\n    }\n  ]\n}"
+      },
+      "id": "f67667a9-43a2-447c-b92d-667a4c9c7996",
+      "name": "Slack Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1400,
+        220
+      ],
+      "continueOnFail": true
     }
   ],
   "connections": {
