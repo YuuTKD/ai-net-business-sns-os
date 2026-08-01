@@ -122,27 +122,27 @@
 
 ### TASK-007: DEV_RIO_702 実装（X 投稿【下書き準備のみ】）
 - **担当**: Claude Code
-- **ステータス**: REVIEW（実装完了・下書き準備版）
+- **ステータス**: REVIEW（本番運用可能・実装完成）
 - **ブランチ**: fix/rio-workflow-verification
 - **PR**: （作成待ち）
 - **期限**: 2026-08-07
-- **備考**: 【方針修正】当初の「自動投稿」案は CLAUDE.md 絶対禁止事項『本番SNS自動投稿の実行』および既存 DEV_RIO_201 の dry-run アーキテクチャに反するため撤回。Claude(Haiku)で X投稿の下書き候補3案を生成し、'Stop Before Publish' で公開直前停止。active:false・投稿APIは呼ばない。人間が確認後に手動投稿。収益数値（¥150-300k/月）は根拠のない推定のため撤回、実測後に再評価する。
+- **備考**: 【方針修正】当初の「自動投稿」案は CLAUDE.md 絶対禁止事項『本番SNS自動投稿の実行』および既存 DEV_RIO_201 の dry-run アーキテクチャに反するため撤回。Claude(Haiku)で X投稿の下書き候補3案を生成し、'Stop Before Publish' で公開直前停止。active:false・投稿APIは呼ばない。人間が確認後に手動投稿。**本番運用可能化として実施済み**: (1) 既存DEV_RIO_101の実働パターンに準拠（anthropicApi クレデンシャル参照 / body はCode nodeでオブジェクト構築しjsonBody=`{{$json.anthropic_body}}` で安全にエスケープ）、(2) qa_status=PASS ゲート追加（品質未達はSKIP）、(3) パースの graceful fallback（API error/不正出力でも捏造せず手動フォールバック）、(4) エッジケース単体テスト合格。運用手順は design/RIO_700_SERIES_RUNBOOK.md。収益数値（¥150-300k/月）は根拠のない推定のため撤回、実測後に再評価。
 
 ### TASK-008: DEV_RIO_701 実装（アフィリエイト【下書き準備のみ】）
 - **担当**: Claude Code
-- **ステータス**: REVIEW（実装完了・下書き準備版）
+- **ステータス**: REVIEW（本番運用可能・実装完成）
 - **ブランチ**: fix/rio-workflow-verification
 - **PR**: （作成待ち）
 - **期限**: 2026-08-07
-- **備考**: 【方針修正】自動埋め込みはせず、記事へのアフィリ挿入案（ジャンル/位置/アンカー文）とリンク差し込み欄（プレースホルダ）のみ生成。偽のアフィリURLは作らない。人間が自分のアフィリID付きリンクを差し込み、手動反映。期待売上は実測後に再評価。
+- **備考**: 【方針修正】自動埋め込みはせず、記事へのアフィリ挿入案（ジャンル/位置/アンカー文）とリンク差し込み欄（プレースホルダ）のみ生成。偽のアフィリURLは作らない。人間が自分のアフィリID付きリンクを差し込み、手動反映。**本番運用可能化**: DEV_RIO_101準拠のAnthropic呼び出し / qa_status=PASSゲート / graceful fallback / JSON検証済み。運用手順は design/RIO_700_SERIES_RUNBOOK.md。期待売上は実測後に再評価。
 
 ### TASK-009: DEV_RIO_705 実装（Threads × 楽天【下書き準備のみ】）
 - **担当**: Claude Code
-- **ステータス**: REVIEW（実装完了・下書き準備版）
+- **ステータス**: REVIEW（本番運用可能・実装完成）
 - **ブランチ**: fix/rio-workflow-verification
 - **PR**: （作成待ち）
 - **期限**: 2026-08-06
-- **備考**: 【方針修正】自動リプライはせず、Threads投稿に添える楽天アフィリのリプライ下書き案のみ生成。実リンクは作らずプレースホルダのみ。人間が手動投稿。CLAUDE.md 準拠。期待売上は実測後に再評価。
+- **備考**: 【方針修正】自動リプライはせず、Threads投稿に添える楽天アフィリのリプライ下書き案のみ生成。実リンクは作らずプレースホルダのみ。人間が手動投稿。CLAUDE.md 準拠。**本番運用可能化**: DEV_RIO_101準拠のAnthropic呼び出し / qa_status=PASSゲート / graceful fallback / JSON検証済み。運用手順は design/RIO_700_SERIES_RUNBOOK.md。期待売上は実測後に再評価。
 
 ### TASK-010: DEV_RIO_601 実装（Lead Generation 自動化）
 - **担当**: Claude Code
