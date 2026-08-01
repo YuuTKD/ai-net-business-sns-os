@@ -1,0 +1,76 @@
+{
+  "name": "DEV_RIO_701_Affiliate_Prepare",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10701-0000-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_701 アフィリエイト【下書き準備のみ・dry-run】。\n// 記事に対する『アフィリンク挿入案』を生成する。★実リンク生成・自動埋め込み・公開はしない。\n// 偽のアフィリエイトURLは作らない。人間が自分のアフィリID付きリンクをプレースホルダに差し込む。\nconst i = $input.first().json;\nreturn [{ json: {\n  content_id: i.content_id ?? 'ca-aff-001',\n  title: i.title ?? '（タイトル未設定）',\n  source_excerpt: (i.note_body ?? i.note_draft_body ?? '').slice(0, 600),\n  platform: 'note',\n  action_type: 'prepare_affiliate_suggestions'\n} }];"
+      },
+      "id": "b1a10701-0000-4000-8000-000000000002",
+      "name": "Ingest Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $env.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"model\": \"claude-haiku-4-5-20251001\",\n  \"max_tokens\": 1024,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"以下の記事に自然に差し込めるアフィリエイト商品の提案を最大3件。各: 商品ジャンル(book/tool/service等)、記事内の挿入位置の説明、20字以内のアンカー文。実在を断定しない。JSON配列のみ: [{\\\"genre\\\":\\\"...\\\",\\\"placement\\\":\\\"...\\\",\\\"anchor\\\":\\\"...\\\"}]。\\n\\nタイトル: {{ $json.title }}\\n本文抜粋: {{ $json.source_excerpt }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "b1a10701-0000-4000-8000-000000000003",
+      "name": "Suggest Affiliate Spots (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [700, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Claude応答をパース。各提案に『リンク差し込み欄(プレースホルダ)』を付与して停止。\nconst prev = $input.first().json;\nlet suggestions = [];\ntry {\n  const text = prev?.content?.[0]?.text ?? '[]';\n  const match = text.match(/\\[[\\s\\S]*\\]/);\n  suggestions = match ? JSON.parse(match[0]) : [];\n} catch (e) {\n  suggestions = [{ genre: 'parse_error', placement: '', anchor: '手動で作成', error: String(e) }];\n}\nconst ctx = $('Ingest Content').first().json;\nconst enriched = suggestions.map((s, idx) => ({\n  ...s,\n  affiliate_link_placeholder: `<<ここに自分の楽天/AmazonアフィリID付きリンクを貼る #${idx + 1}>>`\n}));\nreturn [{ json: {\n  content_id: ctx.content_id,\n  suggestions: enriched,\n  suggestion_count: enriched.length,\n  state: 'WAITING_APPROVAL',\n  published: false,\n  note: 'dry-run。アフィリ挿入案のみ。★実リンク生成・自動埋め込み・公開はしない。人間が自分のアフィリID付きリンクをプレースホルダに差し込み、手動で反映する。'\n} }];"
+      },
+      "id": "b1a10701-0000-4000-8000-000000000004",
+      "name": "Stop Before Embed",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [940, 300]
+    },
+    {
+      "parameters": {},
+      "id": "b1a10701-0000-4000-8000-000000000005",
+      "name": "Result (suggestions only)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1180, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Ingest Content", "type": "main", "index": 0 }]] },
+    "Ingest Content": { "main": [[{ "node": "Suggest Affiliate Spots (Claude)", "type": "main", "index": 0 }]] },
+    "Suggest Affiliate Spots (Claude)": { "main": [[{ "node": "Stop Before Embed", "type": "main", "index": 0 }]] },
+    "Stop Before Embed": { "main": [[{ "node": "Result (suggestions only)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_701 Affiliate Prepare. dry-run. 記事へのアフィリ挿入案(ジャンル/位置/アンカー)を生成。実リンクは作らずプレースホルダのみ。NEVER auto-embed/publish/activate。人間が自分のアフィリID付きリンクを差し込む。" },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "AFFILIATE" }]
+}

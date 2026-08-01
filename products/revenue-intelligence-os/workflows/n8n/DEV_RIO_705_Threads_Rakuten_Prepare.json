@@ -1,0 +1,76 @@
+{
+  "name": "DEV_RIO_705_Threads_Rakuten_Prepare",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10705-0000-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_705 Threads×楽天【下書き準備のみ・dry-run】。\n// Threads投稿に添える『楽天アフィリのリプライ下書き案』を生成。★自動リプライ・自動投稿はしない。\n// 実アフィリリンクは作らない。人間が自分の楽天アフィリID付きリンクを差し込み、手動で投稿する。\nconst i = $input.first().json;\nreturn [{ json: {\n  content_id: i.content_id ?? 'ca-threads-aff-001',\n  threads_post: i.threads_post ?? '（Threads投稿本文）',\n  platform: 'threads',\n  action_type: 'prepare_rakuten_reply_draft'\n} }];"
+      },
+      "id": "b1a10705-0000-4000-8000-000000000002",
+      "name": "Ingest Post",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "x-api-key", "value": "={{ $env.ANTHROPIC_API_KEY }}" },
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"model\": \"claude-haiku-4-5-20251001\",\n  \"max_tokens\": 512,\n  \"messages\": [\n    {\n      \"role\": \"user\",\n      \"content\": \"以下のThreads投稿に自然に続く、商品紹介リプライの下書きを2案。各60字以内、押し売り感なし、日本語。実在商品を断定しない。JSON配列のみ: [{\\\"reply\\\":\\\"...\\\",\\\"product_genre\\\":\\\"...\\\"}]。\\n\\n投稿: {{ $json.threads_post }}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "b1a10705-0000-4000-8000-000000000003",
+      "name": "Draft Reply (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [700, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Claude応答をパース。リプライ案にリンク差し込み欄を付与して停止。\nconst prev = $input.first().json;\nlet replies = [];\ntry {\n  const text = prev?.content?.[0]?.text ?? '[]';\n  const match = text.match(/\\[[\\s\\S]*\\]/);\n  replies = match ? JSON.parse(match[0]) : [];\n} catch (e) {\n  replies = [{ reply: '手動で作成してください', product_genre: 'parse_error', error: String(e) }];\n}\nconst ctx = $('Ingest Post').first().json;\nconst enriched = replies.map((r, idx) => ({\n  ...r,\n  rakuten_link_placeholder: `<<ここに自分の楽天アフィリID付きリンクを貼る #${idx + 1}>>`\n}));\nreturn [{ json: {\n  content_id: ctx.content_id,\n  reply_drafts: enriched,\n  draft_count: enriched.length,\n  state: 'WAITING_APPROVAL',\n  published: false,\n  note: 'dry-run。Threads楽天リプライの下書き案のみ。★自動リプライ・自動投稿はしない。人間が自分の楽天アフィリリンクを差し込み、手動で投稿する（CLAUDE.md 準拠）。'\n} }];"
+      },
+      "id": "b1a10705-0000-4000-8000-000000000004",
+      "name": "Stop Before Reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [940, 300]
+    },
+    {
+      "parameters": {},
+      "id": "b1a10705-0000-4000-8000-000000000005",
+      "name": "Result (reply drafts only)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1180, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Ingest Post", "type": "main", "index": 0 }]] },
+    "Ingest Post": { "main": [[{ "node": "Draft Reply (Claude)", "type": "main", "index": 0 }]] },
+    "Draft Reply (Claude)": { "main": [[{ "node": "Stop Before Reply", "type": "main", "index": 0 }]] },
+    "Stop Before Reply": { "main": [[{ "node": "Result (reply drafts only)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_705 Threads x Rakuten Prepare. dry-run. Threads投稿に添える楽天アフィリのリプライ下書き案を生成。実リンクは作らずプレースホルダのみ。NEVER auto-reply/publish/activate。人間が手動投稿。" },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "THREADS" }, { "name": "AFFILIATE" }]
+}
