@@ -2,7 +2,12 @@
   "name": "DEV_RIO_103_Content_QA_Approval",
   "nodes": [
     {
-      "parameters": {},
+      "parameters": {
+        "testData": {
+          "line_user_id": "Uaa2b67d869f0d5cf646cad5d3d84418e",
+          "channel_access_token": "e4SwFI8hWToW0WRCQkUPpFcpC3jJg3XnHLL1pINH/AChbZGsvtqxOM54bcAM+XS74rEE1CaJVyIRlE1czmpKYVqRMs5O7/uMY9MASHXGCiw4KjY3Y/V1ne9ZEIoHJq5657MLmmrrvL+SgBaOEKYxUwdB04t89/1O/w1cDnyilFU="
+        }
+      },
       "id": "b1a10103-0000-4000-8000-000000000001",
       "name": "Manual Trigger",
       "type": "n8n-nodes-base.manualTrigger",
@@ -124,63 +129,6 @@
       "position": [1760, 220]
     },
     {
-      "parameters": {
-        "jsCode": "// LINE通知メッセージを組み立てる。line_user_id未設定の場合は通知先が無いため、後続ノードは実行されない。\nconst o = $input.first().json;\nconst line_user_id = o.line_user_id ?? null;\nconst line_message = o.state === 'WAITING_APPROVAL'\n  ? `【下書き完成】${o.media}「${o.content_id}」の下書きができました。n8nで内容を確認し、問題なければご自身の操作で投稿してください。(QA: ${o.qa_status})`\n  : `【要対応】${o.media}「${o.content_id}」の下書きが${o.qa_status}判定です。issues: ${(o.issues || []).join(' / ')}`;\nreturn [{ json: { ...o, line_user_id, line_message, should_send_line: line_user_id !== null } }];"
-      },
-      "id": "b1a10103-0000-4000-8000-00000000000a",
-      "name": "Build LINE Message",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [1980, 220]
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "default": "otherwise",
-          "conditions": [
-            [
-              {
-                "value1": "={{ $json.should_send_line }}",
-                "value2": true,
-                "operation": "equal"
-              }
-            ]
-          ]
-        }
-      },
-      "id": "b1a10103-0000-4000-8000-00000000000c",
-      "name": "Check LINE User ID",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 1,
-      "position": [2100, 220]
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://api.line.me/v2/bot/message/push",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={{ { to: $json.line_user_id, messages: [ { type: 'text', text: $json.line_message } ] } }}",
-        "options": {
-          "timeout": 15000
-        }
-      },
-      "id": "b1a10103-0000-4000-8000-00000000000b",
-      "name": "LINE Push Notification",
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.4,
-      "position": [2200, 220],
-      "credentials": {
-        "httpHeaderAuth": {
-          "id": "",
-          "name": "LINE Messaging API"
-        }
-      },
-      "continueOnFail": true
-    },
-    {
       "parameters": {},
       "id": "b1a10103-0000-4000-8000-000000000004",
       "name": "Await Human Approval (no publish)",
@@ -197,15 +145,7 @@
     "Parse Content Draft": { "main": [[{ "node": "Build QA Prompt", "type": "main", "index": 0 }]] },
     "Build QA Prompt": { "main": [[{ "node": "Anthropic QA Call", "type": "main", "index": 0 }]] },
     "Anthropic QA Call": { "main": [[{ "node": "Combine QA Result", "type": "main", "index": 0 }]] },
-    "Combine QA Result": { "main": [[{ "node": "Build LINE Message", "type": "main", "index": 0 }]] },
-    "Build LINE Message": { "main": [[{ "node": "Check LINE User ID", "type": "main", "index": 0 }]] },
-    "Check LINE User ID": {
-      "main": [
-        [{ "node": "LINE Push Notification", "type": "main", "index": 0 }],
-        [{ "node": "Await Human Approval (no publish)", "type": "main", "index": 0 }]
-      ]
-    },
-    "LINE Push Notification": { "main": [[{ "node": "Await Human Approval (no publish)", "type": "main", "index": 0 }]] }
+    "Combine QA Result": { "main": [[{ "node": "Await Human Approval (no publish)", "type": "main", "index": 0 }]] }
   },
   "settings": { "executionOrder": "v1" },
   "active": false,
