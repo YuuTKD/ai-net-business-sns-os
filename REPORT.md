@@ -22,6 +22,19 @@
 
 ## 報告ログ
 
+### REPORT-024: DEV_RIO_103 Slack通知のフィールド不一致を修正（QA状態が空欄で投稿される不具合）
+- **日時**: 2026-08-02
+- **担当**: Claude Code
+- **関連タスク**: TASK-003（Slack通知統合）
+- **PR**: fix/rio-103-slack-fields（レビュー待ち・未マージ）
+- **背景**: 新規作成した構造検証ツール（validate_workflows_structure.mjs）で DEV_RIO_103 を検査中に発見。
+- **不具合**: 「Send a message」ノード（#all-daily-report へ投稿する native Slack ノード）の本文が `{{ $json.qa_judgment }}` と `{{ $json.qa_reasoning }}` を参照していたが、上流の「Combine QA Result」が実際に出力するのは `qa_status` / `issues` / `note`。該当フィールドが存在しないため、Slack投稿が「Status: （空欄） Reasoning: （空欄）」で送信されていた（配信自体は成功するが内容が欠落）。
+- **修正**: 参照を実在フィールドへ変更 — `qa_judgment` → `qa_status`、`qa_reasoning` → `note`（noteは承認待ち/要修正の理由を含む人間可読文）。
+- **検証**: 103 JSON構文OK / 参照フィールドが実出力に一致することを再確認 / 既存・700系テスト全PASS（回帰なし）。実効化には n8n での再インポートが必要。
+- **影響範囲**: DEV_RIO_103 の Slack 通知本文のみ。フロー構造・QA判定ロジックは不変。
+- **pre-deploy-qa 判定**: 対象外（n8nワークフローJSONの1行修正・本番デプロイ/Scheduler変更なし）
+- **確認事項（要ゆうさん判断）**: 同ファイルに孤立ノード「Slack Notification」（旧 Webhook 方式・`$env.SLACK_WEBHOOK_URL`）が未接続のまま残存。現在は native Slack ノードが実働のため機能重複。削除するか残すかは要判断（本PRでは変更せず報告のみ）。
+
 ### REPORT-023: 2 並行トラック・4 週間本番化実行戦闘開始（¥1M 月間売上達成プロジェクト）
 - **日時**: 2026-08-02 14:30 JST（実行開始）
 - **担当**: Claude Code
