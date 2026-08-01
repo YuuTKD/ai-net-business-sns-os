@@ -125,13 +125,34 @@
     },
     {
       "parameters": {
-        "jsCode": "// LINE通知メッセージを組み立てる。line_user_id未設定の場合は通知先が無いため、後続ノードは失敗するが\n// continueOnFail(=true)により無視され、パイプライン自体は止まらない（Anthropicノードと同じ安全設計）。\nconst o = $input.first().json;\nconst line_user_id = o.line_user_id ?? null;\nconst line_message = o.state === 'WAITING_APPROVAL'\n  ? `【下書き完成】${o.media}「${o.content_id}」の下書きができました。n8nで内容を確認し、問題なければご自身の操作で投稿してください。(QA: ${o.qa_status})`\n  : `【要対応】${o.media}「${o.content_id}」の下書きが${o.qa_status}判定です。issues: ${(o.issues || []).join(' / ')}`;\nreturn [{ json: { ...o, line_user_id, line_message } }];"
+        "jsCode": "// LINE通知メッセージを組み立てる。line_user_id未設定の場合は通知先が無いため、後続ノードは実行されない。\nconst o = $input.first().json;\nconst line_user_id = o.line_user_id ?? null;\nconst line_message = o.state === 'WAITING_APPROVAL'\n  ? `【下書き完成】${o.media}「${o.content_id}」の下書きができました。n8nで内容を確認し、問題なければご自身の操作で投稿してください。(QA: ${o.qa_status})`\n  : `【要対応】${o.media}「${o.content_id}」の下書きが${o.qa_status}判定です。issues: ${(o.issues || []).join(' / ')}`;\nreturn [{ json: { ...o, line_user_id, line_message, should_send_line: line_user_id !== null } }];"
       },
       "id": "b1a10103-0000-4000-8000-00000000000a",
       "name": "Build LINE Message",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [1980, 220]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "default": "otherwise",
+          "conditions": [
+            [
+              {
+                "value1": "={{ $json.should_send_line }}",
+                "value2": true,
+                "operation": "equal"
+              }
+            ]
+          ]
+        }
+      },
+      "id": "b1a10103-0000-4000-8000-00000000000c",
+      "name": "Check LINE User ID",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [2100, 220]
     },
     {
       "parameters": {
@@ -177,7 +198,13 @@
     "Build QA Prompt": { "main": [[{ "node": "Anthropic QA Call", "type": "main", "index": 0 }]] },
     "Anthropic QA Call": { "main": [[{ "node": "Combine QA Result", "type": "main", "index": 0 }]] },
     "Combine QA Result": { "main": [[{ "node": "Build LINE Message", "type": "main", "index": 0 }]] },
-    "Build LINE Message": { "main": [[{ "node": "LINE Push Notification", "type": "main", "index": 0 }]] },
+    "Build LINE Message": { "main": [[{ "node": "Check LINE User ID", "type": "main", "index": 0 }]] },
+    "Check LINE User ID": {
+      "main": [
+        [{ "node": "LINE Push Notification", "type": "main", "index": 0 }],
+        [{ "node": "Await Human Approval (no publish)", "type": "main", "index": 0 }]
+      ]
+    },
     "LINE Push Notification": { "main": [[{ "node": "Await Human Approval (no publish)", "type": "main", "index": 0 }]] }
   },
   "settings": { "executionOrder": "v1" },
