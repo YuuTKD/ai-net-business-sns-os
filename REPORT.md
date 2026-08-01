@@ -22,6 +22,22 @@
 
 ## 報告ログ
 
+### REPORT-016: Anthropicクレジット消費を抑えるため一部呼び出しをHaikuモデルに変更
+- **日時**: 2026-08-01
+- **担当**: Claude Code
+- **関連タスク**: TASK-003
+- **PR**: （作成後に記入）
+- **背景**: ゆうさんからAnthropicクレジットの消費状況を見て「抑えながら本番化ステップ（実テーマ実行→Test3再実施→pre-deploy-qa/scheduler-readiness-check）を進めたい」との要望を受けた。4箇所のAnthropic呼び出しのうち、実際に公開記事の文章を書く箇所（DEV_RIO_103の下書き生成）だけは品質重視で現行モデル（claude-sonnet-4-5）を維持し、それ以外の3箇所を軽量モデル（claude-haiku-4-5）に切り替えた。
+- **変更内容**:
+  - `DEV_RIO_101_Evidence_Build.json`「Build Research Prompt」: `claude-sonnet-4-5` → `claude-haiku-4-5`
+  - `DEV_RIO_102_Experiment_Design.json`「Build Experiment Design Prompt」: `claude-sonnet-4-5` → `claude-haiku-4-5`
+  - `DEV_RIO_103_Content_QA_Approval.json`「Build QA Prompt」（AI自己QA）: `claude-sonnet-4-5` → `claude-haiku-4-5`
+  - `DEV_RIO_103_Content_QA_Approval.json`「Build Content Draft Prompt」（実際の記事本文生成）: **変更なし**（`claude-sonnet-4-5`のまま維持）
+- **安全性への影響**: QA自己判定を軽量モデルに変更しても、既存の決定論的ルールチェック（アフィリ+PR表記なし→強制BLOCK等）が引き続きバックストップとして機能するため、「AIがPASSと言ってもルール違反があれば却下する」設計の安全性は変わらない。research/designの結果もあくまで人間承認前の下書き段階の入力であり、最終的なコンテンツ品質はDEV_RIO_103のQA（AI+ルール二重チェック）と人間承認で担保される。
+- **影響範囲**: `workflows/n8n/DEV_RIO_101/102/103`のmodel文字列3箇所のみ。ロジック・プロンプト内容・max_tokens・ノード構成は無変更。
+- **pre-deploy-qa 判定**: 対象外（設定値の微修正のみ）
+- **確認事項**: 既存テスト（`parse_ai_responses.test.mjs` 13/13、`simulate_pipeline.mjs` 10/10）はモデル名を検証対象にしていないため全てPASSを維持。実際のコスト削減効果は次回のn8n実行時にAnthropic Consoleの使用量画面で確認できる。
+
 ### REPORT-015: 実データによる初回ライブテストで判明したmax_tokens不足を修正（DEV_RIO_103）
 - **日時**: 2026-08-01
 - **担当**: Claude Code（ゆうさんと画面操作を分担しながら実施）
