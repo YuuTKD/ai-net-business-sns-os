@@ -1,0 +1,79 @@
+{
+  "name": "DEV_RIO_402_Scaling_Execution",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10402-0000-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_402 Scaling Execution — 自動スケーリング判定に基づいてアクション実行。\n// DEV_RIO_301 から decision（SCALE/ITERATE/HOLD/STOP）を受け取る。\nconst i = $input.first().json;\nreturn [{ json: {\n  experiment_id: i.experiment_id ?? 'exp-001',\n  decision: i.decision ?? 'HOLD',\n  rationale: i.rationale ?? '未指定',\n  kpi: i.kpi_profit_per_hour ?? 0,\n  purchases: i.purchases ?? 0,\n  owner_approval: i.owner_yes_no ?? 'PENDING'\n} }];"
+      },
+      "id": "b1a10402-0000-4000-8000-000000000002",
+      "name": "Receive Decision",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ルーティング: 判定に基づいて実行アクションを分岐。\nconst o = $input.first().json;\nlet action, action_detail, requires_approval;\n\nswitch(o.decision) {\n  case 'SCALE':\n    action = 'INCREASE_PRODUCTION';\n    action_detail = `購入発生確認。週産をX2に増やす。メディア拡大候補: Threads/Instagram/Substack`;\n    requires_approval = true;\n    break;\n  case 'ITERATE':\n    action = 'TEST_VARIANT';\n    action_detail = `遷移ありだが未購入。単一レバー試験: CTA文言/価格/オファー内容から1つ変更`;\n    requires_approval = true;\n    break;\n  case 'HOLD':\n    action = 'CONTINUE_OBSERVATION';\n    action_detail = 'データ継続取得。1週間後に再判定。';\n    requires_approval = false;\n    break;\n  case 'STOP':\n    action = 'ARCHIVE_PROPOSAL';\n    action_detail = `十分データで負確認。本コンテンツをアーカイブ候補に移行。（削除はしない・人間確認）`;\n    requires_approval = true;\n    break;\n  default:\n    action = 'UNKNOWN';\n    action_detail = '判定不明。人間確認待ち。';\n    requires_approval = true;\n}\n\nreturn [{ json: { ...o, action, action_detail, requires_approval,\n  state: requires_approval ? 'WAITING_APPROVAL' : 'READY_EXECUTE',\n  note: `${action} で自動化準備完了。${requires_approval ? 'オーナー Yes で実行。' : '自動実行予定。'}` } }];"
+      },
+      "id": "b1a10402-0000-4000-8000-000000000003",
+      "name": "Route Action",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 実行ログ & Slack 通知準備\nconst o = $input.first().json;\nconst execId = $execution?.id ?? 'exec-unknown';\nconst timestamp = new Date().toISOString();\n\nconst slack_message = `🤖 Scaling Decision: ${o.action}\\n` +\n  `Experiment: ${o.experiment_id}\\n` +\n  `Rationale: ${o.rationale}\\n` +\n  `Action: ${o.action_detail}\\n` +\n  (o.requires_approval ? `⚠️ Requires Owner Approval\\n` : `✅ Ready for Execution\\n`) +\n  `Timestamp: ${timestamp}`;\n\nreturn [{ json: { ...o, execId, timestamp, slack_message, state: 'READY_NOTIFY' } }];"
+      },
+      "id": "b1a10402-0000-4000-8000-000000000004",
+      "name": "Prepare Notification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [920, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"text\": \"🤖 Scaling Decision Notice\",\n  \"blocks\": [\n    {\n      \"type\": \"header\",\n      \"text\": { \"type\": \"plain_text\", \"text\": \"🤖 スケーリング判定実行\" }\n    },\n    {\n      \"type\": \"section\",\n      \"fields\": [\n        { \"type\": \"mrkdwn\", \"text\": \"*Action:*\\n{{ $json.action }}\" },\n        { \"type\": \"mrkdwn\", \"text\": \"*Experiment:*\\n{{ $json.experiment_id }}\" }\n      ]\n    },\n    {\n      \"type\": \"section\",\n      \"text\": { \"type\": \"mrkdwn\", \"text\": \"*Rationale:*\\n{{ $json.action_detail }}\" }\n    },\n    {\n      \"type\": \"context\",\n      \"elements\": [{ \"type\": \"mrkdwn\", \"text\": \"{{ $json.requires_approval ? '⚠️ Approval Needed' : '✅ Auto Execute' }} | {{ $json.timestamp }}\" }]\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "b1a10402-0000-4000-8000-000000000005",
+      "name": "Slack Notification",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1160, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {},
+      "id": "b1a10402-0000-4000-8000-000000000006",
+      "name": "Result (decision logged, notification sent)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1400, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Receive Decision", "type": "main", "index": 0 }]] },
+    "Receive Decision": { "main": [[{ "node": "Route Action", "type": "main", "index": 0 }]] },
+    "Route Action": { "main": [[{ "node": "Prepare Notification", "type": "main", "index": 0 }]] },
+    "Prepare Notification": { "main": [[{ "node": "Slack Notification", "type": "main", "index": 0 }]] },
+    "Slack Notification": { "main": [[{ "node": "Result (decision logged, notification sent)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_402 Scaling Execution. SCALE/ITERATE/HOLD/STOP判定を受け取り、実行アクションをルーティング・ログ・Slack通知。Manual Trigger のみ・active:false。実行は人間承認後。" },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "REVENUE" }]
+}
