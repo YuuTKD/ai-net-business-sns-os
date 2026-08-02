@@ -68,6 +68,12 @@
         448,
         0
       ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "gSjvXXaj0OLWBIza",
+          "name": "Anthropic account"
+        }
+      },
       "continueOnFail": true
     },
     {
@@ -126,6 +132,12 @@
         1104,
         0
       ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "gSjvXXaj0OLWBIza",
+          "name": "Anthropic account"
+        }
+      },
       "continueOnFail": true
     },
     {
