@@ -3,7 +3,7 @@
 ## 同時進行の上限
 | 区分 | 上限 | 現在の割当 |
 |---|---|---|
-| 収益実験 | 2 | ①Threads→note→Brain¥3,980（計測1本目） |
+| 収益実験 | 2 | ①Threads→note→Brain¥1,980（計測1本目） |
 | 基盤構築 | 1 | n8n DEV Workflow 6本の順次構築 |
 | 既存商品の改善 | 1 | Brain商品ページ/note導線の改善（VALIDATE後） |
 

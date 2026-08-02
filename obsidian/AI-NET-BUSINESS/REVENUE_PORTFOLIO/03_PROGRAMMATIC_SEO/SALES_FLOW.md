@@ -11,7 +11,7 @@ Google検索（ロングテールKW）
     ↓
 記事内でBrain商品を紹介（CTA）
     ↓
-Brain商品購入（¥3,980）
+Brain商品購入（¥1,980）
     or
 B2B診断申込み
     or

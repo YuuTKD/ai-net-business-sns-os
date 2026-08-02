@@ -20,7 +20,7 @@
 | **evidence_packs**（追加） | evidence_pack_id, experiment_id, sources(url[]), facts, notes, assets, created_at | Phase2 |
 
 ## 実測ベースライン投入（Phase1確定値）
-- offers: P-BRAIN-01（¥3,980, payout 50%=¥1,990, compliance_flag=OK, status=販売中, 実績レビュー0）
+- offers: P-BRAIN-01（¥1,980【2026-08-02 値下げ改定・旧¥3,980】, payout 50%=¥990, compliance_flag=OK, status=販売中, 実績レビュー0）
 - metrics: note公開2（ビュー計9）, Brain販売0, Substack登録1 → **confirmed_revenue=¥0**
 - ※「note10本公開」等の過大記載は投入しない（[[SECURITY_POLICY]] §実績の正確性）
 
