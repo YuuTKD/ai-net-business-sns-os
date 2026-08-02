@@ -43,13 +43,23 @@
     },
     {
       "parameters": {
-        "jsCode": "// 楽天リプライ下書きの生成プロンプトを Anthropic body オブジェクトとして組み立てる。\nconst i = $input.first().json;\nconst post = String(i.threads_post || '').slice(0, 300);\nconst prompt = `以下のThreads投稿に自然に続く、商品紹介リプライの下書きを2案。\\n\\n投稿: ${post}\\n\\n条件:\\n- 各60字以内、日本語。\\n- 押し売り感なし。\\n- 実在商品を断定しない。特定の商品名・URLは書かない。\\n- 出力は次のJSON配列のみ（前後に説明・コードブロック記号を付けない）:\\n[{\"reply\":\"string\",\"product_genre\":\"string\"}]`;\nconst anthropic_body = {\n  model: 'claude-haiku-4-5',\n  max_tokens: 512,\n  messages: [ { role: 'user', content: prompt } ]\n};\nreturn [{ json: { ...i, anthropic_body } }];"
+        "jsCode": "// ============================================================\n// 楽天アフィリエイト リンクライブラリ（定数）\n// ============================================================\n// マスターは products/revenue-intelligence-os/data/rakuten_link_library.csv。\n// n8nクラウドはローカルファイルを読めないため、CSVの status=active の行を\n// この LINK_LIBRARY 定数へ手で転記して運用する（CSVがマスター、ここは写し）。\n// 転記手順: CSVに行追加 → 下の配列に同内容を追加 → Save → 手動テスト実行。\n// ⚠ affiliate_url はゆうさんが楽天アフィリ管理画面で発行した実URLのみ。\n//   手打ち・推測・生成したURLをここに書くことは禁止（リンク捏造ゼロ）。\n// 記入例（ダミー・コメントのみ。実URLではない）:\n// { id: 'RKT-001', genre: 'kitchen', aliases: ['キッチン', '調理器具'],\n//   product_name: '（例）フライパン28cm',\n//   affiliate_url: 'https://hb.afl.rakuten.co.jp/hgc/XXXXXXXX/?pc=DUMMY-DO-NOT-USE',\n//   pr_note: '楽天アフィリエイトリンクを含みます', status: 'active' }\nconst LINK_LIBRARY = [\n  // CSV（rakuten_link_library.csv）からの転記。2026-08-02 発行分。\n  { id: 'RKT-001', genre: 'photo_gear', aliases: ['撮影機材', 'リングライト', 'スマホ撮影', 'ライト', '写真', 'photo', 'lighting'],\n    product_name: 'リングライト 三脚タイプ スマホスタンド 10インチ',\n    affiliate_url: 'https://a.r10.to/hkmJqO',\n    pr_note: '楽天アフィリエイトリンクを含みます', status: 'active' },\n  { id: 'RKT-002', genre: 'store_signage', aliases: ['看板', 'A型看板', 'ブラックボード', '店頭看板', '黒板', 'signage'],\n    product_name: 'A型看板 ブラックボード 両面 38×78cm 木製',\n    affiliate_url: 'https://a.r10.to/T3YbFn',\n    pr_note: '楽天アフィリエイトリンクを含みます', status: 'active' },\n  { id: 'RKT-003', genre: 'marketing_book', aliases: ['集客本', 'マーケティング本', '書籍', '本', 'book', 'sns集客'],\n    product_name: '店舗やサロンのためのInstagram集客・販促の教科書',\n    affiliate_url: 'https://a.r10.to/hgtsW1',\n    pr_note: '楽天アフィリエイトリンクを含みます', status: 'active' }\n];\nconst active = LINK_LIBRARY.filter(e => e && e.status === 'active' && e.affiliate_url);\nconst genre_keys = [...new Set(active.map(e => String(e.genre || '').trim()).filter(Boolean))];\nconst i = $input.first().json;\nreturn [{ json: { ...i, link_library: active, genre_keys } }];"
+      },
+      "id": "b1a10705-0000-4000-8000-000000000011",
+      "name": "Link Library",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-208, -112]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 楽天リプライ下書きの生成プロンプトを Anthropic body オブジェクトとして組み立てる。\n// product_genre はリンクライブラリのジャンルキーから選ばせ、後段の照合を確実にする。\nconst i = $input.first().json;\nconst post = String(i.threads_post || '').slice(0, 300);\nconst genres = (i.genre_keys && i.genre_keys.length) ? i.genre_keys.join(' / ') : '(登録なし)';\nconst prompt = `以下のThreads投稿に自然に続く、商品紹介リプライの下書きを2案。\\n\\n投稿: ${post}\\n\\n条件:\\n- 各60字以内、日本語。\\n- 押し売り感なし。\\n- 実在商品を断定しない。特定の商品名・URLは書かない。\\n- product_genre は次のジャンルキーから最も合うものを1つだけ選ぶ: ${genres}。どれも合わない場合は \"none\" とする。\\n- 出力は次のJSON配列のみ（前後に説明・コードブロック記号を付けない）:\\n[{\"reply\":\"string\",\"product_genre\":\"string\"}]`;\nconst anthropic_body = {\n  model: 'claude-haiku-4-5',\n  max_tokens: 512,\n  messages: [ { role: 'user', content: prompt } ]\n};\nreturn [{ json: { ...i, anthropic_body } }];"
       },
       "id": "b1a10705-0000-4000-8000-000000000004",
       "name": "Build Reply Prompt",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [-176, -112]
+      "position": [0, -112]
     },
     {
       "parameters": {
@@ -72,7 +82,7 @@
       "name": "Draft Reply (Claude)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [48, -112],
+      "position": [208, -112],
       "credentials": {
         "anthropicApi": { "id": "gSjvXXaj0OLWBIza", "name": "Anthropic account" }
       },
@@ -80,13 +90,45 @@
     },
     {
       "parameters": {
-        "jsCode": "// Claude応答をパース。リプライ案にリンク差し込み欄を付与。捏造しない。\nconst input = $input.first().json;\nconst ctx = $('Collect Inputs').first().json;\nlet replies = [];\nlet parse_error = null;\nif (input.error) {\n  parse_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    const match = cleaned.match(/\\[[\\s\\S]*\\]/);\n    replies = JSON.parse(match ? match[0] : cleaned);\n    if (!Array.isArray(replies) || replies.length === 0) throw new Error('replies missing/empty');\n  } catch (e) {\n    parse_error = 'parse_failed: ' + e.message;\n  }\n}\nif (parse_error) replies = [{ reply: '（AI応答の取得/解析に失敗。手動で作成してください）', product_genre: 'manual' }];\nconst enriched = replies.map((r) => ({\n  content_id: ctx.content_id,\n  reply: r.reply ?? '',\n  product_genre: r.product_genre ?? '',\n  draft_error: parse_error\n}));\nreturn enriched.map(item => ({ json: item }));"
+        "jsCode": "// Claude応答をパース。捏造しない。リンクは後段の Match Rakuten Link でのみ付与される。\nconst input = $input.first().json;\nconst ctx = $('Collect Inputs').first().json;\nlet replies = [];\nlet parse_error = null;\nif (input.error) {\n  parse_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    const match = cleaned.match(/\\[[\\s\\S]*\\]/);\n    replies = JSON.parse(match ? match[0] : cleaned);\n    if (!Array.isArray(replies) || replies.length === 0) throw new Error('replies missing/empty');\n  } catch (e) {\n    parse_error = 'parse_failed: ' + e.message;\n  }\n}\nif (parse_error) replies = [{ reply: '（AI応答の取得/解析に失敗。手動で作成してください）', product_genre: 'manual' }];\nconst enriched = replies.map((r) => ({\n  content_id: ctx.content_id,\n  reply: r.reply ?? '',\n  product_genre: r.product_genre ?? '',\n  draft_error: parse_error\n}));\nreturn enriched.map(item => ({ json: item }));"
       },
       "id": "b1a10705-0000-4000-8000-000000000006",
       "name": "Prepare Drafts",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [272, -112]
+      "position": [416, -112]
+    },
+    {
+      "parameters": {
+        "jsCode": "// リンクライブラリ照合。ゆうさん発行の実リンクがある genre の下書きだけ投稿対象にする。\n// マッチしない下書きは link_matched=false → 後段の Link Gate で NO_LINK_SKIP へ。\n// これにより「リンクなし・プレースホルダーのままの投稿」は構造的に発生しない。\nconst lib = $('Link Library').first().json.link_library || [];\nconst norm = (s) => String(s || '').trim().toLowerCase();\nconst items = $input.all();\nreturn items.map((item) => {\n  const d = item.json;\n  const g = norm(d.product_genre);\n  let entry = null;\n  if (g && g !== 'none' && g !== 'manual') {\n    entry = lib.find(e => norm(e.genre) === g || (Array.isArray(e.aliases) && e.aliases.some(a => norm(a) === g))) || null;\n  }\n  if (!entry) {\n    return { json: { ...d, link_matched: false } };\n  }\n  // 投稿文には必ず【PR】表記を含める（ステマ規制対応）。リンクはライブラリの実URLのみ。\n  const pr_line = '【PR】' + (entry.pr_note ? String(entry.pr_note) : '楽天アフィリエイトリンクを含みます');\n  const final_reply = [String(d.reply || ''), '', pr_line, String(entry.affiliate_url)].join('\\n');\n  return { json: {\n    ...d,\n    link_matched: true,\n    link_id: entry.id ?? null,\n    product_name: entry.product_name ?? null,\n    affiliate_url: entry.affiliate_url,\n    final_reply\n  } };\n});"
+      },
+      "id": "b1a10705-0000-4000-8000-000000000012",
+      "name": "Match Rakuten Link",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [624, -112]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "id": "gate-link-matched",
+              "leftValue": "={{ $json.link_matched }}",
+              "rightValue": "",
+              "operator": { "type": "boolean", "operation": "true", "singleValue": true }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b1a10705-0000-4000-8000-000000000013",
+      "name": "Link Gate (matched only)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [832, -112]
     },
     {
       "parameters": {
@@ -98,7 +140,7 @@
         "queryParameters": {
           "parameters": [
             { "name": "media_type", "value": "TEXT" },
-            { "name": "text", "value": "={{ $json.reply }}" }
+            { "name": "text", "value": "={{ $json.final_reply }}" }
           ]
         },
         "options": { "timeout": 30000 }
@@ -107,7 +149,7 @@
       "name": "Create Threads Container",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [496, -112],
+      "position": [1040, -208],
       "credentials": {
         "httpBearerAuth": { "id": "EqL89RW6m6CtCIbm", "name": "Bearer Auth account" }
       },
@@ -131,7 +173,7 @@
       "name": "Publish Threads Post",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [720, -112],
+      "position": [1264, -208],
       "credentials": {
         "httpBearerAuth": { "id": "EqL89RW6m6CtCIbm", "name": "Bearer Auth account" }
       },
@@ -145,7 +187,17 @@
       "name": "Aggregate Results",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [944, -112]
+      "position": [1488, -208]
+    },
+    {
+      "parameters": {
+        "jsCode": "// リンクライブラリに該当 genre の active リンクが無いため、この下書きは投稿しない。\n// リンクなし・プレースホルダーのままの投稿を出さないための恒久ガード。\nconst items = $input.all();\nconst results = items.map((item) => ({\n  content_id: item.json.content_id,\n  reply: item.json.reply,\n  product_genre: item.json.product_genre,\n  state: 'NO_LINK_SKIP',\n  published: false,\n  note: 'ライブラリに genre 一致の active リンクが無いためスキップ。rakuten_link_library.csv に登録し Link Library ノードへ転記すれば投稿対象になる。'\n}));\nreturn [{ json: { state: 'NO_LINK_SKIP', skipped_count: results.length, results } }];"
+      },
+      "id": "b1a10705-0000-4000-8000-000000000014",
+      "name": "Skip (no link)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1040, 32]
     },
     {
       "parameters": {
@@ -161,16 +213,19 @@
   "connections": {
     "Manual Trigger": { "main": [[{ "node": "Collect Inputs", "type": "main", "index": 0 }]] },
     "Collect Inputs": { "main": [[{ "node": "QA Gate (PASS only)", "type": "main", "index": 0 }]] },
-    "QA Gate (PASS only)": { "main": [[{ "node": "Build Reply Prompt", "type": "main", "index": 0 }], [{ "node": "Skip (not PASS)", "type": "main", "index": 0 }]] },
+    "QA Gate (PASS only)": { "main": [[{ "node": "Link Library", "type": "main", "index": 0 }], [{ "node": "Skip (not PASS)", "type": "main", "index": 0 }]] },
+    "Link Library": { "main": [[{ "node": "Build Reply Prompt", "type": "main", "index": 0 }]] },
     "Build Reply Prompt": { "main": [[{ "node": "Draft Reply (Claude)", "type": "main", "index": 0 }]] },
     "Draft Reply (Claude)": { "main": [[{ "node": "Prepare Drafts", "type": "main", "index": 0 }]] },
-    "Prepare Drafts": { "main": [[{ "node": "Create Threads Container", "type": "main", "index": 0 }]] },
+    "Prepare Drafts": { "main": [[{ "node": "Match Rakuten Link", "type": "main", "index": 0 }]] },
+    "Match Rakuten Link": { "main": [[{ "node": "Link Gate (matched only)", "type": "main", "index": 0 }]] },
+    "Link Gate (matched only)": { "main": [[{ "node": "Create Threads Container", "type": "main", "index": 0 }], [{ "node": "Skip (no link)", "type": "main", "index": 0 }]] },
     "Create Threads Container": { "main": [[{ "node": "Publish Threads Post", "type": "main", "index": 0 }]] },
     "Publish Threads Post": { "main": [[{ "node": "Aggregate Results", "type": "main", "index": 0 }]] }
   },
   "settings": { "executionOrder": "v1" },
   "active": false,
   "pinData": {},
-  "meta": { "description": "DEV_RIO_705 Threads x Rakuten Auto-Post. qa_status=PASS のときのみ Threads投稿に添える楽天アフィリのリプライを自動生成・実 Threads API で自動投稿。段階的承認ポリシー準拠。" },
+  "meta": { "description": "DEV_RIO_705 Threads x Rakuten Auto-Post. qa_status=PASS かつリンクライブラリ（ゆうさん発行の実アフィリリンクのみ登録）に genre 一致がある場合のみ、【PR】表記＋実リンク入りリプライを Threads API で投稿。一致しない下書きは NO_LINK_SKIP（リンクなし投稿の再発防止）。段階的承認ポリシー準拠。" },
   "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "THREADS" }, { "name": "AFFILIATE" }]
 }

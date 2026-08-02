@@ -13,6 +13,8 @@ DEV_RIO_701 / 702 / 704 / 705 の本番運用手順。**これらは「配布用
 
 いずれも `active: false`・外部投稿APIを呼ばない・`Stop Before…` ノードで公開直前停止。
 
+※ DEV_RIO_705 のみ、承認済みロールアウト（PR #42）で実Threads API投稿版に更新済み。2026-08-02 にリンクライブラリ方式を追加（下記『楽天リンクライブラリ運用』参照）。上表の705の行は旧仕様。
+
 ## 前提（1回だけ）
 
 - n8n に Anthropic クレデンシャルが登録済みであること（名称: `Anthropic account`、既存の DEV_RIO_101/103 と同じもの）。HTTPノードは `predefinedCredentialType: anthropicApi` でこれを参照する。
@@ -43,3 +45,28 @@ DEV_RIO_701 / 702 / 704 / 705 の本番運用手順。**これらは「配布用
 - 自動投稿 / 自動リプライ / スケジュール投稿（CLAUDE.md 禁止）
 - 実アフィリエイトURLの自動生成（アフィリID未保有・偽URL防止のためプレースホルダのみ）
 - クリック/売上の自動トラッキング（実測基盤ができてから別途検討）
+
+## 楽天リンクライブラリ運用（DEV_RIO_705・2026-08-02 追加）
+
+DEV_RIO_705 は「ゆうさんが楽天アフィリ管理画面で発行した本物のリンクだけ」を使う
+リンクライブラリ方式に改修済み。URLの捏造・プレースホルダーのままの投稿は構造的に発生しない。
+
+- **マスター**: `products/revenue-intelligence-os/data/rakuten_link_library.csv`
+  （カラム: id / genre / product_name / affiliate_url / pr_note / status / added_date）
+- **実行時参照**: DEV_RIO_705 内 Code ノード「Link Library」の `LINK_LIBRARY` 定数
+  （n8nクラウドはローカルCSVを読めないため、CSV→Codeノードへ手で転記する。CSVがマスター、Codeノードは写し）
+
+### 運用手順（リンク追加のたび）
+
+1. ゆうさんが楽天アフィリエイト管理画面でリンクを発行する
+2. `rakuten_link_library.csv` に1行追加する（`status=active`、`added_date` 記入）
+3. n8n で DEV_RIO_705 を開き、「Link Library」ノードの `LINK_LIBRARY` 配列に同内容を転記して Save
+4. DEV_RIO_705 を手動テスト実行し、リプライに実リンク＋【PR】表記が入ることを確認する
+
+### 実行時の挙動
+
+- Claude が生成した `product_genre` とライブラリの `genre`（または `aliases`）を正規化して照合
+- 一致（`status=active`）した下書きのみ投稿。本文には必ず `【PR】` 表記＋実リンクが入る
+- 一致しない下書きは `state: NO_LINK_SKIP` で投稿せずスキップ（リンクなし投稿の再発防止）
+- ライブラリが空の間は全件 `NO_LINK_SKIP` ＝ 何も投稿されない（安全側デフォルト）
+- リンクを止めたいときは CSV とCodeノードの両方で `status` を `inactive` にする

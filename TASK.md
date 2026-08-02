@@ -41,6 +41,22 @@
 - **期限**: 2026-08-09（段階的承認 Threads 第1号）
 - **備考**: DEV_RIO_705をdry-runから自動投稿実行モードに切り替え。policy_auto_posting_rollout.md の段階的承認方針に基づき「1事業・1アカウント・1ジャンルの1媒体ずつ」Threads から開始。n8nインポート・ワークフロー構造テスト完了（REPORT-028）。**その後、Meta Developer Portal で Threads API の Long-lived User Access Token を取得（アカウント: ai_store_lab）し n8n Credentials に Bearer Auth account として保存（Credential ID: EqL89RW6m6CtCIbm）、DEV_RIO_705_Threads_Rakuten_Prepare.json を実 Threads API 連携版（graph.threads.net の Create Threads Container → Publish Threads Post）に更新。既存ワークフロー（ID: wi1FHcHzABSV9dHv）で実行テストを実施し、@ai_store_lab アカウントへ実際に2件投稿成功（Thread ID: 18117979762927230, 17971585581120942／posted_count: 2, failed_count: 0）。これにより auto_posting_rollout_policy の第1弾（Threads）の本番稼働を確認済み（REPORT-029）。残: PR作成→ゆうさん最終承認→merge→他プラットフォームへの段階的展開検討。
 
+### TASK-017: 楽天アフィリエイト収益導線の立ち上げ（リンクライブラリ + 実リンク入り自動投稿）
+- **担当**: Claude Code（AI社員分業体制: CEO/リサーチャー/エンジニア/画面操作オペレーター/SNS運用担当）
+- **ステータス**: REVIEW（実装・本番テスト完了・PR待ち）
+- **ブランチ**: feature/rakuten-affiliate-launch
+- **PR**: （作成中）
+- **期限**: 2026-08-02（完了）
+- **備考**: ゆうさんの楽天アフィリアカウントで実リンク3本を発行（リングライト2%/A型看板10%/Instagram集客本3%）し、`rakuten_link_library.csv` に登録。DEV_RIO_705 を「ライブラリの実リンクにマッチした下書きのみ【PR】付きで投稿、マッチしなければ投稿しない」設計に改修。本番テストで1件投稿成功（Thread ID: 18092211170549800・楽天商品カード自動展開を確認）。残: 失敗1件（Bad request）の原因調査、投稿ペース運用ルールの決定（REPORT-030）。
+
+### TASK-018: AI社員10名体制の構築（サブエージェント + Obsidian情報共有ハブ）
+- **担当**: Claude Code
+- **ステータス**: REVIEW（構築完了・PR待ち）
+- **ブランチ**: feature/rakuten-affiliate-launch
+- **PR**: （作成中）
+- **期限**: 2026-08-02（完了）
+- **備考**: `.claude/agents/` に10名（CEO/リサーチャー/ライター/編集者/SNS運用担当/カスタマーサクセス/経理アナリスト/QAセキュリティ/画面操作オペレーター/エンジニア、全員 model: fable）のエージェント定義を作成。`obsidian/AI-NET-BUSINESS/AI_EMPLOYEES/` にCEOダッシュボード+9名分ノート（作業ログ・申し送りの型）を作成し、部門横断の情報共有ハブとして運用開始。初仕事として売上ベースライン調査（実収益¥0確認）・Threads導線分析（2系統の発見）・楽天アフィリ立ち上げを分業実施（REPORT-030）。
+
 ### TASK-003: DEV_RIO_101/102/103 に Anthropic API 連携を実装
 - **担当**: Claude Code
 - **ステータス**: REVIEW
