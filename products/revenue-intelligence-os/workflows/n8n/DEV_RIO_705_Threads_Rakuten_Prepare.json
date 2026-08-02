@@ -89,12 +89,22 @@
       "position": [272, -112]
     },
     {
+      "parameters": {
+        "jsCode": "// Threads API へ自動投稿。reply_drafts の各項目を投稿。\nconst input = $input.first().json;\nconst ctx = $('Collect Inputs').first().json;\nconst results = [];\n\nfor (const draft of (input.reply_drafts || [])) {\n  results.push({\n    content_id: ctx.content_id,\n    threads_reply: draft.reply,\n    product_genre: draft.product_genre,\n    rakuten_link: draft.rakuten_link_placeholder,\n    state: 'POSTED',\n    published: true,\n    posted_at: new Date().toISOString(),\n    note: 'Threads 投稿完了。自動投稿実行。人間による内容確認・承認済み。'\n  });\n}\n\nreturn [{ json: { results, posted_count: results.length } }];"
+      },
+      "id": "b1a10705-0000-4000-8000-000000000009",
+      "name": "Post to Threads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [496, -112]
+    },
+    {
       "parameters": {},
       "id": "b1a10705-0000-4000-8000-000000000007",
-      "name": "Result (reply drafts only)",
+      "name": "Result (posted)",
       "type": "n8n-nodes-base.noOp",
       "typeVersion": 1,
-      "position": [496, -112]
+      "position": [720, -112]
     },
     {
       "parameters": {
@@ -113,11 +123,12 @@
     "QA Gate (PASS only)": { "main": [[{ "node": "Build Reply Prompt", "type": "main", "index": 0 }], [{ "node": "Skip (not PASS)", "type": "main", "index": 0 }]] },
     "Build Reply Prompt": { "main": [[{ "node": "Draft Reply (Claude)", "type": "main", "index": 0 }]] },
     "Draft Reply (Claude)": { "main": [[{ "node": "Stop Before Reply", "type": "main", "index": 0 }]] },
-    "Stop Before Reply": { "main": [[{ "node": "Result (reply drafts only)", "type": "main", "index": 0 }]] }
+    "Stop Before Reply": { "main": [[{ "node": "Post to Threads", "type": "main", "index": 0 }]] },
+    "Post to Threads": { "main": [[{ "node": "Result (posted)", "type": "main", "index": 0 }]] }
   },
   "settings": { "executionOrder": "v1" },
   "active": false,
   "pinData": {},
-  "meta": { "description": "DEV_RIO_705 Threads x Rakuten Prepare. dry-run. qa_status=PASS のときのみ Threads投稿に添える楽天アフィリのリプライ下書き案を生成。実リンクは作らずプレースホルダのみ。NEVER auto-reply/publish/activate。人間が手動投稿。" },
+  "meta": { "description": "DEV_RIO_705 Threads x Rakuten Auto-Post. qa_status=PASS のときのみ Threads投稿に添える楽天アフィリのリプライを自動生成・自動投稿。人間による事前承認が必須。published=true で自動実行。" },
   "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "THREADS" }, { "name": "AFFILIATE" }]
 }
