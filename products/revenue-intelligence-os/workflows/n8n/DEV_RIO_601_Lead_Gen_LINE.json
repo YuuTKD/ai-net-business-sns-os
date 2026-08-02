@@ -1,0 +1,90 @@
+{
+  "name": "DEV_RIO_601_Lead_Gen_LINE",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10601-0000-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-848, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_601 Lead Gen【LINE通知・下書き準備】\n// ウェビナー登録者からのリード獲得フロー。LINE Messaging APIで通知。\n// ドライラン：通知下書きのみ生成。自動送信はしない。\nconst i = $input.first().json;\nreturn [{ json: {\n  lead_id: i.lead_id ?? 'lead-' + Date.now(),\n  webinar_id: i.webinar_id ?? 'wf-001',\n  email: i.email ?? 'test@example.com',\n  name: i.name ?? 'テストリード',\n  status: i.status ?? 'new',\n  line_user_id: i.line_user_id ?? 'U' + Math.random().toString(36).substr(2, 9),\n  platform: 'line',\n  action_type: 'send_lead_notification'\n} }];"
+      },
+      "id": "b1a10601-0000-4000-8000-000000000002",
+      "name": "Collect Lead Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-624, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// LINE通知メッセージを組み立てる（Claude生成）\nconst i = $input.first().json;\nconst prompt = `以下のリード情報から、LINE通知の下書きメッセージを作成してください。\\n\\nリード名: ${i.name}\\nメール: ${i.email}\\nウェビナーID: ${i.webinar_id}\\n\\n条件:\\n- 100字以内、日本語\\n- リード獲得の感謝メッセージ\\n- 次のアクション（フォローアップ予定など）を示唆\\n- 出力は次のJSON配列のみ: [{\"message\":\"string\",\"next_action\":\"string\"}]`;\nconst anthropic_body = {\n  model: 'claude-haiku-4-5',\n  max_tokens: 512,\n  messages: [ { role: 'user', content: prompt } ]\n};\nreturn [{ json: { ...i, anthropic_body } }];"
+      },
+      "id": "b1a10601-0000-4000-8000-000000000003",
+      "name": "Build LINE Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-176, -112]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.anthropic_body }}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "b1a10601-0000-4000-8000-000000000004",
+      "name": "Generate Message (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [48, -112],
+      "credentials": {
+        "anthropicApi": { "id": "gSjvXXaj0OLWBIza", "name": "Anthropic account" }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Claude応答をパース。LINE通知下書きを停止前に生成（公開しない）\nconst input = $input.first().json;\nconst ctx = $('Collect Lead Input').first().json;\nlet messages = [];\nlet parse_error = null;\nif (input.error) {\n  parse_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    const match = cleaned.match(/\\[[\\s\\S]*\\]/);\n    messages = JSON.parse(match ? match[0] : cleaned);\n    if (!Array.isArray(messages) || messages.length === 0) throw new Error('messages missing/empty');\n  } catch (e) {\n    parse_error = 'parse_failed: ' + e.message;\n  }\n}\nif (parse_error) messages = [{ message: '（AI応答の取得/解析に失敗。手動で通知を作成してください）', next_action: 'manual' }];\nreturn [{ json: {\n  lead_id: ctx.lead_id,\n  line_user_id: ctx.line_user_id,\n  line_messages: messages,\n  message_count: messages.length,\n  state: 'READY_FOR_REVIEW',\n  draft_only: true,\n  parse_error: parse_error,\n  note: 'ドライラン。LINE通知下書きのみ生成。自動送信はしない。人間が確認後、手動で LINE Messaging API を実行する。'\n} }];"
+      },
+      "id": "b1a10601-0000-4000-8000-000000000005",
+      "name": "Stop Before Send",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [272, -112]
+    },
+    {
+      "parameters": {},
+      "id": "b1a10601-0000-4000-8000-000000000006",
+      "name": "Result (draft only)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [496, -112]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Collect Lead Input", "type": "main", "index": 0 }]] },
+    "Collect Lead Input": { "main": [[{ "node": "Build LINE Message", "type": "main", "index": 0 }]] },
+    "Build LINE Message": { "main": [[{ "node": "Generate Message (Claude)", "type": "main", "index": 0 }]] },
+    "Generate Message (Claude)": { "main": [[{ "node": "Stop Before Send", "type": "main", "index": 0 }]] },
+    "Stop Before Send": { "main": [[{ "node": "Result (draft only)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_601 Lead Gen. ウェビナー登録者のリード獲得情報をClaude生成でLINE通知下書きとして準備。ドライラン・手動承認パターン。自動送信はしない。" },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "LINE" }, { "name": "LEAD_GEN" }]
+}

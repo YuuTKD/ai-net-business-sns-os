@@ -1,0 +1,97 @@
+{
+  "name": "DEV_RIO_602_Sales_Funnel_LINE",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10602-0000-4000-8000-000000000001",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-848, 0],
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "type": "days", "value": 1 }
+          ]
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_602 Sales Funnel【LINE フォローアップ・下書き準備】\n// リードのステータスに応じた段階的なフォローアップメッセージを LINE で準備。\nconst i = $input.first().json;\nreturn [{ json: {\n  funnel_stage: i.funnel_stage ?? 'awareness',\n  lead_id: i.lead_id ?? 'lead-' + Math.random().toString(36).substr(2, 9),\n  line_user_id: i.line_user_id ?? 'U' + Math.random().toString(36).substr(2, 9),\n  days_in_funnel: i.days_in_funnel ?? 3,\n  platform: 'line',\n  action_type: 'send_funnel_followup'\n} }];"
+      },
+      "id": "b1a10602-0000-4000-8000-000000000002",
+      "name": "Collect Funnel Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-624, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ファネルステージに応じたフォローアップメッセージをClaude生成\nconst i = $input.first().json;\nconst stageDesc = {\n  awareness: '認識段階：製品を知り始めた段階',\n  consideration: '検討段階：購入を検討している段階',\n  decision: '決定段階：購入直前の段階'\n};\nconst prompt = `リードの営業ファネルステージが「${stageDesc[i.funnel_stage] || '不明'}」です。\\nファネルステージに適したLINE フォローアップメッセージの下書きを作成してください。\\n\\n条件:\\n- 100字以内、日本語\\n- ステージに合わせた行動喚起（CTA）\\n- 次のステップへ進むよう促す\\n- 出力は次のJSON配列のみ: [{\"subject\":\"string\",\"followup_message\":\"string\"}]`;\nconst anthropic_body = {\n  model: 'claude-haiku-4-5',\n  max_tokens: 512,\n  messages: [ { role: 'user', content: prompt } ]\n};\nreturn [{ json: { ...i, anthropic_body } }];"
+      },
+      "id": "b1a10602-0000-4000-8000-000000000003",
+      "name": "Build Funnel Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-176, -112]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.anthropic_body }}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "b1a10602-0000-4000-8000-000000000004",
+      "name": "Generate Followup (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [48, -112],
+      "credentials": {
+        "anthropicApi": { "id": "gSjvXXaj0OLWBIza", "name": "Anthropic account" }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Claude応答をパース。ファネル段階別のフォローアップ下書き生成\nconst input = $input.first().json;\nconst ctx = $('Collect Funnel Input').first().json;\nlet followups = [];\nlet parse_error = null;\nif (input.error) {\n  parse_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    const match = cleaned.match(/\\[[\\s\\S]*\\]/);\n    followups = JSON.parse(match ? match[0] : cleaned);\n    if (!Array.isArray(followups) || followups.length === 0) throw new Error('followups missing/empty');\n  } catch (e) {\n    parse_error = 'parse_failed: ' + e.message;\n  }\n}\nif (parse_error) followups = [{ subject: '手動作成', followup_message: '（AI応答の取得/解析に失敗。手動でフォローアップを作成してください）' }];\nreturn [{ json: {\n  lead_id: ctx.lead_id,\n  line_user_id: ctx.line_user_id,\n  funnel_stage: ctx.funnel_stage,\n  followup_messages: followups,\n  state: 'WAITING_APPROVAL',\n  published: false,\n  draft_error: parse_error,\n  note: 'ドライラン。ファネル段階別フォローアップ下書きのみ。自動送信はしない。人間が確認して手動実行。'\n} }];"
+      },
+      "id": "b1a10602-0000-4000-8000-000000000005",
+      "name": "Stop Before Send",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [272, -112]
+    },
+    {
+      "parameters": {},
+      "id": "b1a10602-0000-4000-8000-000000000006",
+      "name": "Result (draft only)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [496, -112]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": { "main": [[{ "node": "Collect Funnel Input", "type": "main", "index": 0 }]] },
+    "Collect Funnel Input": { "main": [[{ "node": "Build Funnel Message", "type": "main", "index": 0 }]] },
+    "Build Funnel Message": { "main": [[{ "node": "Generate Followup (Claude)", "type": "main", "index": 0 }]] },
+    "Generate Followup (Claude)": { "main": [[{ "node": "Stop Before Send", "type": "main", "index": 0 }]] },
+    "Stop Before Send": { "main": [[{ "node": "Result (draft only)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_602 Sales Funnel. リードのファネルステージ別にLINE フォローアップ下書きを生成。ドライラン・手動承認。自動送信なし。" },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "LINE" }, { "name": "SALES_FUNNEL" }]
+}
