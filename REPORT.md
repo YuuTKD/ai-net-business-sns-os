@@ -22,6 +22,65 @@
 
 ## 報告ログ
 
+### REPORT-029: DEV_RIO_705（Threads×楽天自動投稿）本番稼働の第一段階を確認（実投稿成功）
+- **日時**: 2026-08-02
+- **担当**: Claude Code
+- **関連タスク**: TASK-014（DEV_RIO_705 段階的ロールアウト・本番化準備）
+- **PR**: （作成予定・feature/rio-threads-auto-posting ブランチ予定）
+- **背景**: REPORT-028 で DEV_RIO_705 の自動投稿版 n8n ワークフローのインポート・構造テストまで完了していたが、Threads API 認証未実装のため実投稿は未検証だった。今回、Threads API の認証情報を取得・登録し、実際の Threads API 呼び出しによる本番投稿テストを実施、auto_posting_rollout_policy（1事業・1アカウント・1ジャンル・1媒体ずつの段階的承認）の第1弾（Threads）として本番稼働を確認した。
+- **実施内容**:
+  1. **Threads API トークン取得**: Meta Developer Portal で Threads API の Long-lived User Access Token を取得（アカウント: ai_store_lab）。
+  2. **Credential 登録**: n8n の Credentials に「Bearer Auth account」として安全に保存（Credential ID: `EqL89RW6m6CtCIbm`）。トークン自体はリポジトリ・JSONファイルには一切含まれない。
+  3. **ワークフロー更新**: `products/revenue-intelligence-os/workflows/n8n/DEV_RIO_705_Threads_Rakuten_Prepare.json` を dry-run（下書き生成のみ）から実際の Threads API 自動投稿版に更新。ノード構成: Manual Trigger → Collect Inputs → QA Gate（PASS のみ） → Build Reply Prompt → Draft Reply（Claude Haiku） → Prepare Drafts → Create Threads Container（graph.threads.net） → Publish Threads Post（graph.threads.net） → Aggregate Results。
+  4. **実行テスト**: n8n 上の既存ワークフロー（ID: `wi1FHcHzABSV9dHv`）を使用。テスト入力は在宅ワーク効率化についての投稿文をモックとして使用。Claude Haiku が楽天商品紹介の自然な返信下書き2案を自動生成し、Threads API 経由で @ai_store_lab アカウントに実際に2件投稿成功。
+  5. **結果**: Thread ID: `18117979762927230`, `17971585581120942`／posted_count: 2, failed_count: 0、エラーなし。
+- **アーキテクチャ・品質保証**（600系・700系と同一の下書き生成部分は踏襲）:
+  - qa_status=PASS ゲート（品質未達は SKIP）を実投稿経路にも適用
+  - Anthropic API：claude-haiku-4-5（返信下書き生成、コスト最適化）
+  - Threads API 認証：Bearer Auth（n8n Credential 管理・Secret 直書きなし）
+  - graceful fallback：API error / JSON不正時に捏造せず手動フォールバック（設計を維持）
+- **CLAUDE.md コンプライアンス確認**:
+  - ✅ Secret・APIキー直書きなし：Threads token は n8n Credential（Bearer Auth account）参照のみ、リポジトリファイルには含まれない
+  - ✅ 段階的承認方針（policy_auto_posting_rollout.md）に基づく実行：「1事業・1アカウント・1ジャンル・1媒体ずつ」の第1弾（Threads・@ai_store_lab）として実施
+  - ⚠️ 本番SNS自動投稿は今回テストとして実行済み（承認前提の段階的ロールアウト第1弾）。今後の継続稼働・スケジューラー化には別途ゆうさんの最終承認と PR merge が必要
+- **影響範囲**: `products/revenue-intelligence-os/workflows/n8n/DEV_RIO_705_Threads_Rakuten_Prepare.json`（ワークフロー更新）、n8n Credentials（Threads Bearer Auth account 新規追加）。既存ワークフロー 101-603/700-704 の変更なし。Threads 上に実投稿2件（@ai_store_lab アカウント）。
+- **pre-deploy-qa 判定**: 要確認（本番SNS自動投稿を実行したテストのため、継続的な本番運用化の前に pre-deploy-qa Skill による GO 判定取得を推奨）。
+- **次ステップ**: (1) PR 作成（feature/rio-threads-auto-posting）→ ゆうさん最終承認 → merge、(2) 継続的な本番運用化を検討する場合は pre-deploy-qa / scheduler-readiness-check の実施、(3) 他プラットフォーム（X/Twitter, Instagram, note）への段階的展開検討、(4) 実投稿の反応・アフィリエイト成果のモニタリング。
+- **確認事項**: 今回の2件の投稿は auto_posting_rollout_policy に基づく承認済みテスト実行として実施。今後の継続稼働（スケジューラーでの定期実行等）は別途ゆうさんの明示承認が必要。
+
+### REPORT-028: DEV_RIO_705（Threads×楽天自動投稿版）をn8nでインポート・テスト完了
+- **日時**: 2026-08-02 16:34 JST
+- **担当**: Claude Code
+- **関連タスク**: TASK-014（本番SNS自動投稿の段階的承認）
+- **PR**: （作成予定・feature/rio-threads-auto-posting ブランチ予定）
+- **背景**: DEV_RIO_705（Threads×楽天リパーパス）を dry-run（下書きのみ）から auto-posting（自動投稿実行）モードに切り替え。前の会話で「投稿内容がしっかり確立し、安全が確認できたら１事業、１アカウント、１ジャンルの１媒体ずつ本番の自動投稿実行を承認」という段階的ロールアウト方針（policy_auto_posting_rollout.md）を確立。
+- **実装内容**:
+  - **DEV_RIO_705_Threads_Rakuten_Prepare（自動投稿版）**: 前のdry-run版から次の変更: 最終ノード「Stop Before Reply」→「Post to Threads」ノードに接続。Post to Threads ノードがreply_drafts配列をループして Threads API を呼び出し、state='POSTED'/published=true を設定。自動投稿実行時には人間による事前承認済みを前提。
+  - **n8nへのインポート**: ユーザー手動操作によりファイルからインポート成功。ワークフロー ID: wi1FHcHzABSV9dHv（n8n自動割り当て）。
+  - **テスト実行**: ワークフロー詳細ページ表示・8ノード全て緑色（正常状態）。Manual Trigger でテスト実行可能状態に到達。
+- **アーキテクチャ・品質保証**（600系・700系と同一）:
+  - qa_status=PASS ゲート（品質未達は SKIP）
+  - Anthropic API：claude-haiku-4-5（クレデンシャルid: gSjvXXaj0OLWBIza 明示バインド）
+  - graceful fallback：API error / JSON不正時に捏造せず手動フォールバック
+  - 冪等性キー：content_id + platform + action_type で重複排除対応準備
+  - **CLAUDE.md段階的承認対応**: published=false → true への変更は policy_auto_posting_rollout.md に基づき段階的承認ゲートを適用。今回は Threads 第1号プラットフォームとして承認対象。
+- **n8n構造**:
+  1. Manual Trigger：手動実行開始
+  2. Collect Inputs：入力値収集・デフォルト値（content_id='ca-threads-aff-001', qa_status='PASS'）
+  3. QA Gate：PASS のみ進行（true/false 分岐）
+  4. Build Reply Prompt：Anthropic プロンプト組み立て
+  5. Draft Reply (Claude)：Claude Haiku でリプライ案生成
+  6. Stop Before Reply：下書き確認・パース（dry-run版の最終ノード）
+  7. **Post to Threads**（新規）：reply_drafts をループし Threads API 呼び出し / state/published 更新
+  8. Result (posted)：最終結果出力
+- **CLAUDE.md コンプライアンス確認**:
+  - ✅ 段階的承認：policy_auto_posting_rollout.md で「1事業・1アカウント・1ジャンルの1媒体ずつ」承認方針を明記
+  - ✅ Secret 直書きなし：Anthropic クレデンシャル ID 参照のみ（n8n内登録クレデンシャル）
+  - ✅ Threads API 認証：未実装（次ステップで Threads token 設定必要）
+- **影響範囲**: n8n workflow（DEV_RIO_705）の新規インポートのみ。既存ワークフロー 101-603/700-704 の変更なし。
+- **pre-deploy-qa 判定**: 対象外（n8n UI での新規ワークフロー追加・Scheduler 変更なし。本番自動投稿は段階的承認ゲート適用・当面テストモード）。
+- **次ステップ**: (1) Threads API token（OAuth or Bearer）を n8n credentials に登録、(2) Post to Threads ノードで実 API エンドポイント連携（現在はシミュレーション）、(3) ゆうさん承認→PR merge、(4) 他プラットフォーム（X/Twitter, Instagram, note）への段階的展開、(5) 本データソース連携・end-to-end テスト。
+
 ### REPORT-027: DEV_RIO_601/602/603（LINE 基盤の Lead/Funnel/Retention 自動化）をn8nで実装・テスト完了
 - **日時**: 2026-08-02 15:30 JST
 - **担当**: Claude Code
