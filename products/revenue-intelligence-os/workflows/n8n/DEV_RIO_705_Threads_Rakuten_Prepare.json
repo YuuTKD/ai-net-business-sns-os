@@ -100,7 +100,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// リンクライブラリ照合。ゆうさん発行の実リンクがある genre の下書きだけ投稿対象にする。\n// マッチしない下書きは link_matched=false → 後段の Link Gate で NO_LINK_SKIP へ。\n// これにより「リンクなし・プレースホルダーのままの投稿」は構造的に発生しない。\nconst lib = $('Link Library').first().json.link_library || [];\nconst norm = (s) => String(s || '').trim().toLowerCase();\nconst items = $input.all();\nreturn items.map((item) => {\n  const d = item.json;\n  const g = norm(d.product_genre);\n  let entry = null;\n  if (g && g !== 'none' && g !== 'manual') {\n    entry = lib.find(e => norm(e.genre) === g || (Array.isArray(e.aliases) && e.aliases.some(a => norm(a) === g))) || null;\n  }\n  if (!entry) {\n    return { json: { ...d, link_matched: false } };\n  }\n  // 投稿文には必ず【PR】表記を含める（ステマ規制対応）。リンクはライブラリの実URLのみ。\n  const pr_line = '【PR】' + (entry.pr_note ? String(entry.pr_note) : '楽天アフィリエイトリンクを含みます');\n  const final_reply = [String(d.reply || ''), '', pr_line, String(entry.affiliate_url)].join('\\n');\n  return { json: {\n    ...d,\n    link_matched: true,\n    link_id: entry.id ?? null,\n    product_name: entry.product_name ?? null,\n    affiliate_url: entry.affiliate_url,\n    final_reply\n  } };\n});"
+        "jsCode": "// リンクライブラリ照合。ゆうさん発行の実リンクがある genre の下書きだけ投稿対象にする。\n// マッチしない下書きは link_matched=false → 後段の Link Gate で NO_LINK_SKIP へ。\n// これにより「リンクなし・プレースホルダーのままの投稿」は構造的に発生しない。\nconst lib = $('Link Library').first().json.link_library || [];\nconst norm = (s) => String(s || '').trim().toLowerCase();\nconst items = $input.all();\nreturn items.map((item) => {\n  const d = item.json;\n  const g = norm(d.product_genre);\n  let entry = null;\n  if (g && g !== 'none' && g !== 'manual') {\n    entry = lib.find(e => norm(e.genre) === g || (Array.isArray(e.aliases) && e.aliases.some(a => norm(a) === g))) || null;\n  }\n  if (!entry) {\n    return { json: { ...d, link_matched: false } };\n  }\n  // 投稿文には必ず【PR】表記を含める（ステマ規制対応）。リンクはライブラリの実URLのみ。\n  const pr_line = '【PR】' + (entry.pr_note ? String(entry.pr_note) : '楽天アフィリエイトリンクを含みます');\n  const final_reply = [String(d.reply || ''), '', pr_line, String(entry.affiliate_url)].join('\\n');\n  // Threads API へは改行・記号入りテキストをクエリではなく JSON body で送る（400 Bad request 対策）。\n  // Anthropic 呼び出しと同じ「Code ノードで body を組み立てて jsonBody で渡す」パターン。\n  const threads_body = { media_type: 'TEXT', text: final_reply };\n  return { json: {\n    ...d,\n    link_matched: true,\n    link_id: entry.id ?? null,\n    product_name: entry.product_name ?? null,\n    affiliate_url: entry.affiliate_url,\n    final_reply,\n    threads_body\n  } };\n});"
       },
       "id": "b1a10705-0000-4000-8000-000000000012",
       "name": "Match Rakuten Link",
@@ -136,13 +136,9 @@
         "url": "=https://graph.threads.net/v1.0/me/threads",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "httpBearerAuth",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            { "name": "media_type", "value": "TEXT" },
-            { "name": "text", "value": "={{ $json.final_reply }}" }
-          ]
-        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.threads_body }}",
         "options": { "timeout": 30000 }
       },
       "id": "b1a10705-0000-4000-8000-000000000009",
@@ -157,23 +153,30 @@
     },
     {
       "parameters": {
+        "jsCode": "// Publish 用の body を組み立てる（creation_id もクエリではなく JSON body で送る堅牢化）。\n// コンテナ作成が失敗した item は id が無く creation_id='' となり、Publish が失敗して\n// Aggregate Results で POST_FAILED として集計される（従来と同じ挙動）。\nconst items = $input.all();\nreturn items.map((item) => {\n  const j = item.json;\n  return { json: { ...j, publish_body: { creation_id: String(j.id || '') } } };\n});"
+      },
+      "id": "b1a10705-0000-4000-8000-000000000015",
+      "name": "Build Publish Body",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1248, -208]
+    },
+    {
+      "parameters": {
         "method": "POST",
         "url": "=https://graph.threads.net/v1.0/me/threads_publish",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "httpBearerAuth",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            { "name": "creation_id", "value": "={{ $json.id }}" }
-          ]
-        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.publish_body }}",
         "options": { "timeout": 30000 }
       },
       "id": "b1a10705-0000-4000-8000-000000000010",
       "name": "Publish Threads Post",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [1264, -208],
+      "position": [1456, -208],
       "credentials": {
         "httpBearerAuth": { "id": "EqL89RW6m6CtCIbm", "name": "Bearer Auth account" }
       },
@@ -187,7 +190,7 @@
       "name": "Aggregate Results",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1488, -208]
+      "position": [1664, -208]
     },
     {
       "parameters": {
@@ -220,7 +223,8 @@
     "Prepare Drafts": { "main": [[{ "node": "Match Rakuten Link", "type": "main", "index": 0 }]] },
     "Match Rakuten Link": { "main": [[{ "node": "Link Gate (matched only)", "type": "main", "index": 0 }]] },
     "Link Gate (matched only)": { "main": [[{ "node": "Create Threads Container", "type": "main", "index": 0 }], [{ "node": "Skip (no link)", "type": "main", "index": 0 }]] },
-    "Create Threads Container": { "main": [[{ "node": "Publish Threads Post", "type": "main", "index": 0 }]] },
+    "Create Threads Container": { "main": [[{ "node": "Build Publish Body", "type": "main", "index": 0 }]] },
+    "Build Publish Body": { "main": [[{ "node": "Publish Threads Post", "type": "main", "index": 0 }]] },
     "Publish Threads Post": { "main": [[{ "node": "Aggregate Results", "type": "main", "index": 0 }]] }
   },
   "settings": { "executionOrder": "v1" },
