@@ -58,6 +58,26 @@ export function parseAffiliate(input) {
   return { suggestions: enriched, draft_error: parse_error, published: false };
 }
 
+// --- 704: Stop Before Publish のパース相当（format/text 配列）---
+export function parseRepurpose(input) {
+  let drafts = [], parse_error = null;
+  if (input.error) {
+    parse_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);
+  } else {
+    try {
+      const text = input.content && input.content[0] && input.content[0].text;
+      if (!text) throw new Error('no text in response');
+      const cleaned = text.trim().replace(/^```json\s*/i, '').replace(/```\s*$/, '');
+      const match = cleaned.match(/\[[\s\S]*\]/);
+      drafts = JSON.parse(match ? match[0] : cleaned);
+      if (!Array.isArray(drafts) || drafts.length === 0) throw new Error('drafts missing/empty');
+      drafts = drafts.map(d => ({ format: d.format ?? 'unknown', text: d.text ?? '' }));
+    } catch (e) { parse_error = 'parse_failed: ' + e.message; }
+  }
+  if (parse_error) drafts = [{ format: 'manual', text: '（AI応答の取得/解析に失敗。手動で下書きを作成してください）' }];
+  return { repurpose_drafts: drafts, draft_count: drafts.length, draft_error: parse_error, published: false };
+}
+
 let pass = 0, fail = 0;
 function check(name, got, expect) {
   const ok = JSON.stringify(got) === JSON.stringify(expect);
@@ -83,6 +103,12 @@ check('702 いかなる場合も published:false', parseXDrafts({ error: { messa
 check('701 正常JSON → 各案にプレースホルダ付与', /^<<ここに自分の/.test(parseAffiliate({ content: [{ text: '[{"genre":"book","placement":"末尾","anchor":"参考書"}]' }] }).suggestions[0].affiliate_link_placeholder), true);
 check('701 APIエラーでもプレースホルダは存在（実URL捏造なし）', /placeholder|<</.test(parseAffiliate({ error: { message: 'x' } }).suggestions[0].affiliate_link_placeholder) , true);
 check('701 非JSON → 手動フォールバック(error明示)', parseAffiliate({ content: [{ text: 'not json' }] }).draft_error !== null, true);
+
+// --- 704 パース（リパーパス下書き）---
+check('704 正常JSON → 3フォーマット採用', parseRepurpose({ content: [{ text: '[{"format":"instagram_caption","text":"a"},{"format":"short_video_script","text":"b"},{"format":"substack_intro","text":"c"}]' }] }).draft_count, 3);
+check('704 各要素は format/text を持つ', parseRepurpose({ content: [{ text: '[{"format":"instagram_caption","text":"a"}]' }] }).repurpose_drafts[0].format, 'instagram_caption');
+check('704 APIエラー → 手動フォールバック(error明示)', parseRepurpose({ error: { message: 'overloaded' } }).draft_error !== null, true);
+check('704 いかなる場合も published:false', parseRepurpose({ error: { message: 'x' } }).published, false);
 
 console.log(`\n${pass}/${pass + fail} passed, ${fail} failed`);
 if (fail > 0) process.exit(1);

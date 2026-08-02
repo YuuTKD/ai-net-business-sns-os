@@ -1,0 +1,123 @@
+{
+  "name": "DEV_RIO_704_Repurpose_Prepare",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10704-0000-4000-8000-000000000001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [-848, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_704 他媒体リパーパス【下書き準備のみ・dry-run】。\n// DEV_RIO_103 の出力(note_body/threads_post/theme/qa_status)を受け取り、\n// 他フォーマット向けの下書きを生成する。★自動投稿・自動展開はしない（CLAUDE.md準拠）。\n// qa_status が無い手動テスト時は 'PASS' 扱い。\nconst i = $input.first().json;\nreturn [{ json: {\n  content_id: i.content_id ?? 'ca-repurpose-001',\n  theme: i.theme ?? '（テーマ未設定）',\n  note_body: i.note_body ?? i.note_draft_body ?? '',\n  threads_post: i.threads_post ?? '',\n  qa_status: i.qa_status ?? 'PASS',\n  action_type: 'prepare_repurpose_drafts'\n} }];"
+      },
+      "id": "b1a10704-0000-4000-8000-000000000002",
+      "name": "Collect Inputs",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-624, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "id": "gate-qa-pass",
+              "leftValue": "={{ $json.qa_status }}",
+              "rightValue": "PASS",
+              "operator": { "type": "string", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b1a10704-0000-4000-8000-000000000003",
+      "name": "QA Gate (PASS only)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-400, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// リパーパス下書き生成プロンプトを Anthropic body オブジェクトとして組み立てる。\n// 対象フォーマット: instagram_caption / short_video_script / substack_intro。\nconst i = $input.first().json;\nconst excerpt = String(i.note_body || '').slice(0, 600);\nconst prompt = `以下の記事を、他媒体向けに『リパーパス』した下書きを作成してください。投稿はせず下書きのみ。\\n\\nテーマ: ${i.theme}\\n元記事(note)抜粋: ${excerpt}\\n元Threads投稿: ${i.threads_post}\\n\\n次の3フォーマットを各1案、日本語で:\\n- instagram_caption: Instagram用キャプション(絵文字可・ハッシュタグ3〜5)\\n- short_video_script: 60秒ショート動画の台本(フック→本編3点→CTAの構成・ナレーション文のみ)\\n- substack_intro: Substackニュースレターの導入文(3〜4文)\\n\\n注意: 誇張・虚偽の数値・断定的な成果保証は禁止。元記事にない事実を創作しない。\\n出力は次のJSON配列のみ（前後に説明・コードブロック記号を付けない）:\\n[{\"format\":\"instagram_caption\",\"text\":\"string\"},{\"format\":\"short_video_script\",\"text\":\"string\"},{\"format\":\"substack_intro\",\"text\":\"string\"}]`;\nconst anthropic_body = {\n  model: 'claude-haiku-4-5',\n  max_tokens: 2048,\n  messages: [ { role: 'user', content: prompt } ]\n};\nreturn [{ json: { ...i, anthropic_body } }];"
+      },
+      "id": "b1a10704-0000-4000-8000-000000000004",
+      "name": "Build Repurpose Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-176, -112]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.anthropic_body }}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "b1a10704-0000-4000-8000-000000000005",
+      "name": "Generate Repurpose Drafts (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [48, -112],
+      "credentials": {
+        "anthropicApi": { "id": "gSjvXXaj0OLWBIza", "name": "Anthropic account" }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Claude応答をパース。失敗時は捏造せず parse_error を明示。公開直前で停止。\nconst input = $input.first().json;\nconst ctx = $('Collect Inputs').first().json;\nlet drafts = [];\nlet parse_error = null;\nif (input.error) {\n  parse_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    const match = cleaned.match(/\\[[\\s\\S]*\\]/);\n    drafts = JSON.parse(match ? match[0] : cleaned);\n    if (!Array.isArray(drafts) || drafts.length === 0) throw new Error('drafts missing/empty');\n    drafts = drafts.map(d => ({ format: d.format ?? 'unknown', text: d.text ?? '' }));\n  } catch (e) {\n    parse_error = 'parse_failed: ' + e.message;\n  }\n}\nif (parse_error) drafts = [{ format: 'manual', text: '（AI応答の取得/解析に失敗。手動で下書きを作成してください）' }];\nconst idempotency_key = ['repurpose', ctx.content_id, ctx.action_type].join('|');\nreturn [{ json: {\n  content_id: ctx.content_id,\n  repurpose_drafts: drafts,\n  draft_count: drafts.length,\n  idempotency_key,\n  state: 'WAITING_APPROVAL',\n  published: false,\n  draft_error: parse_error,\n  note: 'dry-run。他媒体リパーパス下書きのみ生成。★自動投稿・自動展開はしない。人間が各媒体に手動で投稿する（CLAUDE.md 準拠）。'\n} }];"
+      },
+      "id": "b1a10704-0000-4000-8000-000000000006",
+      "name": "Stop Before Publish",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [272, -112]
+    },
+    {
+      "parameters": {},
+      "id": "b1a10704-0000-4000-8000-000000000007",
+      "name": "Result (repurpose drafts only)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [496, -112]
+    },
+    {
+      "parameters": {
+        "jsCode": "// QAゲート不通過。リパーパス生成をスキップ。\nconst i = $input.first().json;\nreturn [{ json: {\n  content_id: i.content_id,\n  skipped: true,\n  qa_status: i.qa_status,\n  state: 'SKIPPED_NOT_PASS',\n  published: false,\n  note: 'qa_status が PASS ではないためリパーパス下書き生成をスキップ。'\n} }];"
+      },
+      "id": "b1a10704-0000-4000-8000-000000000008",
+      "name": "Skip (not PASS)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-176, 176]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Collect Inputs", "type": "main", "index": 0 }]] },
+    "Collect Inputs": { "main": [[{ "node": "QA Gate (PASS only)", "type": "main", "index": 0 }]] },
+    "QA Gate (PASS only)": { "main": [[{ "node": "Build Repurpose Prompt", "type": "main", "index": 0 }], [{ "node": "Skip (not PASS)", "type": "main", "index": 0 }]] },
+    "Build Repurpose Prompt": { "main": [[{ "node": "Generate Repurpose Drafts (Claude)", "type": "main", "index": 0 }]] },
+    "Generate Repurpose Drafts (Claude)": { "main": [[{ "node": "Stop Before Publish", "type": "main", "index": 0 }]] },
+    "Stop Before Publish": { "main": [[{ "node": "Result (repurpose drafts only)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_704 Repurpose Prepare. dry-run. qa_status=PASS のときのみ note記事を他媒体(Instagram/ショート動画台本/Substack)向けにリパーパスした下書きを生成し公開直前で停止。NEVER publish/auto-distribute/activate。人間が各媒体へ手動投稿。" },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "REPURPOSE" }]
+}

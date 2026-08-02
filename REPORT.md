@@ -22,6 +22,18 @@
 
 ## 報告ログ
 
+### REPORT-026: DEV_RIO_704（他媒体リパーパス下書き）を再設計して実装
+- **日時**: 2026-08-02
+- **担当**: Claude Code
+- **関連タスク**: TASK-013
+- **PR**: feat/rio-704-repurpose（レビュー待ち・未マージ）
+- **背景**: 当初 TASK-013 は「note→Threads自動投稿→自動短編化→YouTube/TikTok/Reels自動展開」という案で、CLAUDE.md『本番SNS自動投稿の実行』禁止に抵触するため BLOCKED としていた。これを 700系と同一の「下書き準備のみ・人間が手動投稿」パターンで再設計・実装した。
+- **実装**: 103の記事(note_body/threads_post/theme)を入力に、他媒体向けリパーパス下書きを3フォーマット生成（Instagramキャプション / 60秒ショート動画台本(ナレーション文) / Substack導入文）。`Stop Before Publish` で公開直前停止。active:false・外部投稿APIなし・人間が各媒体へ手動投稿。
+- **既存700系と同一の品質担保**: qa_status=PASSゲート（品質未達はSKIP）/ Anthropic呼び出しは既存クレデンシャル(gSjvXXaj0OLWBIza)を明示バインド / bodyはCode nodeでオブジェクト構築 / パースの graceful fallback（API error・不正出力でも捏造せず手動フォールバック）。
+- **検証**: 704 JSON構文OK(8ノード) / 構造検証エラー0件(全13ファイル) / 700系挙動テストに704の4ケース追加し 17/17 全PASS / Secret値の直書きなし。実効化には n8n インポートが必要。
+- **影響範囲**: 新規ワークフロー1件の追加のみ。既存ワークフロー不変。運用手順は design/RIO_700_SERIES_RUNBOOK.md に704を追記。
+- **pre-deploy-qa 判定**: 対象外（新規ワークフローJSON追加・active:false・本番デプロイ/Scheduler変更なし）。
+
 ### REPORT-025: DEV_RIO_103 の Anthropicクレデンシャル欠落を修正（再インポート時に401になる不具合）
 - **日時**: 2026-08-02
 - **担当**: Claude Code
