@@ -1,0 +1,97 @@
+{
+  "name": "DEV_RIO_603_Retention_LINE",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "b1a10603-0000-4000-8000-000000000001",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-848, 0],
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "type": "weeks", "value": 1 }
+          ]
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// DEV_RIO_603 Retention【LINE 継続営業・下書き準備】\n// 既顧客への定期的な付加価値提供メッセージを LINE で準備。\nconst i = $input.first().json;\nreturn [{ json: {\n  customer_id: i.customer_id ?? 'cust-' + Math.random().toString(36).substr(2, 9),\n  line_user_id: i.line_user_id ?? 'U' + Math.random().toString(36).substr(2, 9),\n  customer_segment: i.customer_segment ?? 'general',\n  months_as_customer: i.months_as_customer ?? 6,\n  platform: 'line',\n  action_type: 'send_retention_offer'\n} }];"
+      },
+      "id": "b1a10603-0000-4000-8000-000000000002",
+      "name": "Collect Customer Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-624, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 顧客セグメント別の継続営業メッセージを Claude 生成\nconst i = $input.first().json;\nconst segmentDesc = {\n  general: '一般顧客',\n  vip: 'VIP顧客',\n  atrisk: 'リスク顧客（解約寸前）'\n};\nconst prompt = `既顧客（セグメント: ${segmentDesc[i.customer_segment] || '不明'}、顧客期間: ${i.months_as_customer}ヶ月）への継続営業メッセージを作成してください。\\n\\n条件:\\n- 100字以内、日本語\\n- 付加価値提供に焦点（売上ではなく顧客の成功）\\n- 長期的な関係構築を示唆\\n- 出力は次のJSON配列のみ: [{\"offer_type\":\"string\",\"retention_message\":\"string\"}]`;\nconst anthropic_body = {\n  model: 'claude-haiku-4-5',\n  max_tokens: 512,\n  messages: [ { role: 'user', content: prompt } ]\n};\nreturn [{ json: { ...i, anthropic_body } }];"
+      },
+      "id": "b1a10603-0000-4000-8000-000000000003",
+      "name": "Build Retention Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-176, -112]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.anthropic_body }}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "b1a10603-0000-4000-8000-000000000004",
+      "name": "Generate Offer (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [48, -112],
+      "credentials": {
+        "anthropicApi": { "id": "gSjvXXaj0OLWBIza", "name": "Anthropic account" }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Claude応答をパース。顧客セグメント別の継続営業下書き生成\nconst input = $input.first().json;\nconst ctx = $('Collect Customer Input').first().json;\nlet offers = [];\nlet parse_error = null;\nif (input.error) {\n  parse_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    const match = cleaned.match(/\\[[\\s\\S]*\\]/);\n    offers = JSON.parse(match ? match[0] : cleaned);\n    if (!Array.isArray(offers) || offers.length === 0) throw new Error('offers missing/empty');\n  } catch (e) {\n    parse_error = 'parse_failed: ' + e.message;\n  }\n}\nif (parse_error) offers = [{ offer_type: '手動作成', retention_message: '（AI応答の取得/解析に失敗。手動で継続営業オファーを作成してください）' }];\nreturn [{ json: {\n  customer_id: ctx.customer_id,\n  line_user_id: ctx.line_user_id,\n  customer_segment: ctx.customer_segment,\n  retention_offers: offers,\n  state: 'WAITING_APPROVAL',\n  published: false,\n  draft_error: parse_error,\n  note: 'ドライラン。顧客継続営業下書きのみ。自動送信はしない。人間が確認して手動実行。'\n} }];"
+      },
+      "id": "b1a10603-0000-4000-8000-000000000005",
+      "name": "Stop Before Send",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [272, -112]
+    },
+    {
+      "parameters": {},
+      "id": "b1a10603-0000-4000-8000-000000000006",
+      "name": "Result (draft only)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [496, -112]
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": { "main": [[{ "node": "Collect Customer Input", "type": "main", "index": 0 }]] },
+    "Collect Customer Input": { "main": [[{ "node": "Build Retention Message", "type": "main", "index": 0 }]] },
+    "Build Retention Message": { "main": [[{ "node": "Generate Offer (Claude)", "type": "main", "index": 0 }]] },
+    "Generate Offer (Claude)": { "main": [[{ "node": "Stop Before Send", "type": "main", "index": 0 }]] },
+    "Stop Before Send": { "main": [[{ "node": "Result (draft only)", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_603 Retention. 既顧客セグメント別にLINE 継続営業下書きを生成。ドライラン・手動承認。自動送信なし。" },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "LINE" }, { "name": "RETENTION" }]
+}

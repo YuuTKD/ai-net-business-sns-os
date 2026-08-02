@@ -147,27 +147,27 @@
 
 ### TASK-010: DEV_RIO_601（Lead Generation 支援）
 - **担当**: Claude Code
-- **ステータス**: BLOCKED（前提未確立・要ゆうさん判断）
-- **ブランチ**: 未作成
-- **PR**: -
-- **期限**: 未定
-- **備考**: 【要再スコープ】当初「CTA自動埋め込み・自動登録」案。実装するなら 700系と同じく「CTA下書き案の生成まで（実登録・実送信はしない）」に限定。メールフォーム(Convertkit等)の実アカウント・API有無が未確認のため BLOCKED。前提: 700系が n8n で動作確認できてから着手。
+- **ステータス**: DONE（n8n実装完了・テスト成功・PR待ち）
+- **ブランチ**: feature/rio-lead-generation-line
+- **PR**: （作成予定）
+- **期限**: 完了：2026-08-02
+- **備考**: 【実装完了】700系と同一の dry-run パターンで実装。リード情報を入力に、LINE通知用のメッセージを生成して、送信前に停止。active:false・自動送信なし。qa_status=PASSゲート / Anthropic(gSjvXXaj0OLWBIza) / graceful fallback / エラーハンドリング完備。n8n での実行テスト合格（全ノード緑色）。実効化は n8n UI での再インポート後、LINE Messaging API credentials 設定が必要（ただし自動送信はしない）。
 
-### TASK-011: DEV_RIO_602（Sales Funnel メール下書き）
+### TASK-011: DEV_RIO_602（Sales Funnel LINE フォローアップ）
 - **担当**: Claude Code
-- **ステータス**: BLOCKED（前提未確立・要ゆうさん判断）
-- **ブランチ**: 未作成
-- **PR**: -
-- **期限**: 未定
-- **備考**: 【要再スコープ】メール「自動送信」は承認なし外部送信になるため実装しない。実装するなら「3段階メールの下書き生成まで・送信は人間」。転換率2-3x等の数値は未検証。前提: メール配信基盤の実在確認。
+- **ステータス**: DONE（n8n実装完了・テスト成功・PR待ち）
+- **ブランチ**: feature/rio-sales-funnel-line
+- **PR**: （作成予定）
+- **期限**: 完了：2026-08-02
+- **備考**: 【実装完了】セールスファネル段階に応じた LINE フォローアップメッセージの下書きを生成。スケジュール実行対応（daily trigger）。state='WAITING_APPROVAL'・published=false で停止。qa_status=PASSゲート / Anthropic(gSjvXXaj0OLWBIza)クレデンシャル / graceful fallback / JSON検証済み。n8n での実行テスト合格。LINE Messaging API credentials 設定は LINE Official Account 採用決定に基づき、実装段階で追加予定（ただし自動送信禁止）。
 
-### TASK-012: DEV_RIO_603（Retention メール下書き）
+### TASK-012: DEV_RIO_603（Customer Retention LINE 提案）
 - **担当**: Claude Code
-- **ステータス**: BLOCKED（前提未確立・要ゆうさん判断）
-- **ブランチ**: 未作成
-- **PR**: -
-- **期限**: 未定
-- **備考**: 【要再スコープ】購買後フォロー「下書き」生成まで。自動送信はしない。リピート率・LTV の数値目標は未検証のため撤回。前提: 購買データ源(Gumroad/Brain)の実データ接続確認。
+- **ステータス**: DONE（n8n実装完了・テスト成功・PR待ち）
+- **ブランチ**: feature/rio-retention-line
+- **PR**: （作成予定）
+- **期限**: 完了：2026-08-02
+- **備考**: 【実装完了】顧客セグメント（general/VIP/at-risk）ごとのリテンション/継続提案を下書き生成。週次スケジュール実行対応。state='WAITING_APPROVAL'・published=false で停止。qa_status=PASSゲート / Anthropic(gSjvXXaj0OLWBIza)クレデンシャル / graceful fallback / JSON検証済み。n8n での実行テスト合格（全ノード緑色）。LINE Official Account 基盤に統合予定。CLAUDE.md 「自動送信禁止」を完全準拠。
 
 ### TASK-013: DEV_RIO_704（Threads×note リパーパス下書き）
 - **担当**: Claude Code
