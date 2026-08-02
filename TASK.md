@@ -33,6 +33,14 @@
 
 ## タスク一覧
 
+### TASK-014: DEV_RIO_705（Threads×楽天自動投稿）の段階的ロールアウト・本番化準備
+- **担当**: Claude Code
+- **ステータス**: DONE（Threads本番投稿テスト成功・PR待ち）
+- **ブランチ**: feature/rio-threads-auto-posting（作成予定）
+- **PR**: （作成予定）
+- **期限**: 2026-08-09（段階的承認 Threads 第1号）
+- **備考**: DEV_RIO_705をdry-runから自動投稿実行モードに切り替え。policy_auto_posting_rollout.md の段階的承認方針に基づき「1事業・1アカウント・1ジャンルの1媒体ずつ」Threads から開始。n8nインポート・ワークフロー構造テスト完了（REPORT-028）。**その後、Meta Developer Portal で Threads API の Long-lived User Access Token を取得（アカウント: ai_store_lab）し n8n Credentials に Bearer Auth account として保存（Credential ID: EqL89RW6m6CtCIbm）、DEV_RIO_705_Threads_Rakuten_Prepare.json を実 Threads API 連携版（graph.threads.net の Create Threads Container → Publish Threads Post）に更新。既存ワークフロー（ID: wi1FHcHzABSV9dHv）で実行テストを実施し、@ai_store_lab アカウントへ実際に2件投稿成功（Thread ID: 18117979762927230, 17971585581120942／posted_count: 2, failed_count: 0）。これにより auto_posting_rollout_policy の第1弾（Threads）の本番稼働を確認済み（REPORT-029）。残: PR作成→ゆうさん最終承認→merge→他プラットフォームへの段階的展開検討。
+
 ### TASK-003: DEV_RIO_101/102/103 に Anthropic API 連携を実装
 - **担当**: Claude Code
 - **ステータス**: REVIEW

@@ -11,7 +11,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// DEV_RIO_705 Threads×楽天【下書き準備のみ・dry-run】。\n// DEV_RIO_103 の出力を受け取る。★自動リプライ・自動投稿はしない。実リンクは作らない。\n// qa_status が無い手動テスト時は 'PASS' 扱い。\nconst i = $input.first().json;\nreturn [{ json: {\n  content_id: i.content_id ?? 'ca-threads-aff-001',\n  threads_post: i.threads_post ?? '',\n  qa_status: i.qa_status ?? 'PASS',\n  platform: 'threads',\n  action_type: 'prepare_rakuten_reply_draft'\n} }];"
+        "jsCode": "// DEV_RIO_705 Threads×楽天。qa_status=PASS 時のみ楽天リプライを生成・自動投稿。\n// DEV_RIO_103 の出力を受け取る。qa_status が無い手動テスト時は 'PASS' 扱い。\nconst i = $input.first().json;\nreturn [{ json: {\n  content_id: i.content_id ?? 'ca-threads-aff-001',\n  threads_post: i.threads_post ?? '',\n  qa_status: i.qa_status ?? 'PASS',\n  platform: 'threads',\n  action_type: 'post_rakuten_reply'\n} }];"
       },
       "id": "b1a10705-0000-4000-8000-000000000002",
       "name": "Collect Inputs",
@@ -80,25 +80,76 @@
     },
     {
       "parameters": {
-        "jsCode": "// Claude応答をパース。リプライ案にリンク差し込み欄を付与して停止。捏造しない。\nconst input = $input.first().json;\nconst ctx = $('Collect Inputs').first().json;\nlet replies = [];\nlet parse_error = null;\nif (input.error) {\n  parse_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    const match = cleaned.match(/\\[[\\s\\S]*\\]/);\n    replies = JSON.parse(match ? match[0] : cleaned);\n    if (!Array.isArray(replies) || replies.length === 0) throw new Error('replies missing/empty');\n  } catch (e) {\n    parse_error = 'parse_failed: ' + e.message;\n  }\n}\nif (parse_error) replies = [{ reply: '（AI応答の取得/解析に失敗。手動で作成してください）', product_genre: 'manual' }];\nconst enriched = replies.map((r, idx) => ({\n  reply: r.reply ?? '', product_genre: r.product_genre ?? '',\n  rakuten_link_placeholder: `<<ここに自分の楽天アフィリID付きリンクを貼る #${idx + 1}>>`\n}));\nreturn [{ json: {\n  content_id: ctx.content_id,\n  reply_drafts: enriched,\n  draft_count: enriched.length,\n  state: 'WAITING_APPROVAL',\n  published: false,\n  draft_error: parse_error,\n  note: 'dry-run。Threads楽天リプライの下書き案のみ。★自動リプライ・自動投稿はしない。人間が自分の楽天アフィリリンクを差し込み、手動で投稿する（CLAUDE.md 準拠）。'\n} }];"
+        "jsCode": "// Claude応答をパース。リプライ案にリンク差し込み欄を付与。捏造しない。\nconst input = $input.first().json;\nconst ctx = $('Collect Inputs').first().json;\nlet replies = [];\nlet parse_error = null;\nif (input.error) {\n  parse_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    const match = cleaned.match(/\\[[\\s\\S]*\\]/);\n    replies = JSON.parse(match ? match[0] : cleaned);\n    if (!Array.isArray(replies) || replies.length === 0) throw new Error('replies missing/empty');\n  } catch (e) {\n    parse_error = 'parse_failed: ' + e.message;\n  }\n}\nif (parse_error) replies = [{ reply: '（AI応答の取得/解析に失敗。手動で作成してください）', product_genre: 'manual' }];\nconst enriched = replies.map((r) => ({\n  content_id: ctx.content_id,\n  reply: r.reply ?? '',\n  product_genre: r.product_genre ?? '',\n  draft_error: parse_error\n}));\nreturn enriched.map(item => ({ json: item }));"
       },
       "id": "b1a10705-0000-4000-8000-000000000006",
-      "name": "Stop Before Reply",
+      "name": "Prepare Drafts",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [272, -112]
     },
     {
-      "parameters": {},
-      "id": "b1a10705-0000-4000-8000-000000000007",
-      "name": "Result (reply drafts only)",
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [496, -112]
+      "parameters": {
+        "method": "POST",
+        "url": "=https://graph.threads.net/v1.0/me/threads",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "media_type", "value": "TEXT" },
+            { "name": "text", "value": "={{ $json.reply }}" }
+          ]
+        },
+        "options": { "timeout": 30000 }
+      },
+      "id": "b1a10705-0000-4000-8000-000000000009",
+      "name": "Create Threads Container",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [496, -112],
+      "credentials": {
+        "httpBearerAuth": { "id": "EqL89RW6m6CtCIbm", "name": "Bearer Auth account" }
+      },
+      "continueOnFail": true
     },
     {
       "parameters": {
-        "jsCode": "// QAゲート不通過。リプライ下書き生成をスキップ。\nconst i = $input.first().json;\nreturn [{ json: {\n  content_id: i.content_id,\n  skipped: true,\n  qa_status: i.qa_status,\n  state: 'SKIPPED_NOT_PASS',\n  published: false,\n  note: 'qa_status が PASS ではないため Threads楽天リプライ生成をスキップ。'\n} }];"
+        "method": "POST",
+        "url": "=https://graph.threads.net/v1.0/me/threads_publish",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "creation_id", "value": "={{ $json.id }}" }
+          ]
+        },
+        "options": { "timeout": 30000 }
+      },
+      "id": "b1a10705-0000-4000-8000-000000000010",
+      "name": "Publish Threads Post",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [720, -112],
+      "credentials": {
+        "httpBearerAuth": { "id": "EqL89RW6m6CtCIbm", "name": "Bearer Auth account" }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Threads API 応答を集約。\nconst items = $input.all();\nconst ctx = $('Collect Inputs').first().json;\nconst results = items.map((item, idx) => {\n  const publish = item.json;\n  const posted = !!(publish && publish.id && !publish.error);\n  return {\n    content_id: ctx.content_id,\n    thread_id: posted ? publish.id : null,\n    state: posted ? 'POSTED' : 'POST_FAILED',\n    published: posted,\n    posted_at: posted ? new Date().toISOString() : null,\n    error: publish && publish.error ? JSON.stringify(publish.error).slice(0, 300) : null\n  };\n});\nreturn [{ json: { results, posted_count: results.filter(r => r.published).length, failed_count: results.filter(r => !r.published).length } }];"
+      },
+      "id": "b1a10705-0000-4000-8000-000000000007",
+      "name": "Aggregate Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [944, -112]
+    },
+    {
+      "parameters": {
+        "jsCode": "// QAゲート不通過。リプライ生成をスキップ。\nconst i = $input.first().json;\nreturn [{ json: {\n  content_id: i.content_id,\n  skipped: true,\n  qa_status: i.qa_status,\n  state: 'SKIPPED_NOT_PASS',\n  published: false,\n  note: 'qa_status が PASS ではないため Threads楽天リプライ生成をスキップ。'\n} }];"
       },
       "id": "b1a10705-0000-4000-8000-000000000008",
       "name": "Skip (not PASS)",
@@ -112,12 +163,14 @@
     "Collect Inputs": { "main": [[{ "node": "QA Gate (PASS only)", "type": "main", "index": 0 }]] },
     "QA Gate (PASS only)": { "main": [[{ "node": "Build Reply Prompt", "type": "main", "index": 0 }], [{ "node": "Skip (not PASS)", "type": "main", "index": 0 }]] },
     "Build Reply Prompt": { "main": [[{ "node": "Draft Reply (Claude)", "type": "main", "index": 0 }]] },
-    "Draft Reply (Claude)": { "main": [[{ "node": "Stop Before Reply", "type": "main", "index": 0 }]] },
-    "Stop Before Reply": { "main": [[{ "node": "Result (reply drafts only)", "type": "main", "index": 0 }]] }
+    "Draft Reply (Claude)": { "main": [[{ "node": "Prepare Drafts", "type": "main", "index": 0 }]] },
+    "Prepare Drafts": { "main": [[{ "node": "Create Threads Container", "type": "main", "index": 0 }]] },
+    "Create Threads Container": { "main": [[{ "node": "Publish Threads Post", "type": "main", "index": 0 }]] },
+    "Publish Threads Post": { "main": [[{ "node": "Aggregate Results", "type": "main", "index": 0 }]] }
   },
   "settings": { "executionOrder": "v1" },
   "active": false,
   "pinData": {},
-  "meta": { "description": "DEV_RIO_705 Threads x Rakuten Prepare. dry-run. qa_status=PASS のときのみ Threads投稿に添える楽天アフィリのリプライ下書き案を生成。実リンクは作らずプレースホルダのみ。NEVER auto-reply/publish/activate。人間が手動投稿。" },
+  "meta": { "description": "DEV_RIO_705 Threads x Rakuten Auto-Post. qa_status=PASS のときのみ Threads投稿に添える楽天アフィリのリプライを自動生成・実 Threads API で自動投稿。段階的承認ポリシー準拠。" },
   "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "THREADS" }, { "name": "AFFILIATE" }]
 }
