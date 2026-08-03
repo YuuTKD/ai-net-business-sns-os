@@ -1,12 +1,16 @@
 # =====================================================================
-# affiliate_link_library_v2_proposed_schema.csv — マルチアフィリエイト対応
-# 提案スキーマ（未採用・レビュー用テンプレート。本番ファイルではない）
+# affiliate_link_library_v2.csv — マルチアフィリエイト対応リンクライブラリ
 # =====================================================================
-# 作成: 2026-08-03（TASK-024）
+# 作成: 2026-08-03（TASK-024） / 実データ投入: 2026-08-03（TASK-025）
 # 位置づけ: 本番の products/revenue-intelligence-os/data/rakuten_link_library.csv
-#   は本ファイルでは変更していない。A8.net・もしもアフィリエイトは
-#   口座/税務情報の登録を伴う新規アカウント開設がゆうさん本人にしかできないため、
-#   ゆうさんの開設完了後にこのスキーマを使って本番統合するかを判断する。
+#   は本ファイルでは変更していない（楽天は引き続きv1ファイルで運用）。
+#   ゆうさんが既にA8.net（メディアID a24062165409・yuublog様）・
+#   もしもアフィリエイト（店主のAI時短メモ・スモールビジネスカテゴリ）の
+#   アカウントを開設済みであることが2026-08-03に判明したため、
+#   実際に発行された広告リンクを本ファイルへ投入した（リンク捏造ゼロ原則準拠）。
+#   ただし、DEV_RIO_705 等の自動投稿ワークフローへの組み込み（Code ノードの
+#   LINK_LIBRARY定数への転記）は本PRの範囲外とし、ゆうさんの承認を得てから
+#   別タスクで実施する（CLAUDE.md「本番SNS自動投稿の実行は承認必須」準拠）。
 #   設計背景・A8/もしもの特徴調査は design/MULTI_AFFILIATE_NETWORK_EXPANSION.md 参照。
 #
 # rakuten_link_library.csv (v1) からの差分:
@@ -48,7 +52,13 @@
 # A8-001,a8,biz_credit_card,corporate_card;credit_card,（例）法人カード（三井住友ビジネスオーナーズ）,https://www.a8.net/DUMMY-DO-NOT-USE,A8.net経由。要提携承認,cpa,not_registered,inactive,2026-08-03
 # MOSHIMO-001,moshimo,accounting_saas,cloud_accounting;saas,（例）クラウド会計ソフト,https://af.moshimo.com/DUMMY-DO-NOT-USE,もしも経由。Amazon等は審査あり,cpa,not_registered,inactive,2026-08-03
 #
-# 注意: 行頭が「#」の行はコメント。本ファイルは提案スキーマのため
-#   実データ行（コメント外）は追加していない。ゆうさんのアカウント開設完了後、
-#   本番統合の要否を判断してから実データを投入する。
+# 注意: 行頭が「#」の行はコメント。以下は2026-08-03にA8.net／もしもアフィリエイトの
+#   管理画面（ゆうさんの既存アカウント）から実際に発行を確認した広告リンクのみを記載。
+#   手打ち・推測URLの登録は禁止（rakuten_link_library.csvと同じ原則）。
+#   店舗オーナー向けバックオフィス効率化（会計・勤怠・労務）という、Threads投稿の
+#   既存テーマ（口コミ対応・接客）とは異なる新ジャンルの提携商材群。
+#   まだワークフロー未統合のため、この3件は自動投稿には一切使われていない。
 id,network,genre,aliases,product_name,affiliate_url,pr_note,payout_type,network_account_status,status,added_date
+A8-001,a8,cloud_accounting,tax_filing;kakutei_shinkoku;bookkeeping,やよいの青色申告オンライン（弥生株式会社・A8.net プログラムID s00000014765001・テキスト素材ID001）,https://px.a8.net/svt/ejp?a8mat=4B8B4X+FNTJFE+35XE+5YJRM,A8.netアフィリエイトリンクを含みます。新規セルフプラン申込1000円〜トータルプラン申込2000円（プランにより変動）,cpa,active,active,2026-08-03
+MOSHIMO-001,moshimo,cloud_accounting,accounting_saas;kakutei_shinkoku,マネーフォワード クラウド会計・確定申告（株式会社マネーフォワード・もしもアフィリエイト プロモーションID888・テキスト広告ID64712）,https://af.moshimo.com/af/c/click?a_id=5718256&p_id=888&pc_id=1087&pl_id=64712,もしもアフィリエイトリンクを含みます。新規無料会員登録500〜700円,cpa,active,active,2026-08-03
+MOSHIMO-002,moshimo,attendance_management,kintai;kintai_kanri;shift_management,Relix勤怠（勤怠管理システム無料トライアル・もしもアフィリエイト プロモーションID4080・どこでもリンク）,https://af.moshimo.com/af/c/click?a_id=5718250&p_id=4080&pc_id=10324&pl_id=55927&url=https%3A%2F%2Frelix-kintai.jp%3Frd_code%3D%7B%7BCODE%7D%7D,もしもアフィリエイトリンクを含みます。無料トライアル申込（会社情報入力）1000円,cpa,active,active,2026-08-03
