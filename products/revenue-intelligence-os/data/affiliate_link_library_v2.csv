@@ -55,10 +55,13 @@
 # 注意: 行頭が「#」の行はコメント。以下は2026-08-03にA8.net／もしもアフィリエイトの
 #   管理画面（ゆうさんの既存アカウント）から実際に発行を確認した広告リンクのみを記載。
 #   手打ち・推測URLの登録は禁止（rakuten_link_library.csvと同じ原則）。
-#   店舗オーナー向けバックオフィス効率化（会計・勤怠・労務）という、Threads投稿の
-#   既存テーマ（口コミ対応・接客）とは異なる新ジャンルの提携商材群。
-#   まだワークフロー未統合のため、この3件は自動投稿には一切使われていない。
+#   店舗オーナー向けバックオフィス効率化（会計・勤怠・労務・ドメイン取得）という、
+#   Threads投稿の既存テーマ（口コミ対応・接客）とは異なる新ジャンルの提携商材群。
+#   まだワークフロー未統合のため、この6件は自動投稿には一切使われていない。
 id,network,genre,aliases,product_name,affiliate_url,pr_note,payout_type,network_account_status,status,added_date
 A8-001,a8,cloud_accounting,tax_filing;kakutei_shinkoku;bookkeeping,やよいの青色申告オンライン（弥生株式会社・A8.net プログラムID s00000014765001・テキスト素材ID001）,https://px.a8.net/svt/ejp?a8mat=4B8B4X+FNTJFE+35XE+5YJRM,A8.netアフィリエイトリンクを含みます。新規セルフプラン申込1000円〜トータルプラン申込2000円（プランにより変動）,cpa,active,active,2026-08-03
+A8-002,a8,kakutei_shinkoku,cloud_accounting;tax_filing;kojin_jigyou,マネーフォワード クラウド確定申告（株式会社マネーフォワード・A8.net プログラムID s00000021185002・テキスト素材ID002）,https://px.a8.net/svt/ejp?a8mat=4B8B4S+C210S2+4JGQ+BX3J6,A8.netアフィリエイトリンクを含みます。新規会員登録1500円,cpa,active,active,2026-08-03
+A8-003,a8,domain_registration,website_setup;homepage;server,お名前.com（GMOインターネット株式会社・A8.net プログラムID s00000000018015・テキスト素材ID032）,https://px.a8.net/svt/ejp?a8mat=3Z9CLZ+9NP62A+50+2HHVNM,A8.netアフィリエイトリンクを含みます。ドメイン取得1件あたり110円〜（注文金額により変動）,cpa,active,active,2026-08-03
 MOSHIMO-001,moshimo,cloud_accounting,accounting_saas;kakutei_shinkoku,マネーフォワード クラウド会計・確定申告（株式会社マネーフォワード・もしもアフィリエイト プロモーションID888・テキスト広告ID64712）,https://af.moshimo.com/af/c/click?a_id=5718256&p_id=888&pc_id=1087&pl_id=64712,もしもアフィリエイトリンクを含みます。新規無料会員登録500〜700円,cpa,active,active,2026-08-03
 MOSHIMO-002,moshimo,attendance_management,kintai;kintai_kanri;shift_management,Relix勤怠（勤怠管理システム無料トライアル・もしもアフィリエイト プロモーションID4080・どこでもリンク）,https://af.moshimo.com/af/c/click?a_id=5718250&p_id=4080&pc_id=10324&pl_id=55927&url=https%3A%2F%2Frelix-kintai.jp%3Frd_code%3D%7B%7BCODE%7D%7D,もしもアフィリエイトリンクを含みます。無料トライアル申込（会社情報入力）1000円,cpa,active,active,2026-08-03
+MOSHIMO-003,moshimo,labor_outsourcing,roumu;roumu_daikou;hr_outsourcing,Remoba労務（オンライン労務アウトソーシング代行・もしもアフィリエイト プロモーションID3772・自由テキスト広告ID52513）,https://af.moshimo.com/af/c/click?a_id=5718252&p_id=3772&pc_id=9267&pl_id=52513,もしもアフィリエイトリンクを含みます。新規問い合わせ・資料DL500円、新規成約完了30000円,cpa,active,active,2026-08-03
