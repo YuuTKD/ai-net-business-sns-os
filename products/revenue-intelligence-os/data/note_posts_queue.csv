@@ -41,3 +41,4 @@
 # NOTE-EXAMPLE,cnt_999,（例）テーマキー,2200,8100,980,pending,PENDING,,（例）デスク・ノート,https://editor.note.com/notes/nDUMMY0000/edit/,not_started,,,,2026-08-03
 #
 id,content_id,theme,free_char_count,paid_char_count,price_jpy,real_experience_placeholder_status,qa_gate,qa_notes,cover_image_theme,note_edit_url,draft_status,scheduled_review_date,published_url,published_at,added_date
+NOTE-001,note_ai_store_001,kuchikomi_jitan_ai,600,500,980,not_applicable,PENDING,sns-post-quality-check未実施（次のタスクで実施予定）。BLOCK該当語（誇大表現・薬機法・NG語）の目視確認は完了し該当なし。,デスク・スマホ・チェックリスト（口コミ返信の作業風景を想起させる構図）,,not_started,,,,2026-08-03
