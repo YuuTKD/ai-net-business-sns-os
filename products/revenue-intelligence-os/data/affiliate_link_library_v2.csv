@@ -1,0 +1,64 @@
+# =====================================================================
+# affiliate_link_library_v2.csv — マルチアフィリエイト対応リンクライブラリ
+# =====================================================================
+# 作成: 2026-08-03（TASK-024） / 実データ投入: 2026-08-03（TASK-025）
+# 位置づけ: 本番の products/revenue-intelligence-os/data/rakuten_link_library.csv
+#   は本ファイルでは変更していない（楽天は引き続きv1ファイルで運用）。
+#   ゆうさんが既にA8.net（メディアID a24062165409・yuublog様）・
+#   もしもアフィリエイト（店主のAI時短メモ・スモールビジネスカテゴリ）の
+#   アカウントを開設済みであることが2026-08-03に判明したため、
+#   実際に発行された広告リンクを本ファイルへ投入した（リンク捏造ゼロ原則準拠）。
+#   ただし、DEV_RIO_705 等の自動投稿ワークフローへの組み込み（Code ノードの
+#   LINK_LIBRARY定数への転記）は本PRの範囲外とし、ゆうさんの承認を得てから
+#   別タスクで実施する（CLAUDE.md「本番SNS自動投稿の実行は承認必須」準拠）。
+#   設計背景・A8/もしもの特徴調査は design/MULTI_AFFILIATE_NETWORK_EXPANSION.md 参照。
+#
+# rakuten_link_library.csv (v1) からの差分:
+#   - network 列を新規追加: rakuten / a8 / moshimo を判別する。
+#     ワークフロー側のジャンル照合ロジックはこの列を参照しない
+#     （genre / aliases のみで照合＝ネットワーク非依存を維持）。
+#   - aliases 列を新規追加（セミコロン区切り）。
+#     design/RIO_700_SERIES_RUNBOOK.md が「genre（またはaliases）」と記述しているが
+#     v1のrakuten_link_library.csvには存在しないため、v2で正式に追加する提案。
+#   - payout_type 列を新規追加（cpa / rate / flat）。
+#     offers.csv に既にある概念をリンク単位でも持たせる。
+#   - network_account_status 列を新規追加
+#     （active / pending_registration / not_registered）。
+#     ゆうさんのASPアカウント開設状況を可視化し、not_registered の行は
+#     ワークフローが絶対に使わない設計にする（rakuten_link_library.csvの
+#     「ここに無いリンクは使わない」原則をネットワーク単位にも拡張）。
+#   - id のprefixをネットワークごとに分ける想定: RKT-xxx / A8-xxx / MOSHIMO-xxx
+#     （人間が一覧を見たときにネットワークを判別しやすくするため。
+#     機械的な判別は network 列で行う）。
+#   - pr_note の意味は v1のまま据え置き（運用メモ欄。投稿文自体には
+#     genre一致時のみ固定文言「#PR」が付く仕様、2026-08-03時点の最新仕様）。
+#
+# カラム定義:
+#   id                      : 一意ID（例: RKT-001 / A8-001 / MOSHIMO-001）
+#   network                 : rakuten / a8 / moshimo
+#   genre                   : ジャンルキー（小文字英数推奨）。ワークフロー照合の主キー。ネットワーク非依存
+#   aliases                 : genre の別名（セミコロン区切り）。genre不一致時の追加照合に使う
+#   product_name            : 商品名（管理用）
+#   affiliate_url           : 各ASP管理画面で発行した実URL。手打ち・推測・生成したURLの登録は禁止
+#   pr_note                 : 運用メモ欄。投稿文自体には genre一致時のみ固定文言「#PR」が付く
+#   payout_type             : cpa（成果報酬固定額）/ rate（料率）/ flat（一律）
+#   network_account_status  : active（提携・振込設定済み）/ pending_registration（開設中）/
+#                              not_registered（未開設）。not_registeredの行はワークフロー未使用
+#   status                  : active（使用中）/ inactive（停止中）。network_account_statusとは別軸
+#   added_date              : 追加日 YYYY-MM-DD
+#
+# 記入例（↓は全てダミー。実在するURL・提携情報ではなく使用不可）:
+# RKT-001,rakuten,photo_gear,lighting;camera_accessory,（例）リングライト三脚タイプ,https://a.r10.to/DUMMY-DO-NOT-USE,楽天アフィリエイトリンクを含みます,rate,active,active,2026-08-02
+# A8-001,a8,biz_credit_card,corporate_card;credit_card,（例）法人カード（三井住友ビジネスオーナーズ）,https://www.a8.net/DUMMY-DO-NOT-USE,A8.net経由。要提携承認,cpa,not_registered,inactive,2026-08-03
+# MOSHIMO-001,moshimo,accounting_saas,cloud_accounting;saas,（例）クラウド会計ソフト,https://af.moshimo.com/DUMMY-DO-NOT-USE,もしも経由。Amazon等は審査あり,cpa,not_registered,inactive,2026-08-03
+#
+# 注意: 行頭が「#」の行はコメント。以下は2026-08-03にA8.net／もしもアフィリエイトの
+#   管理画面（ゆうさんの既存アカウント）から実際に発行を確認した広告リンクのみを記載。
+#   手打ち・推測URLの登録は禁止（rakuten_link_library.csvと同じ原則）。
+#   店舗オーナー向けバックオフィス効率化（会計・勤怠・労務）という、Threads投稿の
+#   既存テーマ（口コミ対応・接客）とは異なる新ジャンルの提携商材群。
+#   まだワークフロー未統合のため、この3件は自動投稿には一切使われていない。
+id,network,genre,aliases,product_name,affiliate_url,pr_note,payout_type,network_account_status,status,added_date
+A8-001,a8,cloud_accounting,tax_filing;kakutei_shinkoku;bookkeeping,やよいの青色申告オンライン（弥生株式会社・A8.net プログラムID s00000014765001・テキスト素材ID001）,https://px.a8.net/svt/ejp?a8mat=4B8B4X+FNTJFE+35XE+5YJRM,A8.netアフィリエイトリンクを含みます。新規セルフプラン申込1000円〜トータルプラン申込2000円（プランにより変動）,cpa,active,active,2026-08-03
+MOSHIMO-001,moshimo,cloud_accounting,accounting_saas;kakutei_shinkoku,マネーフォワード クラウド会計・確定申告（株式会社マネーフォワード・もしもアフィリエイト プロモーションID888・テキスト広告ID64712）,https://af.moshimo.com/af/c/click?a_id=5718256&p_id=888&pc_id=1087&pl_id=64712,もしもアフィリエイトリンクを含みます。新規無料会員登録500〜700円,cpa,active,active,2026-08-03
+MOSHIMO-002,moshimo,attendance_management,kintai;kintai_kanri;shift_management,Relix勤怠（勤怠管理システム無料トライアル・もしもアフィリエイト プロモーションID4080・どこでもリンク）,https://af.moshimo.com/af/c/click?a_id=5718250&p_id=4080&pc_id=10324&pl_id=55927&url=https%3A%2F%2Frelix-kintai.jp%3Frd_code%3D%7B%7BCODE%7D%7D,もしもアフィリエイトリンクを含みます。無料トライアル申込（会社情報入力）1000円,cpa,active,active,2026-08-03

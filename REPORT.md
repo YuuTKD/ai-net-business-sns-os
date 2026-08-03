@@ -22,6 +22,33 @@
 
 ## 報告ログ
 
+### REPORT-036: A8.net・もしもアフィリエイト実アカウント確認 + 実リンク3件のライブラリ投入
+- **日時**: 2026-08-03
+- **担当**: Claude Code（CEO代理・画面操作オペレーター）
+- **関連タスク**: TASK-025
+- **PR**: #51（TASK-024の続きとして同PRに追加コミット）
+- **変更内容**: ゆうさんから「A8.net・もしもアフィリエイトは既にログイン済み」と共有を受け、Claude in Chromeでもしもアフィリエイト（メディア「店主のAI時短メモ」・4提携）とA8.net（メディアID a24062165409・21提携）に実際にアクセスし提携中プログラムを調査。店舗オーナー向けバックオフィス効率化（会計・勤怠・労務）という新ジャンルを発見し、実リンク3件（やよいの青色申告オンライン／マネーフォワード クラウド会計／Relix勤怠）を各ASP管理画面から実際に発行・取得。`affiliate_link_library_v2_proposed_schema.csv` を `affiliate_link_library_v2.csv` にリネームし実データとして投入、`design/MULTI_AFFILIATE_NETWORK_EXPANSION.md` の前提（口座開設がゆうさん本人にしかできないため今すぐ着手しない、という結論）を実態に合わせて更新。
+- **影響範囲**: `affiliate_link_library_v2.csv`（実データ3行）、design文書更新。ワークフロー統合・実投稿・実接続は行っていない。rakuten_link_library.csv・posts_queue.csv等の本番稼働データは無変更。A8/もしもの操作は既存アカウントでのリンク発行確認のみ（新規申請・口座情報入力なし）。
+- **pre-deploy-qa 判定**: 対象外（データ投入のみ、SNS本番投稿・デプロイ・Scheduler変更を伴わない）
+- **確認事項**: TASK-024で「アカウント開設はゆうさん本人にしかできないため段階導入」と判断した前提が、同日中に「実は既に開設済みだった」と覆った。CEO代理としての判断は状況把握が不十分だった点を認識し、次回以降は既存アカウント・契約状況の確認を意思決定の前段階でより丁寧に行う。ワークフロー統合（自動投稿への組み込み）は別途ゆうさんの承認を得てから実施する。
+
+### REPORT-035: note運用SOP統合 + マルチアフィリエイトネットワーク対応スキーマ設計（Week1 フォローアップ）
+- **日時**: 2026-08-03
+- **担当**: Claude Code（CEO代理）
+- **関連タスク**: TASK-024（TASK-023からの派生・Week1フォローアップ）
+- **PR**: #51
+- **背景**: TASK-023で保留とした「note運用SOPの統合」と、ゆうさんからの質問「楽天以外にA8.net・もしもアフィリエイトも使うか」への回答の具体化（口座/税務情報登録が必要なため新規アカウント開設はゆうさん本人にしかできず、今回はスキーマ・設計のみ準備する）を実施した。
+- **変更内容**:
+  1. `design/RIO_801_NOTE_OPERATIONS_SOP.md`（新規）: 既存note下書き運用実績（REPORT-005〜009、`products/revenue-intelligence-os/reports/note先行10本_公開SOP.md`）を読み込み、Threadsで実績のある `sns-post-quality-check` Skillをnoteに適用する運用フローを設計。note向け入力マッピング（無料部分のみ採点対象、BLOCK項目は全文適用）、note固有の追加ゲート（実体験プレースホルダー未確定チェック＝REPORT-009の教訓の恒久化、有料ライン目印チェック）、Threads投稿との重複禁止方針（媒体ごとに別文面を作成）を明記。n8nは使わず、ブラウザ下書き作成＋人間の最終確認・公開という運用を明文化した。
+  2. `products/revenue-intelligence-os/data/note_posts_queue.csv`（新規）: note記事の公開進捗管理キュー。ヘッダー・コメント・スキーマ説明のみで実データ行は追加していない（id/content_id/theme/free_char_count/paid_char_count/price_jpy/real_experience_placeholder_status/qa_gate/qa_notes/cover_image_theme/note_edit_url/draft_status/scheduled_review_date/published_url/published_at/added_date）。
+  3. `design/MULTI_AFFILIATE_NETWORK_EXPANSION.md`（新規）: 現行 `rakuten_link_library.csv`（楽天専用・network列なし）の構造を確認した上で、A8.net・もしもアフィリエイトを将来追加する際の拡張方針を設計。マッチングロジック（genre/aliases照合）がネットワーク非依存のまま拡張できる設計であることを明記。A8.net（サイト審査なし・広告主別審査あり・口座登録必須・広告主数2万社超）、もしもアフィリエイト（楽天/Yahoo!は審査なし・Amazon等は審査あり・W報酬制度・楽天高料率ショップは直接契約の方が上限なく有利）の特徴をWeb調査で整理し、`offers.csv` に既にA8/もしも前提のオファー（off_01/03/04）が存在することを確認した。
+  4. `products/revenue-intelligence-os/data/affiliate_link_library_v2_proposed_schema.csv`（新規）: `network`（rakuten/a8/moshimo）・`aliases`（RIO_700_SERIES_RUNBOOK.mdが言及済みだがv1未実装だった列を正式提案）・`payout_type`・`network_account_status` の4列を追加した提案スキーマ。ダミー例3件（各ネットワーク1件ずつ）のみで実データなし。
+  5. `products/revenue-intelligence-os/data/README.md` に新規2ファイル（note_posts_queue.csv / affiliate_link_library_v2_proposed_schema.csv）の説明を追記。
+  6. TASK.md に TASK-024 を新規追加。
+- **影響範囲**: 新規ファイル4件（design 2件・data 2件）の追加とREADME.md/TASK.mdへの追記のみ。既存の本番データファイル（`rakuten_link_library.csv`・`posts_queue.csv`・`threads_posts.csv`）、既存Skill（`sns-post-quality-check`本体）は無変更。note/A8/もしもへの実投稿・実接続は一切行っていない。アカウント開設代行・APIキー取得の試行もしていない。`.env.local` には触れていない。
+- **pre-deploy-qa 判定**: 対象外（ドキュメント・スキーマ設計のみ。デプロイ・Scheduler変更・外部API本番呼び出しなし）
+- **確認事項**: 作業ブランチ作成後、リポジトリ側で `rakuten_link_library.csv`（PR表記が「【PR】」→固定文言「#PR」に変更）が並行して更新されていたことを確認した。本タスクの新規スキーマ提案（`affiliate_link_library_v2_proposed_schema.csv`のコメント）はこの最新仕様（#PR表記）に合わせて記載している。次のアクション: (1) note_posts_queue.csvを使った次の1本の試験運用検証、(2) ゆうさんのA8.net/もしもアフィリエイト口座開設タイミングの確認、(3) 開設後のv2スキーマ本番統合判断、(4) v2統合前提としてCSVパーサのRFC4180準拠化（TASK-023から継続申し送り）。
+
 ### REPORT-032: 収益化加速戦略 Monday キックオフ会議の実行（CEO 5決定 + note API調査 + posts_queue v2スキーマ提案）
 - **日時**: 2026-08-03
 - **担当**: Claude Code（CEO代理）
