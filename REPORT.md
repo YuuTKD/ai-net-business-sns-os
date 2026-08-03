@@ -22,6 +22,29 @@
 
 ## 報告ログ
 
+### REPORT-032: 収益化加速戦略 Monday キックオフ会議の実行（CEO 5決定 + note API調査 + posts_queue v2スキーマ提案）
+- **日時**: 2026-08-03
+- **担当**: Claude Code（CEO代理）
+- **関連タスク**: TASK-023
+- **PR**: （作成予定・ブランチ docs/revenue-acceleration-kickoff-w1）
+- **背景**: 前セッションで作成された4戦略ドキュメント（REVENUE_ACCELERATION_STRATEGY_2026-08-09.md / N8N_PIPELINE_EXPANSION_SPEC.md / IMPLEMENTATION_SCHEDULE_AND_CHECKLIST.md / EXECUTIVE_SUMMARY_REVENUE_ACCELERATION.md）を読み込み、EXECUTIVE_SUMMARY内「意思決定が必要な5つのポイント」についてCEOとして意思決定し、Week1タスクの一部（note API調査／posts_queue.csv拡張スキーマ設計）に着手した。
+- **変更内容**:
+  1. **4戦略ドキュメントをリポジトリに追加**（前セッションで作業ディレクトリに作成済み・未コミットだったものを本PRで追跡開始）: `REVENUE_ACCELERATION_STRATEGY_2026-08-09.md` / `N8N_PIPELINE_EXPANSION_SPEC.md` / `IMPLEMENTATION_SCHEDULE_AND_CHECKLIST.md` / `EXECUTIVE_SUMMARY_REVENUE_ACCELERATION.md`
+  2. **note API 調査**: Web検索の結果、**note.comに公式の投稿/OAuth APIは存在しない**ことを確認（note公式ヘルプ「現在公開しているAPIはない・公開予定も未定」）。N8N_PIPELINE_EXPANSION_SPEC.md が前提としていた「note.com API（OAuth 2.0）」「POST /api/v1/notes」は実在しない設計だった。有志による非公式API（読み取り中心、`note.com/api/v2/...`）は存在するが、投稿系の非公式利用は規約リスクが高くCLAUDE.mdの安全方針に合わない。本リポジトリには既に Claude in Chrome によるnote下書き作成の実績（REPORT-005〜008、`reports/note先行10本_公開SOP.md`）があるため、この安全な既存手法を継続する方針に修正。
+  3. **posts_queue.csv v2 拡張スキーマ提案を新規作成**: `products/revenue-intelligence-os/data/posts_queue_v2_proposed_schema.csv`（note列をAPI前提からブラウザ下書き運用前提に修正、`note_publish_mode` / `qa_gate` 列を新設）。**本番の `posts_queue.csv` は未変更**。`data/README.md` に参照セクションを追記（既存内容は削除せず追記のみ）。
+  4. **TASK.md に TASK-023 を追加**: CEOの5つの意思決定（展開順序=段階展開／メルマガ目標=保守的50名／承認=9月末まで人間承認継続／頻度上限=週7回を上限に段階増加／予算=Week1-4は原則¥0追加支出）を記録。
+  5. **REPORT.md に本エントリを追加**。
+- **CEOの5つの意思決定の要旨**（詳細はTASK-023参照）:
+  1. 複数媒体は同時展開せず段階展開（Threads安定稼働の確認 → note(ブラウザ下書き) → Instagram(Meta Graph API・審査待ち) → メルマガ(Mailchimp)）
+  2. メルマガ登録目標は保守的な8月末50名（80名の攻撃的案は不採用）
+  3. 投稿承認は9月末まで人間承認を継続（完全自動化は不採用。CLAUDE.md絶対禁止事項および段階的承認ポリシーに準拠）。新規媒体は `sns-post-quality-check` Skill PASS必須
+  4. 投稿頻度は週7回（1日1回）を上限に段階増加、品質ゲート未達なら増やさない
+  5. 予算はEXECUTIVE_SUMMARY案の¥1.65Mを採用せず、Week1-4は原則¥0の追加現金支出（無料枠のみ活用）。外注予算は9月のGo/Stop判定後に再検討
+- **⚠️ ガバナンス上の発見（重要）**: 本タスクのため `main` から新規ブランチを切ったところ、`main` の `posts_queue.csv` はヘッダーのみで投稿4-7のデータがなく、`threads_posts.csv` も存在せず、cronで実際にThreadsへ自動投稿する `DEV_RIO_705_Auto_Daily_Schedule.json` も存在しないことが判明した。これらは TASK-022 / REPORT-034 / REPORT-035 として `feature/threads-auto-daily-schedule` ブランチにのみ存在し、**`main` へ未マージ・PR未作成**。すなわち今回のキックオフの前提だった「Threadsは毎日21:00に自動投稿中」は、git上は未レビューのコードに基づく。n8n UI側で既にインポート・Activate済みの可能性はあるが、リポジトリの記録だけでは確認できない。ゆうさんへ、(1) TASK-022ブランチの早急なPR化・レビュー、(2) n8n UI上でのActivate状態の確認、(3) 8/4-8/6投稿の実施有無の目視確認、を推奨事項として申し送る。
+- **影響範囲**: ドキュメント追加（4戦略ファイル）、TASK.md/REPORT.md/data/README.md への追記、新規CSVテンプレート1件の追加。**本番の posts_queue.csv・n8nワークフロー・SNSアカウントへの変更は一切なし**。note/Instagram/Mailchimpへの実接続・実投稿もなし。`.env.local` は未参照。APIキーの直書きなし。
+- **pre-deploy-qa 判定**: 対象外（ドキュメント作成・調査のみ。デプロイ・Scheduler変更・外部API本番呼び出しなし）
+- **確認事項**: 次アクションはゆうさんの意思決定確認（TASK-023の5決定への承認/修正）と、TASK-022ブランチのPR化・n8n Activate状態確認。note/Instagram/Mailchimpの各パイプライン実装（DEV_RIO_801/802/803再設計）は本PRの範囲外とし、承認後に別タスクで着手する。
+
 ### REPORT-031: 価格戦略変更のリポジトリ反映 + 楽天アフィリ4本目 + Threads投稿第1弾の開始
 - **日時**: 2026-08-02
 - **担当**: Claude Code（CEO/ライター/エンジニア/画面操作オペレーター）

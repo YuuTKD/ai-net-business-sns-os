@@ -1,0 +1,34 @@
+# =====================================================================
+# posts_queue_v2_proposed_schema.csv — 提案スキーマ（未採用・レビュー用テンプレート）
+# =====================================================================
+# 作成: 2026-08-03 CEOキックオフ（TASK-023）
+# 位置づけ: N8N_PIPELINE_EXPANSION_SPEC.md §C の posts_queue_v2.csv 案をベースに、
+#   note を「公式API」ではなく「Claude in Chromeによるブラウザ下書き補助＋
+#   ゆうさん本人の手動公開」前提へ修正した提案。
+# 本番の products/revenue-intelligence-os/data/posts_queue.csv は本ファイルでは
+# 変更していない。DEV_RIO_801（note）の再設計が固まり、ゆうさんが移行を承認
+# してから本番CSVへ反映する。
+#
+# 既存(v1)からの差分:
+#   - channels / include_rakuten / utm_source / utm_campaign / mailchimp_segment
+#     は元案を踏襲（媒体分岐・追跡に必須のため）。
+#   - note_eye_catch_prompt は維持するが、"note API POST" ではなく
+#     「Claude in Chrome 下書き作成タスクへの入力」として使う想定に用途を変更。
+#   - note_publish_mode 列を新規追加: browser_draft_only（既定・下書き保存のみ）
+#     / human_manual_publish（ゆうさんが下書きを見て手動で公開ボタンを押す）。
+#     note_publish_mode に auto_api という値は現時点で用意しない
+#     （note公式APIが存在しないため。将来公式APIが提供されたら再検討）。
+#   - ig_hashtags は元案どおり（Meta Graph APIは実在するため据え置き）。
+#   - qa_gate 列を新規追加: sns-post-quality-check Skill の PASS/FAIL/PENDING を
+#     明示し、DEV_RIO_800側のQA Validation Gateが読める形にする。
+#
+# 既知の制約（実装前に解消が必要）:
+#   - DEV_RIO_705/800系のCSVパーサ（Code ノード内 line.split(',')）は
+#     クォート付きフィールド（カンマを含む値）を正しく扱えない。
+#     ig_hashtags や note_eye_catch_prompt にカンマを含む文言を入れる場合、
+#     v2移行前にパーサをRFC4180準拠（またはセミコロン区切り統一）へ
+#     堅牢化すること。
+#
+id,content_id,media,scheduled,status,approver_action,url,channels,include_rakuten,note_publish_mode,note_eye_catch_prompt,ig_hashtags,utm_source,utm_campaign,mailchimp_segment,qa_gate
+post_4,threads_draft_004,threads,2026-08-04T21:00:00+09:00,scheduled,yuya_tokuda,https://www.brain.co.jp/u/ai_store_yuya/A_kuchikomi_reply_template_30,threads,true,,,,threads,reply-template-004,,PASS
+post_note_1,note_draft_001,note,2026-08-11T10:00:00+09:00,draft_pending_review,yuya_tokuda,,note,false,browser_draft_only,"スマートフォンでGoogle口コミ返信画面を操作する手元写真",,note,note-launch-001,warmers,PENDING

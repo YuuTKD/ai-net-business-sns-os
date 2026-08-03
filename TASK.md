@@ -233,6 +233,33 @@
 - **期限**: -
 - **備考**: 構造検証ツールで発見した2件の再インポート不具合を修正。(1) Slack通知が空欄で送信される問題（qa_judgment/qa_reasoning → qa_status/note）= #38でマージ済み。(2) Anthropic 2ノード（Draft/QA Call）に credentials 参照が欠落しており、リポジトリJSONを再インポートすると認証未選択で401になる問題 → 101/700系と同じ anthropicApi クレデンシャル(gSjvXXaj0OLWBIza)を明示バインド。実効化には n8n 再インポートが必要。孤立ノード「Slack Notification」の削除可否は要ゆうさん判断（未変更）。
 
+### TASK-023: 収益化加速戦略 Monday キックオフ会議の実行（意思決定 + Week1着手）
+- **担当**: Claude Code（CEO代理）/ ゆうさん
+- **ステータス**: IN_PROGRESS
+- **ブランチ**: docs/revenue-acceleration-kickoff-w1
+- **PR**: （作成予定）
+- **期限**: Week 1 チェックポイント 2026-08-10
+- **背景**: 前セッションで作成された4戦略ドキュメント（REVENUE_ACCELERATION_STRATEGY_2026-08-09.md / N8N_PIPELINE_EXPANSION_SPEC.md / IMPLEMENTATION_SCHEDULE_AND_CHECKLIST.md / EXECUTIVE_SUMMARY_REVENUE_ACCELERATION.md）を読み込み、EXECUTIVE_SUMMARY内「意思決定が必要な5つのポイント」についてCEOとして意思決定し、Week1タスクの一部に着手した。
+- **⚠️ 重要な事実訂正（本タスクで判明）**: N8N_PIPELINE_EXPANSION_SPEC.md は note.com に **OAuth 2.0 の公式投稿API（POST /api/v1/notes 等）が存在する前提**で DEV_RIO_801 を設計しているが、Web調査の結果 **note.com に公式APIは存在しない**（公式ヘルプでも「現在公開しているAPIはない・公開予定も未定」と明記）。存在するのは有志が解析した非公式APIのみで、記事取得（読み取り）系が中心。投稿（書き込み）系の非公式エンドポイントも一部報告されているが、規約上のグレー・将来の破壊的変更リスクが高く、CLAUDE.mdの安全重視方針にそぐわない。一方、本リポジトリには既に **Claude in Chrome によるブラウザ操作でnote下書きを作成する実績とSOP**（REPORT-005〜008、`reports/note先行10本_公開SOP.md`）があり、これは公開ボタンを押さない「下書き保存のみ」の安全な運用実績である。→ **DEV_RIO_801はOAuth API前提を撤回し、「Claude in Chromeによる下書き作成補助＋ゆうさん本人の手動公開」方式に再設計する**方針をCEO決定として記録する（実装は別タスクで着手）。
+- **CEOの5つの意思決定**（EXECUTIVE_SUMMARY §「意思決定が必要な5つのポイント」に対する回答）:
+  1. **展開順序**: 同時展開ではなく**段階展開**を採用。Threads（既存運用中）が安定稼働を継続する中で、note（ただしAPIではなくブラウザ操作の下書き補助、上記訂正済み）→ Instagram（Meta Graph API、要ビジネスアカウント審査、Week2以降）→ メルマガ（Mailchimp、実在する公式APIのため技術リスク低、Week1後半〜Week2）の順に慎重に立ち上げる。EXECUTIVE_SUMMARYの「同時展開」推奨は、存在しないnote APIへの開発投資が無駄になるリスクを踏まえ不採用。
+  2. **メルマガ登録目標**: 保守的な **8月末50名** を採用（攻撃的な80名案は不採用）。9月末150名は「参考目標」として維持するが、8月末の実測を見て9月にゆうさんへ再確認する。
+  3. **投稿の承認・自動化タイミング**: **人間承認を9月末まで継続**（「Yes, auto-publish by Sep 15」は不採用）。CLAUDE.md絶対禁止事項「本番SNS自動投稿の実行」「自動DM送信の実行」および既存の段階的承認ポリシー（1事業・1アカウント・1ジャンル・1媒体ずつ承認、`memory/policy_auto_posting_rollout.md`）に基づく。新規媒体（note/Instagram/メルマガ）はすべて **`sns-post-quality-check` Skill PASS + ゆうさん承認** をゲートとし、posts_queue.csvのapprover_action欄運用を踏襲する。
+  4. **投稿頻度の上限**: 8月末 週4-5回、9月末 週7回（1日1回）を**上限**として段階増加。品質 > 投稿量の原則（EXECUTIVE_SUMMARY記載）を優先し、品質ゲート未達時は頻度を上げない。
+  5. **予算・リソース割当**: EXECUTIVE_SUMMARY案（¥1.65M）は不採用。実収益がまだ検証段階（過去のREPORT-003監査で実収益実質¥0の時期があり、¥21K/月という現状値も未検証の推定値である点に留意）であるため、**Week1-4は原則¥0の追加現金支出**（実行はゆうさん＋Claude Codeで対応、n8n/Typeform/Mailchimpは無料枠を使用）とし、外注予算（Dev/Writer等）の検討は9月のGo/Stop判定でLTVが検証されてから行う。EXECUTIVE_SUMMARY内の「Dev/Ops/Writer/Analyst lead」という体制は本リポジトリの実運用体制（ゆうさん + Claude Code）と一致しないため、実行計画上は役割ではなくタスクとして扱う。
+- **Week1着手内容**（本タスクで実施）:
+  - note API調査（Web検索）: 上記の通り「公式APIなし」を確認。調査結果はREPORT側に記録。
+  - posts_queue.csv 拡張スキーマ設計: N8N_PIPELINE_EXPANSION_SPEC.md §C の v2スキーマ案をベースに、note列を「API前提」から「ブラウザ下書き運用前提」に修正した提案スキーマを作成（`products/revenue-intelligence-os/data/posts_queue_v2_proposed_schema.csv` に新規作成、**既存の本番 posts_queue.csv は未変更**）。DEV_RIO_705が単純split方式でCSVをパースしており、カンマを含む値（ハッシュタグ等）でパースが壊れる既知の脆弱性があるため、v2移行時はCSVパーサ自体の堅牢化（quoted-field対応）が先行タスクとして必要である旨を明記。
+  - TASK.md本エントリでキックオフと5決定を記録。
+- **⚠️ ガバナンス上の追加発見**: 本タスク着手のため作業ブランチを `main` から新規作成したところ、`main` の `posts_queue.csv` はヘッダー行のみ（post_4〜7の投稿データなし）、`threads_posts.csv` は存在せず、`DEV_RIO_705_Auto_Daily_Schedule.json`（cronで毎日21:00に自動実行し `graph.threads.net` へ実際に投稿する版）も存在しないことが判明した。これらは TASK-022 / REPORT-034 / REPORT-035 として別ブランチ `feature/threads-auto-daily-schedule` にのみ存在し、**まだ `main` にマージされていない（PR未作成）**。つまり「Threadsが毎日21:00に自動投稿中」という本キックオフの前提は、git上は未レビュー・未承認の状態のコードに基づいている（n8n UI側で既にインポート・Activate済みの可能性はあるが、リポジトリの記録だけでは確認できない）。CEOとして次を推奨: (1) TASK-022のブランチを早急にPR化しゆうさんのレビュー・承認を得ること、(2) n8n UI上で当該ワークフローが実際にActivate状態か確認すること、(3) 確認が取れるまで本キックオフの新規媒体展開は「Threadsは安定稼働中」という前提を過信せず、8/4-8/6の投稿4-6が実際に投稿されたかを目視確認してから次の判断に進むこと。
+- **未着手・次のステップ**（要ゆうさん確認の上、別タスクで着手）:
+  - DEV_RIO_801（note）をブラウザ操作前提で再設計・実装
+  - DEV_RIO_803（Mailchimp）の実API仕様確認・skeleton実装
+  - DEV_RIO_802（Instagram / Meta Graph API）はビジネスアカウント審査状況の確認が先
+  - posts_queue.csv本体をv2へ移行するかはDEV_RIO_801再設計完了後にゆうさんと判断
+- **pre-deploy-qa 判定**: 対象外（ドキュメント作成・調査のみ。デプロイ・Scheduler変更・外部API本番呼び出しなし）
+- **確認事項**: 本タスクでは note/Instagram への実投稿、Mailchimp/note API への実接続は一切行っていない。`.env.local` には触れていない。APIキーはファイルに直書きしていない。
+
 ---
 
 <!-- 新しいタスクは上記フォーマットに従ってここに追加する -->
