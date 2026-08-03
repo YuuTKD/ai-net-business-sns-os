@@ -276,6 +276,23 @@
 - **pre-deploy-qa 判定**: 対象外（ドキュメント作成・調査のみ。デプロイ・Scheduler変更・外部API本番呼び出しなし）
 - **確認事項**: 本タスクでは note/Instagram への実投稿、Mailchimp/note API への実接続は一切行っていない。`.env.local` には触れていない。APIキーはファイルに直書きしていない。
 
+### TASK-024: note運用SOP統合 + マルチアフィリエイトネットワーク対応スキーマ設計（Week1 フォローアップ）
+- **担当**: Claude Code（CEO代理）
+- **ステータス**: REVIEW（実装完了・PR作成済み・ゆうさん承認待ち）
+- **ブランチ**: feature/note-sop-multi-affiliate-schema
+- **PR**: （作成後に記入）
+- **期限**: Week 1 チェックポイント 2026-08-10
+- **背景**: TASK-023（Monday キックオフ）でのゆうさんの質問「楽天以外にA8.net・もしもアフィリエイトも使うか」への回答（口座/税務情報登録が必要なため新規アカウント開設は今すぐ行わず、スキーマ・設計だけ先に準備する段階導入方針）を具体化する。あわせて、既存のnote下書き運用実績（REPORT-005〜009、`products/revenue-intelligence-os/reports/note先行10本_公開SOP.md`）と、Threadsで実績のある `sns-post-quality-check` Skillを統合したnote運用SOPを整備する。
+- **実施内容**:
+  1. **note運用SOP統合**: `design/RIO_801_NOTE_OPERATIONS_SOP.md` を新規作成。既存のnote下書き運用（Claude in Chromeでの下書き保存のみ・公開ボタンは押さない・REPORT-009の「実体験プレースホルダー未確定のまま公開しない」教訓）を踏まえ、sns-post-quality-check Skillのnote向け入力マッピング（無料部分のみ採点対象・BLOCK項目は全文適用）と、note固有の追加ゲート（実体験プレースホルダーチェック・有料ライン目印チェック）を設計。n8nは使わずブラウザ下書き作成＋人間の最終確認・公開という運用を明記。
+  2. **note_posts_queue.csv 新規作成**（`products/revenue-intelligence-os/data/note_posts_queue.csv`）: note記事の公開進捗を管理するキュー。価格・無料/有料文字数・実体験プレースホルダー状態・下書きURL等のカラムを設計。ヘッダー・コメントのみで実データ行は追加していない（実際の投稿文生成は今回はしない）。
+  3. **マルチアフィリエイト対応スキーマ設計**: 現行 `rakuten_link_library.csv`（楽天専用、network列なし）の構造を確認し、`products/revenue-intelligence-os/data/affiliate_link_library_v2_proposed_schema.csv` を新規作成。`network` 列（rakuten/a8/moshimo）・`aliases` 列（RIO_700_SERIES_RUNBOOK.mdが言及済みだがv1未実装だったもの）・`payout_type` 列・`network_account_status` 列を追加し、既存のgenreマッチングロジックがネットワーク非依存のまま拡張できる設計にした。**本番の `rakuten_link_library.csv` は未変更**（ダミー例のみ）。
+  4. **A8.net / もしもアフィリエイトの調査整理**: `design/MULTI_AFFILIATE_NETWORK_EXPANSION.md` にWeb調査結果を整理（審査の有無、口座登録要否、得意ジャンル、楽天との報酬体系比較）。`offers.csv` に既にA8/もしも前提のオファー（off_01/03/04等）が存在することを確認し、実装ロードマップ（アカウント開設後にやること）を記載。
+  5. `products/revenue-intelligence-os/data/README.md` に新規2ファイルの説明を追記。
+- **影響範囲**: 新規ファイル4件（design 2件、data 2件）の追加、README.mdへの追記のみ。既存の本番データファイル（`rakuten_link_library.csv`・`posts_queue.csv`・`threads_posts.csv`・SKILL.md本体）は無変更。note/A8/もしもへの実投稿・実接続、アカウント開設代行、APIキー取得は一切行っていない。`.env.local` には触れていない。
+- **pre-deploy-qa 判定**: 対象外（ドキュメント・スキーマ設計のみ、デプロイ・Scheduler変更・外部API本番呼び出しなし）
+- **確認事項**: 次のアクションは (1) note_posts_queue.csvを使った次の1本の試験運用検証、(2) ゆうさんのA8.net/もしもアフィリエイト口座開設タイミングの確認、(3) 開設後にaffiliate_link_library_v2スキーマを本番統合するかの判断。CSVパーサ堅牢化（RFC4180準拠）はv2統合前の先行タスクとして必要（TASK-023から継続申し送り）。
+
 ---
 
 <!-- 新しいタスクは上記フォーマットに従ってここに追加する -->

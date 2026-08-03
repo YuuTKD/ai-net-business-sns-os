@@ -1,0 +1,43 @@
+# =====================================================================
+# note_posts_queue.csv — note記事 公開キュー（新規・設計のみ／実データなし）
+# =====================================================================
+# 作成: 2026-08-03（TASK-024）
+# 位置づけ: 既存の posts_queue.csv（Threads中心の配信キュー）とは別に、
+#   note記事特有の項目（価格・無料/有料文字数・実体験プレースホルダー状態・
+#   ブラウザ下書き作成の進捗）を管理するためのキュー。
+#   運用フローの詳細は design/RIO_801_NOTE_OPERATIONS_SOP.md を参照。
+#
+# 重要: note公式APIは存在しないため、このキューは「n8nが自動処理する対象」
+#   ではない。あくまで人間（ゆうさん）とClaude in Chromeのブラウザ操作を
+#   人間が確認しながら進めるための進捗管理表。draft_status の遷移は
+#   すべて人間の操作結果を見てから手動で更新する。
+#
+# カラム定義:
+#   id                                : 一意ID（例: NOTE-001）
+#   content_id                        : content.csv の id と対応させる場合に使用（任意）
+#   theme                             : 記事テーマ（note_100本設計図.md のテーマキーと対応）
+#   free_char_count                   : 無料部分の文字数
+#   paid_char_count                   : 有料部分の文字数
+#   price_jpy                         : 販売価格（円）。現行運用は980固定（変更時はゆうさん確認）
+#   real_experience_placeholder_status: not_applicable（実体験不要な記事）/
+#                                        pending（【実際の経験に置き換える：...】が未確定）/
+#                                        filled（実体験に差し替え済み・公開可）
+#                                        ※ REPORT-009の教訓：pendingのまま公開しない
+#   qa_gate                           : sns-post-quality-check Skill の適用結果
+#                                        PASS / REVISE / BLOCK / PENDING（未実施）
+#   qa_notes                          : QA実施メモ（減点理由・修正版の有無など）
+#   cover_image_theme                 : カバー画像の絵柄テーマ（note先行10本_公開SOP.md §2の対応表と同形式）
+#   note_edit_url                     : editor.note.com/notes/<ID>/edit/ 形式の下書きURL（作成後に記入）
+#   draft_status                      : not_started / draft_saved / paid_line_set / published
+#                                        （「公開」への遷移は必ずゆうさん本人の操作結果を確認後に記入）
+#   scheduled_review_date             : ゆうさんが最終確認・公開作業を行う予定日（任意）
+#   published_url                     : 公開後の記事URL（公開後に記入）
+#   published_at                      : 公開日時（公開後に記入）
+#   added_date                        : このキューに追加した日 YYYY-MM-DD
+#
+# 注意: 行頭が「#」の行はコメント。本タスク（TASK-024）では実データ行を
+#   追加していない（設計・スキーマ提案のみ、実際の投稿文生成はしない）。
+# 記入例（↓はダミー。実在する記事ではなく使用不可）:
+# NOTE-EXAMPLE,cnt_999,（例）テーマキー,2200,8100,980,pending,PENDING,,（例）デスク・ノート,https://editor.note.com/notes/nDUMMY0000/edit/,not_started,,,,2026-08-03
+#
+id,content_id,theme,free_char_count,paid_char_count,price_jpy,real_experience_placeholder_status,qa_gate,qa_notes,cover_image_theme,note_edit_url,draft_status,scheduled_review_date,published_url,published_at,added_date
