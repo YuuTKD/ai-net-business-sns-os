@@ -280,7 +280,7 @@
 - **担当**: Claude Code（CEO代理）
 - **ステータス**: REVIEW（実装完了・PR作成済み・ゆうさん承認待ち）
 - **ブランチ**: feature/note-sop-multi-affiliate-schema
-- **PR**: （作成後に記入）
+- **PR**: #51
 - **期限**: Week 1 チェックポイント 2026-08-10
 - **背景**: TASK-023（Monday キックオフ）でのゆうさんの質問「楽天以外にA8.net・もしもアフィリエイトも使うか」への回答（口座/税務情報登録が必要なため新規アカウント開設は今すぐ行わず、スキーマ・設計だけ先に準備する段階導入方針）を具体化する。あわせて、既存のnote下書き運用実績（REPORT-005〜009、`products/revenue-intelligence-os/reports/note先行10本_公開SOP.md`）と、Threadsで実績のある `sns-post-quality-check` Skillを統合したnote運用SOPを整備する。
 - **実施内容**:
