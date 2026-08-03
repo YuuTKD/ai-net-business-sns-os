@@ -45,6 +45,41 @@
 - **pre-deploy-qa 判定**: 対象外（ドキュメント作成・調査のみ。デプロイ・Scheduler変更・外部API本番呼び出しなし）
 - **確認事項**: 次アクションはゆうさんの意思決定確認（TASK-023の5決定への承認/修正）と、TASK-022ブランチのPR化・n8n Activate状態確認。note/Instagram/Mailchimpの各パイプライン実装（DEV_RIO_801/802/803再設計）は本PRの範囲外とし、承認後に別タスクで着手する。
 
+### REPORT-034: Threads 自動投稿パイプライン構築（DEV_RIO_705 毎日21:00実行対応）
+- **日時**: 2026-08-03
+- **担当**: Claude Code（エンジニア）
+- **関連タスク**: TASK-022
+- **ブランチ**: feature/threads-auto-daily-schedule
+- **変更内容**: 
+  1. **投稿キューファイル作成**: posts_queue.csv（投稿4・5・6のスケジュール + 投稿7待機）
+  2. **投稿データベース作成**: threads_posts.csv（投稿1-7の本文テキスト）
+  3. **n8n ワークフロー修正**: DEV_RIO_705_Threads_Rakuten_Prepare.json をベースに、Trigger を「Manual」から「Cron（毎日21:00 JST）」に変更。投稿キュー読み込み + 投稿抽出ロジックを追加（Extract Next Post ノード）
+  4. **修正版保存**: DEV_RIO_705_Auto_Daily_Schedule.json
+  5. **インポートガイド作成**: N8N_IMPORT_GUIDE.md（n8n UI での 5分セットアップ手順）
+- **自動投稿スケジュール**:
+  - 2026-08-04 21:00 → 投稿4（スタッフを褒められた返信例）
+  - 2026-08-05 21:00 → 投稿5（事実と異なる口コミへの対応）
+  - 2026-08-06 21:00 → 投稿6（NG返信3つ + 文字数目安）
+  - 2026-08-09 21:00 → 投稿7（scheduled_pending = Brain実サイト公開待ち）
+- **影響範囲**: Threads @ai_store_lab（自動投稿・毎日21:00）、posts_queue.csv（投稿管理）、threads_posts.csv（本文管理）
+- **必須アクション**: n8n UI で DEV_RIO_705_Auto_Daily_Schedule.json をインポート（n8n UI → Workflow Import）。インポート完了後、自動投稿が開始。
+- **確認事項**:
+  - n8n Cron Trigger が「毎日21:00 JST」に設定されていることを確認
+  - Threads API Credentials（Bearer Auth account ID: EqL89RW6m6CtCIbm）が有効であることを確認
+  - 投稿4の初回投稿後、posts_queue.csv の status が「scheduled」→「posted」に更新されていることを確認
+
+### REPORT-033: Threads投稿第1弾 投稿3を公開
+- **日時**: 2026-08-03
+- **担当**: Claude Code（SNS運用担当・画面操作オペレーター）
+- **関連タスク**: TASK-021
+- **PR**: feature/threads-post3-published ブランチで作成
+- **変更内容**: 投稿3（高評価口コミへのお礼・共感型）を`sns-post-quality-check` Skillで検品。初回スコア7（REVISE、集客導線・季節接点・反応要素の減点）→末尾に問いかけを追加した修正版でスコア9（PASS）。投稿1（ネガティブ対応）・投稿2（待ち時間クレーム対応）とのテーマ重複がないことを確認（高評価対応で相互に独立したテーマ）。Threads @ai_store_lab に実際に投稿・公開確認。
+- **影響範囲**: Threads @ai_store_lab（実投稿1件）
+- **pre-deploy-qa 判定**: 対象外（SNS投稿のみ）
+- **確認事項**:
+  - 新規スレッド作成時、初回入力で改行が反映されない事象が再発（原因は contenteditable 要素の初期化タイミング依存の可能性、未確定）。全クリアして再入力する対処法で解決。今後もこの事象が起きうるため、投稿前に必ず`innerText`で全文照合する運用を継続する
+  - 7本中3本（投稿1・2・3）公開完了。残り4本（投稿4〜7、投稿7は¥980テンプレ告知でBrain実サイト公開後に投稿予定）
+
 ### REPORT-031: 価格戦略変更のリポジトリ反映 + 楽天アフィリ4本目 + Threads投稿第1弾の開始
 - **日時**: 2026-08-02
 - **担当**: Claude Code（CEO/ライター/エンジニア/画面操作オペレーター）

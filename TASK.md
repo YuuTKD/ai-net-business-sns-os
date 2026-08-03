@@ -33,6 +33,22 @@
 
 ## タスク一覧
 
+### TASK-022: Threads 投稿自動化パイプライン構築（毎日21:00自動投稿）
+- **担当**: Claude Code（エンジニア・SNS運用担当）
+- **ステータス**: IN_PROGRESS（n8n UI インポート待ち）
+- **ブランチ**: feature/threads-auto-daily-schedule
+- **PR**: （作成中）
+- **期限**: 2026-08-04（投稿4初回投稿予定）
+- **備考**: DEV_RIO_705 ワークフローを毎日21:00自動実行に設定。投稿4・5・6を posts_queue.csv で管理。修正版 JSON（DEV_RIO_705_Auto_Daily_Schedule.json）作成済み、n8n UI でのインポート待ち。投稿7は Brain 実サイト公開待ちで scheduled_pending 状態。手動操作：n8n UI で「Workflow Import」実施（5分程度）。
+
+### TASK-021: Threads投稿第1弾 投稿3の公開
+- **担当**: Claude Code（SNS運用担当・画面操作オペレーター）
+- **ステータス**: REVIEW（実施完了・PR待ち）
+- **ブランチ**: feature/threads-post3-published
+- **PR**: （作成中）
+- **期限**: 2026-08-03（完了）
+- **備考**: 投稿3（高評価口コミへのお礼・共感型）を sns-post-quality-check で検品（初回スコア7→修正版スコア9）し、Threads @ai_store_lab に公開。投稿1・2とのテーマ重複がないことを確認済み（PR #46で公開した投稿2は本PR時点で未マージのためTASK-020として別枠）。これで7本中3本公開完了（残り4本）。
+
 ### TASK-019: 価格戦略変更の反映 + 楽天アフィリ4本目追加 + Threads投稿第1弾の開始
 - **担当**: Claude Code（CEO/ライター/エンジニア/画面操作オペレーター）
 - **ステータス**: REVIEW（実施完了・PR待ち。Brain実サイトの価格変更はゆうさん対応待ち）
