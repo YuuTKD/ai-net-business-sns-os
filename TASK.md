@@ -33,6 +33,14 @@
 
 ## タスク一覧
 
+### TASK-022: Threads 投稿自動化パイプライン構築（毎日21:00自動投稿）
+- **担当**: Claude Code（エンジニア・SNS運用担当）
+- **ステータス**: IN_PROGRESS（n8n UI インポート待ち）
+- **ブランチ**: feature/threads-auto-daily-schedule
+- **PR**: （作成中）
+- **期限**: 2026-08-04（投稿4初回投稿予定）
+- **備考**: DEV_RIO_705 ワークフローを毎日21:00自動実行に設定。投稿4・5・6を posts_queue.csv で管理。修正版 JSON（DEV_RIO_705_Auto_Daily_Schedule.json）作成済み、n8n UI でのインポート待ち。投稿7は Brain 実サイト公開待ちで scheduled_pending 状態。手動操作：n8n UI で「Workflow Import」実施（5分程度）。
+
 ### TASK-021: Threads投稿第1弾 投稿3の公開
 - **担当**: Claude Code（SNS運用担当・画面操作オペレーター）
 - **ステータス**: REVIEW（実施完了・PR待ち）

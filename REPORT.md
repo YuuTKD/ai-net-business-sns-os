@@ -22,6 +22,29 @@
 
 ## 報告ログ
 
+### REPORT-034: Threads 自動投稿パイプライン構築（DEV_RIO_705 毎日21:00実行対応）
+- **日時**: 2026-08-03
+- **担当**: Claude Code（エンジニア）
+- **関連タスク**: TASK-022
+- **ブランチ**: feature/threads-auto-daily-schedule
+- **変更内容**: 
+  1. **投稿キューファイル作成**: posts_queue.csv（投稿4・5・6のスケジュール + 投稿7待機）
+  2. **投稿データベース作成**: threads_posts.csv（投稿1-7の本文テキスト）
+  3. **n8n ワークフロー修正**: DEV_RIO_705_Threads_Rakuten_Prepare.json をベースに、Trigger を「Manual」から「Cron（毎日21:00 JST）」に変更。投稿キュー読み込み + 投稿抽出ロジックを追加（Extract Next Post ノード）
+  4. **修正版保存**: DEV_RIO_705_Auto_Daily_Schedule.json
+  5. **インポートガイド作成**: N8N_IMPORT_GUIDE.md（n8n UI での 5分セットアップ手順）
+- **自動投稿スケジュール**:
+  - 2026-08-04 21:00 → 投稿4（スタッフを褒められた返信例）
+  - 2026-08-05 21:00 → 投稿5（事実と異なる口コミへの対応）
+  - 2026-08-06 21:00 → 投稿6（NG返信3つ + 文字数目安）
+  - 2026-08-09 21:00 → 投稿7（scheduled_pending = Brain実サイト公開待ち）
+- **影響範囲**: Threads @ai_store_lab（自動投稿・毎日21:00）、posts_queue.csv（投稿管理）、threads_posts.csv（本文管理）
+- **必須アクション**: n8n UI で DEV_RIO_705_Auto_Daily_Schedule.json をインポート（n8n UI → Workflow Import）。インポート完了後、自動投稿が開始。
+- **確認事項**:
+  - n8n Cron Trigger が「毎日21:00 JST」に設定されていることを確認
+  - Threads API Credentials（Bearer Auth account ID: EqL89RW6m6CtCIbm）が有効であることを確認
+  - 投稿4の初回投稿後、posts_queue.csv の status が「scheduled」→「posted」に更新されていることを確認
+
 ### REPORT-033: Threads投稿第1弾 投稿3を公開
 - **日時**: 2026-08-03
 - **担当**: Claude Code（SNS運用担当・画面操作オペレーター）

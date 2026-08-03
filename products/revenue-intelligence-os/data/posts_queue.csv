@@ -1,1 +1,5 @@
 id,content_id,media,scheduled,status,approver_action,url
+post_4,threads_draft_004,threads,2026-08-04T21:00:00+09:00,scheduled,yuya_tokuda,https://www.brain.co.jp/u/ai_store_yuya/A_kuchikomi_reply_template_30
+post_5,threads_draft_005,threads,2026-08-05T21:00:00+09:00,scheduled,yuya_tokuda,https://www.brain.co.jp/u/ai_store_yuya/A_kuchikomi_reply_template_30
+post_6,threads_draft_006,threads,2026-08-06T21:00:00+09:00,scheduled,yuya_tokuda,https://www.brain.co.jp/u/ai_store_yuya/A_kuchikomi_reply_template_30
+post_7,threads_draft_007,threads,2026-08-09T21:00:00+09:00,scheduled_pending,yuya_tokuda,https://www.brain.co.jp/u/ai_store_yuya/A_kuchikomi_reply_template_30
