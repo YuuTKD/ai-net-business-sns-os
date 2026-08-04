@@ -1,0 +1,37 @@
+# =====================================================================
+# wordpress_posts_queue.csv — WordPress（店主のAI時短メモ）記事 公開キュー
+# =====================================================================
+# 作成: 2026-08-04（TASK-031）
+# 位置づけ: note_posts_queue.csv と対になるキュー。treecosme.home.blog
+#   （店主のAI時短メモ）向けの記事の進捗を管理する。
+#   運用フローの詳細は design/RIO_802_WORDPRESS_OPERATIONS_SOP.md を参照。
+#   文字数・品質基準は design/AFFILIATE_ARTICLE_STANDARDS.md を参照。
+#
+# 重要: WordPress公式APIは未導入のため、このキューはn8nが自動処理する対象では
+#   ない。あくまで人間（ゆうさん）とClaude in Chromeのブラウザ操作を人間が
+#   確認しながら進めるための進捗管理表。draft_status の遷移はすべて人間の
+#   操作結果を見てから手動で更新する。
+#
+# カラム定義:
+#   id                     : 一意ID（例: WP-001）
+#   keyword                : メインキーワード
+#   search_intent          : AFFILIATE_ARTICLE_STANDARDS.md §2の9分類のいずれか
+#   article_type           : 同ドキュメント§1の10分類のいずれか
+#   target_word_count_min  : 目標文字数レンジの下限
+#   target_word_count_max  : 目標文字数レンジの上限
+#   actual_word_count      : 実際の文字数（下書き保存時点のもの）
+#   affiliate_program      : 主に紹介しているアフィリエイトプログラム（複数の場合は;区切り）
+#   product_name           : 主に紹介している商品・サービス名（複数の場合は;区切り）
+#   qa_score                : quality-reviewerによる100点満点スコア（AFFILIATE_ARTICLE_STANDARDS.md §7）
+#   compliance_score        : 同スコアリングのコンプライアンス項目（10点満点）
+#   affiliate_link_status   : pending（未発行・商品名のみ）/ inserted（実リンク挿入済み）
+#   wp_edit_url             : WordPress編集画面のURL（作成後に記入）
+#   draft_status            : not_started / draft_saved / qa_passed / published
+#   published_url           : 公開後の記事URL（公開後に記入）
+#   published_at            : 公開日時（公開後に記入）
+#   added_date               : このキューに追加した日 YYYY-MM-DD
+#
+# 注意: 行頭が「#」の行はコメント。
+#
+id,keyword,search_intent,article_type,target_word_count_min,target_word_count_max,actual_word_count,affiliate_program,product_name,qa_score,compliance_score,affiliate_link_status,wp_edit_url,draft_status,published_url,published_at,added_date
+WP-001,美容室 ホームページ制作 比較,比較検討,比較記事,5000,8000,1313,もしもアフィリエイト,サロンプロパートナーズ;リーズナブルHP;PACKPLAN;見積太郎;名刺代わりのシンプルなホームページの制作;ホームページ格安制作所;町のホームページ屋さん;だれでもHP;すぐウェブ,,,pending,https://treecosmehome.wordpress.com/wp-admin/post.php?post=27&action=edit&classic-editor,draft_saved,,,2026-08-04

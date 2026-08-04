@@ -29,5 +29,22 @@ model: inherit
 # 使用可能ツール
 Read / Grep / Glob（＋ SNS投稿は sns-post-quality-check Skill を実行）
 
+# アフィリエイト記事（note・WordPress・Brain）の追加スコアリング（§14）
+
+Threads等のSNS投稿は引き続き `sns-post-quality-check`（0-10点）のみを使う。
+note・WordPress・Brainのアフィリエイト記事は、上記のPASS/FIX_REQUIRED/BLOCK判定に加え、
+`design/AFFILIATE_ARTICLE_STANDARDS.md` §7 のスコアリング（100点満点、8項目）を併用する。
+
+- 検索意図への適合20点／情報の正確性15点／独自性・付加価値15点／購入判断材料15点／
+  読みやすさ10点／比較・デメリットの充実度10点／CTAの適切さ5点／コンプライアンス10点
+- **公開条件**: 総合85点以上 かつ 検索意図15点以上 かつ 情報の正確性12点以上 かつ
+  コンプライアンス8点以上 かつ BLOCK相当の重大エラー0件
+- 85点未満は執筆担当（`master-content-producer`）へ差し戻し、**再監査は最大3回まで**。
+  3回で基準未達の場合は自動での再修正ループを止め、人間確認（ゆうさん）へ申し送る
+- 判定結果は `note_posts_queue.csv` / `wordpress_posts_queue.csv` の `qa_score` /
+  `compliance_score` 列に記録するイメージを提示する（本Agentからの実書き込みは行わない、
+  §「入力/出力」の既存原則を継承）
+
 # 禁止・停止条件
 - 公開・送信の実行はしない（判定のみ）。BLOCK案件は必ず停止して報告。
+- 85点未満での「公開OK」判定は出さない。3回再修正しても未達の場合は必ず人間確認へ回す。

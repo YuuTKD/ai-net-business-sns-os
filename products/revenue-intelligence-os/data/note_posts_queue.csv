@@ -34,11 +34,19 @@
 #   published_url                     : 公開後の記事URL（公開後に記入）
 #   published_at                      : 公開日時（公開後に記入）
 #   added_date                        : このキューに追加した日 YYYY-MM-DD
+#   keyword                           : メインキーワード（TASK-031で追加。AFFILIATE_ARTICLE_STANDARDS.md参照）
+#   search_intent                     : 同ドキュメント§2の9分類のいずれか（TASK-031で追加）
+#   article_type                      : 同ドキュメント§1の10分類のいずれか（TASK-031で追加）
+#   target_word_count_min             : 目標文字数レンジの下限（TASK-031で追加）
+#   target_word_count_max             : 目標文字数レンジの上限（TASK-031で追加）
+#   qa_score                          : quality-reviewerによる100点満点スコア（TASK-031で追加、同ドキュメント§7）
+#   compliance_score                  : 同スコアリングのコンプライアンス項目・10点満点（TASK-031で追加）
 #
 # 注意: 行頭が「#」の行はコメント。本タスク（TASK-024）では実データ行を
 #   追加していない（設計・スキーマ提案のみ、実際の投稿文生成はしない）。
+#   TASK-031で末尾に品質基準関連の列を追加（既存列の順序・内容は変更せず追記のみ）。
 # 記入例（↓はダミー。実在する記事ではなく使用不可）:
-# NOTE-EXAMPLE,cnt_999,（例）テーマキー,2200,8100,980,pending,PENDING,,（例）デスク・ノート,https://editor.note.com/notes/nDUMMY0000/edit/,not_started,,,,2026-08-03
+# NOTE-EXAMPLE,cnt_999,（例）テーマキー,2200,8100,980,pending,PENDING,,（例）デスク・ノート,https://editor.note.com/notes/nDUMMY0000/edit/,not_started,,,,2026-08-03,,,,,,,
 #
-id,content_id,theme,free_char_count,paid_char_count,price_jpy,real_experience_placeholder_status,qa_gate,qa_notes,cover_image_theme,note_edit_url,draft_status,scheduled_review_date,published_url,published_at,added_date
-NOTE-001,note_ai_store_001,kuchikomi_jitan_ai,582,2083,980,not_applicable,PENDING,sns-post-quality-check未実施（次のタスクで実施予定）。BLOCK該当語（誇大表現・薬機法・NG語）の目視確認は完了し該当なし。有料部分を実テンプレート6本・プロンプト3種・ビフォーアフター例に拡充し「売れる構成」に強化済み。,デスク・スマホ・チェックリスト（口コミ返信の作業風景を想起させる構図）,,not_started,,,,2026-08-03
+id,content_id,theme,free_char_count,paid_char_count,price_jpy,real_experience_placeholder_status,qa_gate,qa_notes,cover_image_theme,note_edit_url,draft_status,scheduled_review_date,published_url,published_at,added_date,keyword,search_intent,article_type,target_word_count_min,target_word_count_max,qa_score,compliance_score
+NOTE-001,note_ai_store_001,kuchikomi_jitan_ai,582,2083,980,not_applicable,PENDING,sns-post-quality-check未実施（次のタスクで実施予定）。BLOCK該当語（誇大表現・薬機法・NG語）の目視確認は完了し該当なし。有料部分を実テンプレート6本・プロンプト3種・ビフォーアフター例に拡充し「売れる構成」に強化済み。,デスク・スマホ・チェックリスト（口コミ返信の作業風景を想起させる構図）,,not_started,,,,2026-08-03,口コミ返信 AI 時短,問題解決,note有料記事,7000,10000,,
