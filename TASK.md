@@ -41,6 +41,14 @@
 - **期限**: N/A
 - **備考**: X @yu_____y12a凍結を受けて各媒体（X/Threads/note/WordPress/Brain）の禁止行為を調査。**最有力原因は「ブラウザ自動操作での投稿」自体がXの規約違反**と判明（自動化ポリシーが手法そのものを禁止）。`design/RIO_804_PLATFORM_COMPLIANCE_RULES.md`を新設し、CLAUDE.mdに「Xへのブラウザ自動操作投稿は承認があっても対象外」の例外を追記。今後Xへの投稿はゆうさん本人の手動、または公式API経由のみとする。あわせてBrain商品「店舗集客立て直しキット」の価格を¥3,980→¥980に変更・公開申請済み（本文中の価格表記も980円に統一）。
 
+### TASK-038: 第1回 週次PDCAレビュー実施（2026-08-05）
+- **担当**: Claude Code
+- **ステータス**: DONE
+- **ブランチ**: docs/weekly-pdca-2026-08-05
+- **PR**: #66
+- **期限**: N/A
+- **備考**: `design/RIO_803_WEEKLY_PDCA_REVIEW_SOP.md`に沿って初回実施。対象はai-net-business-sns-os本体（note YUU/cool_zinnia2047・WordPress店主のAI時短メモ・Threads @ai_store_lab・X @yu_____y12a）に加え、ゆうさん指示により元退職代行の相談員ライン（note yameru_man88・X @KawaiiAnimals88）も追加。**最重要の発見: X @yu_____y12aアカウントが凍結されている**（原因未確認、ゆうさんに要確認）。詳細はmetrics.csv（2026-08-05付の行群）に実測値を記録。分析結果はチャットでゆうさんに報告済み。
+
 ### TASK-037: 週次PDCAレビューSOPを新設（note/Brain/Threads/X/WordPress横断）
 - **担当**: Claude Code
 - **ステータス**: DONE

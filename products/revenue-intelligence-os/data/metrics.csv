@@ -1,1 +1,15 @@
 date,content_id,media,impressions,views,saves,comments,clicks,link_clicks,signups,page_visits,est_revenue,confirmed_revenue,source
+2026-08-05,WP-002,WordPress,unknown,1,unknown,0,unknown,unknown,unknown,unknown,unknown,0,Jetpack Stats（週間7/30-8/5、実測）
+2026-08-05,WP-003,WordPress,unknown,1,unknown,0,unknown,unknown,unknown,unknown,unknown,0,Jetpack Stats（週間7/30-8/5、実測）
+2026-08-05,WP-ACCOUNT,WordPress,unknown,2,unknown,0,unknown,unknown,unknown,unknown,unknown,0,Jetpack Stats（週間7/30-8/5、アカウント合計、実測。UTM/デバイス欄の大きい数値はWordPress側のサンプル表示の可能性が高く実測値として採用せず）
+2026-08-05,THREADS-PIN-BRAIN,Threads,48,unknown,unknown,0,unknown,unknown,unknown,unknown,unknown,0,Threads投稿ページ表示回数（実測、@ai_store_lab、2026-07-04投稿）
+2026-08-05,THREADS-KUCHIKOMI-REPLY,Threads,78,unknown,unknown,1,unknown,unknown,unknown,unknown,unknown,0,Threads投稿ページ表示回数（実測、@ai_store_lab、リンクなし・問いかけ型投稿）
+2026-08-05,THREADS-WP002-CROSS,Threads,6,unknown,unknown,0,unknown,unknown,unknown,unknown,unknown,0,Threads投稿ページ表示回数（実測、@ai_store_lab、WP-002誘導）
+2026-08-05,THREADS-WP003-CROSS,Threads,15,unknown,unknown,0,unknown,unknown,unknown,unknown,unknown,0,Threads投稿ページ表示回数（実測、@ai_store_lab、WP-003誘導）
+2026-08-05,X-ACCOUNT,X,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown,@yu_____y12a凍結中のため取得不可（2026-08-05確認）
+2026-08-05,NOTE-YAYOI-EXPENSE,note,unknown,unknown,0,unknown,unknown,unknown,unknown,unknown,unknown,0,note公開記事「その支払い、経費にできる？」スキ数のみ実測（ビュー数は取得手段未確立）
+2026-08-05,NOTE-AI-ZATSUMU,note,unknown,unknown,0,unknown,unknown,unknown,unknown,unknown,unknown,0,note公開記事「小さなお店の店主が、AIで雑務を週3時間減らした話」スキ数のみ実測（ビュー数は取得手段未確立）
+2026-08-05,BRAIN-STORE-KIT,Brain,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown,0,Brain商品「店舗集客立て直しキット」¥3,980・レビュー0件（実測）。閲覧数は取得手段未確立
+2026-08-05,X-YAMERU-PIN,X,8,unknown,unknown,0,unknown,unknown,unknown,unknown,unknown,0,@KawaiiAnimals88固定ポストの表示回数（実測、note誘導投稿、2026-08-01投稿）
+2026-08-05,NOTE-YAMERU-FREE,note,unknown,unknown,0,unknown,unknown,unknown,unknown,unknown,unknown,0,note.com/yameru_man88「退職代行を使うべき人と、まず状況を整理できる人の違い」（無料）スキ数のみ実測。ビュー数は取得手段未確立
+2026-08-05,NOTE-YAMERU-PAID,note,unknown,unknown,0,unknown,unknown,unknown,unknown,unknown,unknown,0,note.com/yameru_man88「退職代行を検索してしまう夜に。辞めたいのに言えない人へ」（¥980）スキ数のみ実測。ビュー数は取得手段未確立
