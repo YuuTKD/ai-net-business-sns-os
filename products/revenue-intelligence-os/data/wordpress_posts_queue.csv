@@ -34,4 +34,6 @@
 # 注意: 行頭が「#」の行はコメント。
 #
 id,keyword,search_intent,article_type,target_word_count_min,target_word_count_max,actual_word_count,affiliate_program,product_name,qa_score,compliance_score,affiliate_link_status,wp_edit_url,draft_status,published_url,published_at,added_date
-WP-001,美容室 ホームページ制作 比較,比較検討,比較記事,5000,8000,1313,もしもアフィリエイト,サロンプロパートナーズ;リーズナブルHP;PACKPLAN;見積太郎;名刺代わりのシンプルなホームページの制作;ホームページ格安制作所;町のホームページ屋さん;だれでもHP;すぐウェブ,,,pending,https://treecosmehome.wordpress.com/wp-admin/post.php?post=27&action=edit&classic-editor,draft_saved,,,2026-08-04
+WP-001,美容室 ホームページ制作 比較,比較検討,比較記事,5000,8000,,もしもアフィリエイト,サロンプロパートナーズ;リーズナブルHP;PACKPLAN;見積太郎;名刺代わりのシンプルなホームページの制作;ホームページ格安制作所;町のホームページ屋さん;だれでもHP;すぐウェブ,,,pending,https://treecosmehome.wordpress.com/wp-admin/post.php?post=27&action=edit&classic-editor,trashed,,,2026-08-04
+WP-002,見積もりシミュレーター 比較,比較検討,比較記事,4000,5500,3356,もしもアフィリエイト,見積太郎;PACKPLAN,88,10,inserted,https://treecosmehome.wordpress.com/wp-admin/post.php?post=37&action=edit&classic-editor,published,https://treecosme.home.blog/2026/08/05/「料金はいくらですか？」対応、店舗はどう減ら/,2026-08-05 01:47,2026-08-04
+WP-003,POSレジ 選び方,問題解決,悩み解決・使い方記事,2500,4500,3977,A8.net,レジチョイス,94,10,inserted,https://treecosmehome.wordpress.com/wp-admin/post.php?post=51&action=edit&classic-editor,published,https://treecosme.home.blog/2026/08/05/posレジ選びで失敗しないために｜美容室・飲食店/,2026-08-05 01:11,2026-08-05
