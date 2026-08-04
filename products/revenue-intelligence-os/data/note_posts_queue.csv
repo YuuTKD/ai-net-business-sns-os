@@ -42,3 +42,4 @@
 #
 id,content_id,theme,free_char_count,paid_char_count,price_jpy,real_experience_placeholder_status,qa_gate,qa_notes,cover_image_theme,note_edit_url,draft_status,scheduled_review_date,published_url,published_at,added_date
 NOTE-001,note_ai_store_001,kuchikomi_jitan_ai,582,2083,980,not_applicable,PENDING,sns-post-quality-check未実施（次のタスクで実施予定）。BLOCK該当語（誇大表現・薬機法・NG語）の目視確認は完了し該当なし。有料部分を実テンプレート6本・プロンプト3種・ビフォーアフター例に拡充し「売れる構成」に強化済み。,デスク・スマホ・チェックリスト（口コミ返信の作業風景を想起させる構図）,,not_started,,,,2026-08-03
+NOTE-002,brain_parts_A_kuchikomi_reply_template_30,kuchikomi_reply_template_30,約2200,約6800,980,not_applicable,PENDING,products/brain_parts/A_kuchikomi_reply_template_30.mdの完全原稿をnote全文入力（本番・サンプルではなく30本全て）。Brain商品（同一原稿・pending_publish）とnote版が同時展開の位置づけ。BLOCK該当語（誇大表現・薬機法・保証表現）は原稿レベルで既に回避設計済み。sns-post-quality-check未実施。,デスク・スマホ・口コミ返信の作業風景,https://editor.note.com/notes/n3108bfb98b7d/edit/,draft_saved,,,,2026-08-04
