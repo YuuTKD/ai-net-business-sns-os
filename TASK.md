@@ -37,13 +37,23 @@
 - **担当**: Claude Code
 - **ステータス**: DONE
 - **ブランチ**: docs/weekly-pdca-2026-08-05
-- **PR**: （作成予定）
+- **PR**: #66
 - **期限**: N/A
 - **備考**: `design/RIO_803_WEEKLY_PDCA_REVIEW_SOP.md`に沿って初回実施。対象はai-net-business-sns-os本体（note YUU/cool_zinnia2047・WordPress店主のAI時短メモ・Threads @ai_store_lab・X @yu_____y12a）に加え、ゆうさん指示により元退職代行の相談員ライン（note yameru_man88・X @KawaiiAnimals88）も追加。**最重要の発見: X @yu_____y12aアカウントが凍結されている**（原因未確認、ゆうさんに要確認）。詳細はmetrics.csv（2026-08-05付の行群）に実測値を記録。分析結果はチャットでゆうさんに報告済み。
+
+### TASK-037: 週次PDCAレビューSOPを新設（note/Brain/Threads/X/WordPress横断）
 - **担当**: Claude Code
 - **ステータス**: DONE
+- **ブランチ**: docs/weekly-pdca-review-sop
+- **PR**: #65
+- **期限**: N/A
+- **備考**: n8nはnote/Brainの公式APIが無くログイン画面操作ができないため、週次のインプレッション取得・分析・改善提案はn8nではなくClaude Code（Claude in Chrome）が担う方針に確定（2026-08-05）。完全自動の定期実行（CronCreate）はセッション依存・7日で自動失効という制約が判明したため見送り、ゆうさんが毎週月曜日に一言依頼する運用に決定。手順を`design/RIO_803_WEEKLY_PDCA_REVIEW_SOP.md`として新設。
+
+### TASK-036: Threads「投稿＋コメント欄」アフィリエイト導線の型を700系運用に反映
+- **担当**: Claude Code
+- **ステータス**: DONE（マージ済み）
 - **ブランチ**: docs/threads-comment-affiliate-flow
-- **PR**: （作成予定）
+- **PR**: #64
 - **期限**: N/A
 - **備考**: ゆうさんが共有した参考投稿（構成パターンのみ観察、内容は流用せず）から「1投稿目＝フックのみ／2投稿目＝価値提供（リンクなし）／3・4投稿目＝自己リプライで商品導線（PR表記付き）」という4段構成を抽出し、`design/RIO_700_SERIES_RUNBOOK.md`に追記。DEV_RIO_701/705の出力（アフィリ挿入案／楽天リプライ下書き）を3・4投稿目相当として位置づけ。本番投稿の承認制・QAゲート・実URL限定の原則は変更なし。
 
