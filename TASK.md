@@ -33,7 +33,13 @@
 
 ## タスク一覧
 
-### TASK-036: Threads「投稿＋コメント欄」アフィリエイト導線の型を700系運用に反映
+### TASK-038: 第1回 週次PDCAレビュー実施（2026-08-05）
+- **担当**: Claude Code
+- **ステータス**: DONE
+- **ブランチ**: docs/weekly-pdca-2026-08-05
+- **PR**: （作成予定）
+- **期限**: N/A
+- **備考**: `design/RIO_803_WEEKLY_PDCA_REVIEW_SOP.md`に沿って初回実施。対象はai-net-business-sns-os本体（note YUU/cool_zinnia2047・WordPress店主のAI時短メモ・Threads @ai_store_lab・X @yu_____y12a）に加え、ゆうさん指示により元退職代行の相談員ライン（note yameru_man88・X @KawaiiAnimals88）も追加。**最重要の発見: X @yu_____y12aアカウントが凍結されている**（原因未確認、ゆうさんに要確認）。詳細はmetrics.csv（2026-08-05付の行群）に実測値を記録。分析結果はチャットでゆうさんに報告済み。
 - **担当**: Claude Code
 - **ステータス**: DONE
 - **ブランチ**: docs/threads-comment-affiliate-flow
