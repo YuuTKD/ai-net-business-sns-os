@@ -21,11 +21,15 @@
 
 ---
 
-## 1. 公開ボタンはAIが押さない（既存原則の継承）
+## 1. 公開は投稿ごとのゆうさん承認制（2026-08-05改定）
 
-`RIO_801_NOTE_OPERATIONS_SOP.md` §0と同じ安全方針をWordPressにも適用する。
-Claude in Chromeでの下書き作成・「下書き保存」クリックまではAIが行うが、
-**「公開」ボタンはゆうさん本人が押す**。
+`CLAUDE.md`「本番投稿・公開の承認制ルール」に従う。Claude in Chromeでの下書き作成・
+QA（`design/AFFILIATE_ARTICLE_STANDARDS.md` §7でPASS）までは従来通りAIが行う。
+
+「公開」ボタンは、**その投稿について、ゆうさんから明示的な承認（「公開して」等）を
+得た場合に限り**Claude Codeが押してよい。承認なしでの公開は引き続き絶対禁止。
+承認は投稿1件ごとに毎回必要（過去の承認の流用不可）。公開後はURL・日時を
+`wordpress_posts_queue.csv` に記録する。
 
 ---
 
@@ -113,7 +117,8 @@ published_url / published_at / added_date`
 
 - WordPress REST APIによる自動投稿（現状は手動ブラウザ操作のみ）
 - 独自ドメインの自動取得（有料プラン契約が前提、課金判断が必要なため保留）
-- AIによる「公開」ボタン操作
+- ゆうさんの投稿ごとの承認を経ないAIによる「公開」ボタン操作（承認があれば
+  `CLAUDE.md`「本番投稿・公開の承認制ルール」・本SOP §1に従い実行可、2026-08-05改定）
 - 検索順位・競合文字数の自動取得（`AFFILIATE_ARTICLE_STANDARDS.md` §0参照、
   有料SEO API未契約）
 
