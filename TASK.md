@@ -391,4 +391,25 @@
 - **pre-deploy-qa 判定**: 対象外（データ修正のみ、実際の外部公開は伴わない）
 - **確認事項**: (1) Threads @ai_store_lab のプロフィール欄リンクが正しいBrain商品ページになっているか、ゆうさんの確認が必要。(2) Brainへのログインをお願いしたい（新商品作成のため）。(3) note版テンプレート30本の全文入力を継続中（時間を要する見込み）。
 
+### TASK-031: アフィリエイト記事の品質・文字数基準を整備（記事タイプ別レンジ＋QAスコアリング）
+- **担当**: Claude Code（CEO代理・SEOアーキテクト/編集長/QA監査/エンジニア）
+- **ステータス**: REVIEW（実装完了・PR作成予定・ゆうさん承認待ち）
+- **ブランチ**: feature/affiliate-article-quality-standards
+- **PR**: （作成予定）
+- **期限**: -
+- **背景**: ゆうさんから「アフィリエイトブログの記事生成基準を見直し、単純な長文量産ではなく検索意図・記事タイプに応じて最適な文字数と構成を自動決定できる仕組みに改善してほしい」という詳細指示を受けた。実装前に既存リポジトリを調査した結果、`.claude/skills/` はこのリポジトリには存在せず（`sns-post-quality-check`等はユーザーのグローバル環境のSkill）、記事の目標文字数を決定する仕組みは皆無（note記事は「7,000〜10,000字」という単一目安のみ、`RIO_801_NOTE_OPERATIONS_SOP.md` §1、REPORT-009の1実例ベース）だったことが判明。また、ご指示は「検索上位10記事を自動取得して文字数中央値を算出する」前提だったが、本リポジトリには有料SEO API（Ahrefs/SEMrush等）の契約がなく、常時稼働するアプリケーションサーバーも無い（実行主体はClaude CodeとN8nワークフロー）ため、ご提示の13モジュールをフルソフトウェアとして実装する方式（B）ではなく、既存のSkill/Agent資産を拡張する方式（A）で進めることをゆうさんに確認し、承認を得た。適用媒体はnote・WordPress（店主のAI時短メモ）・Brainの3つで確認済み。
+- **実施内容**:
+  1. `design/AFFILIATE_ARTICLE_STANDARDS.md` を新規作成。記事タイプ別文字数レンジ（10種類、悩み解決記事2,500〜4,500字〜高額商品記事7,000〜12,000字）、検索意図9分類、記事構成の必須要素16項目、品質基準（メリットだけの記事禁止・公式ページ言い換え禁止・虚偽体験談禁止・根拠のない断定禁止）、CTA設計ルール、QAスコアリング（100点満点8項目・85点以上で公開候補・再監査は最大3回まで）を定義。競合記事の自動SERP分析は「取得できない場合は記事タイプ別レンジをそのまま使う（推測で埋めない）」という代替ロジックとした。
+  2. `products/revenue-intelligence-os/agents/master-content-producer.md` を拡張：note/WordPress/Brain向け記事を書く前に記事タイプ・検索意図を判定し、AFFILIATE_ARTICLE_STANDARDS.mdに従う旨のルールを追記（既存の記事作成原則セクションは変更せず、新セクションとして追加）。
+  3. `products/revenue-intelligence-os/agents/quality-reviewer.md` を拡張：既存のPASS/FIX_REQUIRED/BLOCK判定に加え、収益記事（note/WordPress/Brain）向けのQAスコアリング（100点満点、公開条件85点以上）を追記。85点未満は差し戻し、再監査は最大3回まで、それでも未達なら人間確認へ回すルールを明記。
+  4. `design/RIO_801_NOTE_OPERATIONS_SOP.md` を更新：既存の「7,000〜10,000字」目安が「note有料記事」タイプ限定であることを明記し、新設の§2.5で記事タイプ別レンジの決定手順を追加。
+  5. `design/RIO_802_WORDPRESS_OPERATIONS_SOP.md` を新規作成：WordPress（店主のAI時短メモ、`treecosme.home.blog`）向けの運用SOP。RIO_801と対の構成。ブロックエディター（Gutenberg）でタイトル/本文の混入不具合が起きた実装上の知見（旧エディター推奨）も記録。
+  6. `products/revenue-intelligence-os/data/wordpress_posts_queue.csv` を新規作成（`note_posts_queue.csv`と対のスキーマ）。第1弾記事（美容室・飲食店・整体院向けHP制作会社9社比較、下書きpost=27）を実データとして1行登録。
+  7. `products/revenue-intelligence-os/data/note_posts_queue.csv` を拡張：末尾に `keyword` `search_intent` `article_type` `target_word_count_min` `target_word_count_max` `qa_score` `compliance_score` を追加（既存列・既存NOTE-001行のデータは変更せず追記のみ）。NOTE-001を実際に分類した結果、「note有料記事」タイプ（目標7,000〜10,000字）に対し現状の実文字数は2,665字（582+2,083）と大幅に不足していることが判明（新基準の実効性を示す最初の検出例）。
+  8. `products/revenue-intelligence-os/data/content.csv` を拡張：末尾に `article_type` `target_word_count_min` `target_word_count_max` を追加（既存24行は未分類のため空欄のまま、推測での後付け分類はしない）。
+  9. `products/revenue-intelligence-os/data/README.md` に新規ファイル・拡張列の説明を追記。
+- **影響範囲**: 新規ファイル3件（`AFFILIATE_ARTICLE_STANDARDS.md`、`RIO_802_WORDPRESS_OPERATIONS_SOP.md`、`wordpress_posts_queue.csv`）、既存ファイル5件への追記（`master-content-producer.md`、`quality-reviewer.md`、`RIO_801_NOTE_OPERATIONS_SOP.md`、`note_posts_queue.csv`、`content.csv`、`data/README.md`）。既存の列・データ行・既存ロジックの削除や上書きは一切なし（すべて追記または新規セクション追加）。n8nワークフロー（DEV_RIO_103等）・本番稼働中のパイプラインへの変更は行っていない。
+- **pre-deploy-qa 判定**: 対象外（ドキュメント・データスキーマ追加のみ、デプロイ・外部API呼び出し・Scheduler変更を伴わない）
+- **確認事項**: (1) 本PRのレビュー・マージ。(2) 次のnote記事・WordPress記事から、新基準（記事タイプ判定→目標文字数→QAスコアリング）を実際に適用して運用開始してよいか確認したい。(3) NOTE-001（口コミ返信AI時短記事）は新基準で文字数不足と判定されたため、公開前に有料部分の拡充が必要（別タスクで対応）。(4) 将来課題として、有料SEO API契約・Google Search Console連携による自動計測は本タスクの対象外とし、`AFFILIATE_ARTICLE_STANDARDS.md` §9に申し送り事項として明記した。
+
 <!-- 新しいタスクは上記フォーマットに従ってここに追加する -->

@@ -35,3 +35,17 @@ note記事専用の公開進捗キュー（ヘッダー・スキーマのみ、�
 自動投稿ワークフローへの組み込みはまだ行っていない**（ゆうさんの承認待ち）。
 設計背景・ASP比較は `design/MULTI_AFFILIATE_NETWORK_EXPANSION.md`、
 詳細は TASK.md の TASK-024・TASK-025 を参照。
+
+## wordpress_posts_queue.csv（2026-08-04 新規・実データ1行あり）
+WordPress（店主のAI時短メモ、treecosme.home.blog）記事専用の公開進捗キュー。
+`note_posts_queue.csv` と対のスキーマ。運用フローは
+`design/RIO_802_WORDPRESS_OPERATIONS_SOP.md` を参照。詳細は TASK.md の TASK-031。
+
+## 記事品質・文字数基準（2026-08-04 新規、content.csv / note_posts_queue.csv / wordpress_posts_queue.csv 共通）
+アフィリエイト記事（note・WordPress・Brain）の目標文字数・QAスコアリングの基準を
+`design/AFFILIATE_ARTICLE_STANDARDS.md` に新規追加した。これに伴い、`content.csv` に
+`article_type` / `target_word_count_min` / `target_word_count_max`、
+`note_posts_queue.csv` に `keyword` / `search_intent` / `article_type` /
+`target_word_count_min` / `target_word_count_max` / `qa_score` / `compliance_score`
+を末尾に追加（既存列・既存データ行は変更せず追記のみ、既存行の新規列は空欄）。
+詳細は TASK.md の TASK-031。
