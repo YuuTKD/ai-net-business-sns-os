@@ -26,7 +26,7 @@
 - **日時**: 2026-08-04
 - **担当**: Claude Code（CEO代理・SEOアーキテクト/編集長/QA監査/エンジニア）
 - **関連タスク**: TASK-031
-- **PR**: （作成予定）
+- **PR**: #59（merge済み）
 - **変更内容**: ゆうさんの詳細指示（検索意図・記事タイプに応じた文字数自動決定、公開前QAゲート、虚偽体験談禁止等）を受け、実装前に既存構成を調査。ご提示の「SERP自動分析を含む13モジュールのフルソフトウェア実装」は、本リポジトリに常時稼働サーバー・有料SEO API契約が無いため過剰と判断し、既存のSkill/Agent資産（`master-content-producer`・`quality-reviewer`・`RIO_801_NOTE_OPERATIONS_SOP.md`）を拡張する方式をゆうさんに確認・承認を得て採用。`design/AFFILIATE_ARTICLE_STANDARDS.md`（記事タイプ別文字数レンジ10種・検索意図9分類・QAスコアリング100点満点/85点公開基準）を新規作成し、note・WordPress・Brainの3媒体に適用できる形で`master-content-producer.md`・`quality-reviewer.md`・`RIO_801_NOTE_OPERATIONS_SOP.md`を拡張。WordPress向けの新SOP（`RIO_802_WORDPRESS_OPERATIONS_SOP.md`）と進捗管理キュー（`wordpress_posts_queue.csv`）も新規作成。既存の`note_posts_queue.csv`・`content.csv`は末尾に新規列を追記のみ（既存データは無変更）。実データとして分類したところ、既存のNOTE-001下書き（口コミ返信AI時短記事）は新基準の目標文字数（7,000〜10,000字）に対し実際は2,665字と大幅未達であることが判明した。
 - **影響範囲**: 新規ファイル3件、既存ファイル6件への追記。既存ロジック・データの削除や上書きは一切なし。n8nワークフロー・本番パイプラインへの変更なし。
 - **pre-deploy-qa 判定**: 対象外（ドキュメント・データスキーマ追加のみ）
