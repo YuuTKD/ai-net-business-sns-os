@@ -1,6 +1,27 @@
 # PROGRAMMATIC_SEO — CONTENT PLAN
 
+> **2026-08-05更新メモ:** このファイルは2026-07-09時点の設計（Notion公開想定、記事0本）のまま止まっていました。
+> 実際には2026-08-04以降、`design/RIO_802_WORDPRESS_OPERATIONS_SOP.md` の方針でWordPress
+> （治療cosme.home.blog／店主のAI時短メモ）を収益記事の主エンジンとして運用開始しています。
+> README.mdの「今はやらないこと：WordPress本格開発」は現状と矛盾するため、実態優先でこの下に
+> 公開記事ログを追加します（README側の全面書き直しは未実施、要フォロー）。
+
 ---
+
+## 公開記事ログ（WordPress・店主のAI時短メモ）
+
+進捗管理の一次情報は `products/revenue-intelligence-os/data/wordpress_posts_queue.csv`。
+ここには要点のみ転記する。
+
+| id | タイトル/キーワード | 記事タイプ | アフィリエイト | QAスコア | ステータス | URL |
+|---|---|---|---|---|---|---|
+| WP-001 | 美容室 ホームページ制作 比較（9社） | 比較記事 | もしもアフィリエイト | — | ⚫ ゴミ箱移動済み（2026-08-05、復元可） | [編集画面](https://treecosmehome.wordpress.com/wp-admin/post.php?post=27&action=edit&classic-editor) |
+| WP-002 | 見積もりシミュレーター 比較（見積太郎/PACKPLAN） | 比較記事 | もしもアフィリエイト | 88/100（QA再監査済み） | 🟢 公開済み（2026-08-05） | https://treecosme.home.blog/2026/08/05/「料金はいくらですか？」対応、店舗はどう減ら/ |
+| WP-003 | POSレジ選びで失敗しないために（レジチョイス） | 悩み解決記事 | A8.net | 94/100 | 🟢 公開済み（2026-08-05） | https://treecosme.home.blog/2026/08/05/posレジ選びで失敗しないために｜美容室・飲食店/ |
+
+---
+
+## キーワード候補リスト（初期30本・設計中）
 
 ## キーワード候補リスト（初期30本・設計中）
 

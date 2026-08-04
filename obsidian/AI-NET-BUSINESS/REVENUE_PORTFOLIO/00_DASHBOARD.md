@@ -51,7 +51,7 @@
 |---|---|---|---|---|---|
 | B2B_AGENT | — | — | — | — | — |
 | MICRO_SAAS | — | — | — | — | — |
-| PROGRAMMATIC_SEO | 0記事 | — | — | — | — |
+| PROGRAMMATIC_SEO | WordPress 2記事公開・1記事ゴミ箱移動（2026-08-05時点、詳細は[[../03_PROGRAMMATIC_SEO/CONTENT_PLAN|公開記事ログ]]） | — | — | — | — |
 | SNS_AFFILIATE | X:1 / Th:1 | — | — | — | 0 |
 
 ---
