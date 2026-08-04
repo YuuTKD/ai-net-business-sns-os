@@ -33,6 +33,14 @@
 
 ## タスク一覧
 
+### TASK-037: 週次PDCAレビューSOPを新設（note/Brain/Threads/X/WordPress横断）
+- **担当**: Claude Code
+- **ステータス**: DONE
+- **ブランチ**: docs/weekly-pdca-review-sop
+- **PR**: （作成予定）
+- **期限**: N/A
+- **備考**: n8nはnote/Brainの公式APIが無くログイン画面操作ができないため、週次のインプレッション取得・分析・改善提案はn8nではなくClaude Code（Claude in Chrome）が担う方針に確定（2026-08-05）。完全自動の定期実行（CronCreate）はセッション依存・7日で自動失効という制約が判明したため見送り、ゆうさんが毎週月曜日に一言依頼する運用に決定。手順を`design/RIO_803_WEEKLY_PDCA_REVIEW_SOP.md`として新設。
+
 ### TASK-034: 本番投稿・公開ルールを「無条件禁止」から「投稿ごとの承認制」へ改定
 - **担当**: Claude Code
 - **ステータス**: DONE（マージ済み）
