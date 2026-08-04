@@ -37,13 +37,23 @@
 - **担当**: Claude Code
 - **ステータス**: DONE
 - **ブランチ**: docs/platform-compliance-rules-2026-08-05
-- **PR**: （作成予定）
+- **PR**: #67
 - **期限**: N/A
 - **備考**: X @yu_____y12a凍結を受けて各媒体（X/Threads/note/WordPress/Brain）の禁止行為を調査。**最有力原因は「ブラウザ自動操作での投稿」自体がXの規約違反**と判明（自動化ポリシーが手法そのものを禁止）。`design/RIO_804_PLATFORM_COMPLIANCE_RULES.md`を新設し、CLAUDE.mdに「Xへのブラウザ自動操作投稿は承認があっても対象外」の例外を追記。今後Xへの投稿はゆうさん本人の手動、または公式API経由のみとする。あわせてBrain商品「店舗集客立て直しキット」の価格を¥3,980→¥980に変更・公開申請済み（本文中の価格表記も980円に統一）。
+
+### TASK-037: 週次PDCAレビューSOPを新設（note/Brain/Threads/X/WordPress横断）
 - **担当**: Claude Code
 - **ステータス**: DONE
+- **ブランチ**: docs/weekly-pdca-review-sop
+- **PR**: #65
+- **期限**: N/A
+- **備考**: n8nはnote/Brainの公式APIが無くログイン画面操作ができないため、週次のインプレッション取得・分析・改善提案はn8nではなくClaude Code（Claude in Chrome）が担う方針に確定（2026-08-05）。完全自動の定期実行（CronCreate）はセッション依存・7日で自動失効という制約が判明したため見送り、ゆうさんが毎週月曜日に一言依頼する運用に決定。手順を`design/RIO_803_WEEKLY_PDCA_REVIEW_SOP.md`として新設。
+
+### TASK-036: Threads「投稿＋コメント欄」アフィリエイト導線の型を700系運用に反映
+- **担当**: Claude Code
+- **ステータス**: DONE（マージ済み）
 - **ブランチ**: docs/threads-comment-affiliate-flow
-- **PR**: （作成予定）
+- **PR**: #64
 - **期限**: N/A
 - **備考**: ゆうさんが共有した参考投稿（構成パターンのみ観察、内容は流用せず）から「1投稿目＝フックのみ／2投稿目＝価値提供（リンクなし）／3・4投稿目＝自己リプライで商品導線（PR表記付き）」という4段構成を抽出し、`design/RIO_700_SERIES_RUNBOOK.md`に追記。DEV_RIO_701/705の出力（アフィリ挿入案／楽天リプライ下書き）を3・4投稿目相当として位置づけ。本番投稿の承認制・QAゲート・実URL限定の原則は変更なし。
 
