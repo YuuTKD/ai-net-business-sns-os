@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
-# pr_auto_flow.sh
-# ローカルPR自動連携フロー
+# pr_auto_flow.sh — ローカルPR自動連携フロー（Codex 120点版）
 #
 # 目的:
 #   Claude Codeによる作業完了後、PR作成→Codexレビュー→判定→Safe Merge Gateまでを自動化する。
 #   scripts/** を含む高リスクPRはMerge前で必ず停止し、人間確認を求める。
+#   FIX判定は最大3回まで自動修正を許可し、3回を超えたら停止する。
 #
 # 使い方:
 #   ./scripts/agent/pr_auto_flow.sh --pr <PR番号>
 #   ./scripts/agent/pr_auto_flow.sh --pr <PR番号> --dry-run
+#   ./scripts/agent/pr_auto_flow.sh --pr <PR番号> --reset-attempts
 #
 # 禁止事項（このスクリプト内では絶対に実行しない）:
 #   - git add .
@@ -27,12 +28,17 @@ REPORTS_DIR="${REPO_ROOT}/data/reports"
 REVIEW_SCRIPT="${REPO_ROOT}/scripts/review/codex_pr_review.sh"
 MERGE_GATE_SCRIPT="${REPO_ROOT}/scripts/agent/safe_auto_merge_pr.sh"
 
+MAX_FIX_ATTEMPTS=3
+
 # 低リスクパターン（これだけなら自動Merge対象）
 LOW_RISK_PATTERNS=(
   "^docs/"
   "^obsidian/"
   "^data/revenue_portfolio/"
   "^data/analytics/"
+  "^data/posts/"
+  "^data/outreach/"
+  "^\.claude/commands/"
   "^README\.md$"
   "^TASK\.md$"
   "^REPORT\.md$"
@@ -85,29 +91,54 @@ header() {
   echo "${BOLD}━━━ $* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
 }
 
+get_fix_attempt() {
+  local attempt_file="${REPORTS_DIR}/fix_attempt_pr_${PR_NUMBER}.txt"
+  if [[ -f "$attempt_file" ]]; then
+    cat "$attempt_file"
+  else
+    echo 0
+  fi
+}
+
 # ━━━ 引数パース ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 PR_NUMBER=""
 DRY_RUN=0
+RESET_ATTEMPTS=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --pr)      PR_NUMBER="$2"; shift 2 ;;
-    --dry-run) DRY_RUN=1; shift ;;
+    --pr)             PR_NUMBER="$2"; shift 2 ;;
+    --dry-run)        DRY_RUN=1; shift ;;
+    --reset-attempts) RESET_ATTEMPTS=1; shift ;;
     *) echo "不明なオプション: $1" >&2; exit 1 ;;
   esac
 done
 
 if [[ -z "$PR_NUMBER" ]]; then
-  echo "使い方: $0 --pr <PR番号> [--dry-run]" >&2
+  echo "使い方: $0 --pr <PR番号> [--dry-run] [--reset-attempts]" >&2
   exit 1
 fi
+
+# ━━━ FIX試行回数管理 ━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FIX_ATTEMPT_FILE="${REPORTS_DIR}/fix_attempt_pr_${PR_NUMBER}.txt"
+mkdir -p "${REPORTS_DIR}"
+
+if [[ $RESET_ATTEMPTS -eq 1 ]]; then
+  rm -f "${FIX_ATTEMPT_FILE}"
+  echo ""
+  info "--reset-attemptsフラグにより、FIX試行回数をリセットしました"
+fi
+
+CURRENT_FIX_ATTEMPT="$(get_fix_attempt)"
 
 # ━━━ 開始 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 header "PR Auto Flow — PR #${PR_NUMBER}"
-echo "  DRY_RUN : ${DRY_RUN}"
-echo "  Reports : ${REPORTS_DIR}"
+echo "  DRY_RUN      : ${DRY_RUN}"
+echo "  Reports      : ${REPORTS_DIR}"
+echo "  FIX試行回数  : ${CURRENT_FIX_ATTEMPT}/${MAX_FIX_ATTEMPTS}"
 echo ""
 
 # ━━━ [0] gh auth確認 ━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -196,7 +227,6 @@ fi
 
 header "[4/6] Codexレビュー"
 REVIEW_OUTPUT="${REPORTS_DIR}/codex_review_pr_${PR_NUMBER}.txt"
-mkdir -p "${REPORTS_DIR}"
 
 if [[ ! -f "$REVIEW_SCRIPT" ]]; then
   fail "レビュースクリプトが見つかりません: ${REVIEW_SCRIPT}"
@@ -227,40 +257,94 @@ info "レビュー判定: ${REVIEW_RESULT}"
 case "$REVIEW_RESULT" in
   GO)
     ok "Codex判定: GO — Merge Gateに進みます"
+    # FIX試行回数リセット（GO達成）
+    rm -f "${FIX_ATTEMPT_FILE}"
     ;;
   FIX)
-    warn "Codex判定: FIX — 修正指示ファイルを生成します"
+    NEXT_FIX_ATTEMPT=$((CURRENT_FIX_ATTEMPT + 1))
+    echo "$NEXT_FIX_ATTEMPT" > "${FIX_ATTEMPT_FILE}"
+
+    warn "Codex判定: FIX（試行 ${NEXT_FIX_ATTEMPT}/${MAX_FIX_ATTEMPTS}）"
+
     FIX_FILE="${REPORTS_DIR}/fix_instruction_pr_${PR_NUMBER}.md"
+
+    # Codex出力から指摘事項を抽出
+    FINDINGS="$(grep -E '^\*\*\[要修正\]|\*\*\[要修正\]|^\*\*\[推奨修正\]|^- \*\*\[要修正\]|^8\. 指摘事項' "${REVIEW_OUTPUT}" | head -20 || true)"
+    if [[ -z "$FINDINGS" ]]; then
+      FINDINGS="$(grep -E '指摘事項|要修正|修正推奨' "${REVIEW_OUTPUT}" | head -10 || true)"
+    fi
+
     cat > "${FIX_FILE}" <<FIXEOF
-# FIX指示 — PR #${PR_NUMBER}
+# FIX指示 — PR #${PR_NUMBER}（試行 ${NEXT_FIX_ATTEMPT}/${MAX_FIX_ATTEMPTS}）
 
 生成日時: $(date '+%Y-%m-%d %H:%M:%S')
-Codexレビュー結果: FIX
-レビュー詳細: ${REVIEW_OUTPUT}
 
-## 修正指示
+## 判定
+FIX
 
-Codexレビューで以下の問題が指摘されました。
-詳細は \`${REVIEW_OUTPUT}\` を確認してください。
+## FIX理由（Codex抽出）
+$(echo "$FINDINGS" | head -15 || echo "詳細は ${REVIEW_OUTPUT} を参照してください")
 
-## 次のアクション
+詳細レビュー: ${REVIEW_OUTPUT}
 
-1. \`${REVIEW_OUTPUT}\` を読む
-2. 指摘箇所を修正する
-3. 修正ファイルだけを \`git add\`（git add . は禁止）
-4. \`git commit\`
-5. \`git push\`
-6. 再度このスクリプトを実行: \`./scripts/agent/pr_auto_flow.sh --pr ${PR_NUMBER}\`
+## 優先修正順
+1. データ破損・CSV不整合
+2. Secret・安全性
+3. コンプライアンス（Amazon開示・ステマ規制・個人情報）
+4. リンク（Obsidian/Markdown）
+5. 表記ゆれ・日付・曜日不整合
+6. 売上導線の明確化
 
-## 禁止
+## 自動修正してよい内容
+- CSV列数修正・model_id統一
+- Markdownリンク修正
+- Obsidianリンク修正（Vault外はテキスト参照に変換）
+- typo / 表記ゆれ修正
+- 日付・曜日修正
+- docs / obsidian / data の説明補足
+- コンプライアンス注記追加（参照URL追加・主体名プレースホルダー等）
+- 個人情報取り扱い説明追加
+- 危険表現の安全な言い換え
 
-- git add .
-- 指摘を無視してMergeする
-- STOP判定の無視
+## 自動修正してはいけない内容
+- scripts/** の実行ロジック大幅変更
+- agents/** / config/** / .env
+- deploy / Scheduler / Cloud Run
+- 外部送信 / 自動投稿 / 自動DM / 自動リプ
+- 決済 / 顧客データ / 商品マッチ先AI再開
+- 法務・仕様判断が必要な変更
+
+## Claude Codeへの修正指示
+1. ${REVIEW_OUTPUT} を読んで指摘箇所を確認してください
+2. 最小修正のみ実施してください
+3. git add . は絶対禁止 — 対象ファイルだけ git add してください
+4. git commit → git push してください
+5. 再実行: ./scripts/agent/pr_auto_flow.sh --pr ${PR_NUMBER}
+
+## 残り自動修正回数
+$(echo "$((MAX_FIX_ATTEMPTS - NEXT_FIX_ATTEMPT))") 回（最大${MAX_FIX_ATTEMPTS}回中 ${NEXT_FIX_ATTEMPT}回目完了）
+
+## 再レビューコマンド
+export PATH="/Users/tokudayuya/.local/bin:/opt/homebrew/bin:\$PATH"
+./scripts/agent/pr_auto_flow.sh --pr ${PR_NUMBER}
 FIXEOF
+
     ok "FIX指示ファイル生成: ${FIX_FILE}"
     echo ""
-    fail "FIX判定のため停止します。${FIX_FILE} を確認して修正してください。"
+
+    if [[ $NEXT_FIX_ATTEMPT -ge $MAX_FIX_ATTEMPTS ]]; then
+      fail "FIX判定が ${MAX_FIX_ATTEMPTS} 回に達しました。自動修正を停止します。"
+      echo ""
+      echo "${YELLOW}${BOLD}人間確認が必要です:${RESET}"
+      echo "  詳細レビュー : ${REVIEW_OUTPUT}"
+      echo "  修正指示     : ${FIX_FILE}"
+      echo ""
+      echo "  FIX試行回数をリセットするには:"
+      echo "  ./scripts/agent/pr_auto_flow.sh --pr ${PR_NUMBER} --reset-attempts"
+      exit 5
+    fi
+
+    fail "FIX判定（試行 ${NEXT_FIX_ATTEMPT}/${MAX_FIX_ATTEMPTS}）。${FIX_FILE} を確認して修正してください。"
     exit 2
     ;;
   STOP)
@@ -306,6 +390,9 @@ if [[ $IS_HIGH_RISK -eq 1 ]]; then
   echo "${BOLD}  理由: ${HIGH_RISK_REASON}${RESET}"
   echo ""
   echo "${BOLD}人間が確認してからMergeしてください:${RESET}"
+  echo ""
+  echo "  # レビュー内容確認:"
+  echo "  cat ${REPORTS_DIR}/codex_review_pr_${PR_NUMBER}.txt"
   echo ""
   echo "  # ラベル付与（確認後）:"
   echo "  gh pr edit ${PR_NUMBER} --add-label 'safe-auto-merge'"
