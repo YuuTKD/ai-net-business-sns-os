@@ -37,9 +37,17 @@
 - **担当**: Claude Code
 - **ステータス**: DONE（記事公開分）／方針提案は要ゆうさん確認
 - **ブランチ**: feature/wp-004-a-frame-signage
-- **PR**: （作成予定）
+- **PR**: #69
 - **期限**: N/A
 - **備考**: ゆうさんの「WordPress・Threads・note・Brainを総動員」指示を受け、未使用の楽天アフィリエイトリンク（RKT-002・A型看板）を使った新規記事WP-004を執筆・QA（91/100 PASS）・公開。`rakuten_link_library.csv`/`affiliate_link_library_v2.csv`にある他の未使用商材（RKT-001/003/004、A8-002/003、MOSHIMO-001/003）のうちRelix勤怠（MOSHIMO-002）は公式サイトの情報が乏しく、捏造禁止原則により記事化を見送った。Threads毎日投稿・note大量生産・Brain埋没対策は、note公開の手動ボトルネックとコンテンツ品質基準（AFFILIATE_ARTICLE_STANDARDS.md）の兼ね合いから、ペース・優先順位についてゆうさんに方針確認中。
+
+### TASK-040: Threads投稿型を3段構成に精緻化＋Brain値下げ投稿を実行
+- **担当**: Claude Code
+- **ステータス**: DONE
+- **ブランチ**: docs/threads-3part-structure-pr-tag
+- **PR**: #68
+- **期限**: N/A
+- **備考**: ゆうさん指示によりTASK-036の4段構成を「1本文（リンク関連の強い内容）→コメント1（納得文）→コメント2（商品導入＋リンク＋#PR）」の3段構成に精緻化し`RIO_700_SERIES_RUNBOOK.md`に追記。この型でThreads @ai_store_labにBrain値下げ告知スレッドを投稿（重複投稿を1件削除して解消）。既存のWP-002/WP-003誘導投稿（旧表記「※PR（アフィリエイトリンクを含む記事へのリンクです）」）は編集期限切れで修正不可と判明、法令上問題ないためそのまま維持し、今後の新規投稿から`#PR`短縮表記に統一する運用とした。
 
 ### TASK-039: 媒体別コンプライアンスルール新設（X凍結原因分析）＋Brain価格変更
 - **担当**: Claude Code
