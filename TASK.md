@@ -33,6 +33,14 @@
 
 ## タスク一覧
 
+### TASK-041: WP-004公開（A型看板記事）＋コンテンツ大量生産の方針整理
+- **担当**: Claude Code
+- **ステータス**: DONE（記事公開分）／方針提案は要ゆうさん確認
+- **ブランチ**: feature/wp-004-a-frame-signage
+- **PR**: （作成予定）
+- **期限**: N/A
+- **備考**: ゆうさんの「WordPress・Threads・note・Brainを総動員」指示を受け、未使用の楽天アフィリエイトリンク（RKT-002・A型看板）を使った新規記事WP-004を執筆・QA（91/100 PASS）・公開。`rakuten_link_library.csv`/`affiliate_link_library_v2.csv`にある他の未使用商材（RKT-001/003/004、A8-002/003、MOSHIMO-001/003）のうちRelix勤怠（MOSHIMO-002）は公式サイトの情報が乏しく、捏造禁止原則により記事化を見送った。Threads毎日投稿・note大量生産・Brain埋没対策は、note公開の手動ボトルネックとコンテンツ品質基準（AFFILIATE_ARTICLE_STANDARDS.md）の兼ね合いから、ペース・優先順位についてゆうさんに方針確認中。
+
 ### TASK-039: 媒体別コンプライアンスルール新設（X凍結原因分析）＋Brain価格変更
 - **担当**: Claude Code
 - **ステータス**: DONE
