@@ -280,6 +280,7 @@ X（@yu_____y12a）へのブラウザ自動操作投稿は禁止。本アーセ�
 
 | 日時 | 投稿 | トピック | 状態 | 投稿URL |
 |---|---|---|---|---|
+| 2026-08-08 | **無料入口note着火A（設定ファイル概念フック / NOTE-FREE-01へ送客→¥1,480大全）** | AI活用 | ✅ ライブ（本文＋noteリンクカード展開OK・#店舗経営/#AI活用/#口コミ返信・sns-post-quality-check 9点PASS・ゆうさん承認済み） | https://www.threads.com/@ai_store_lab/post/DbxeCrZAWTl |
 | 2026-08-08 | **①-b主砲・別バリエ NOTE-012（SNS投稿軸＋マスターシート）2連投** | AI活用 | 🕒 予約確認済み（今日8:00 JST投稿予定・返信2件=2/2＋リンクコメント同梱・重複なし。画面で下書き作成→ゆうさん予約） | 公開後に取得 |
 | 2026-08-08 | **①主砲 NOTE-012 大全50（¥1,480）2連投** | AI活用 | ✅ ライブ（1/2フック＋無料プロンプト・2/2誘導・3/3リンクnoteカード展開OK・重複なし） | https://www.threads.com/@ai_store_lab/post/DbvzcH2gcWd |
 | 2026-08-07 | 餌-004（店舗SNS→7つの箱） | 店舗経営 | ✅ ライブ（本文＋1コメント目リンクNOTE-004・noteカード展開OK） | https://www.threads.com/@ai_store_lab/post/Dbu-WP_gfwq |
