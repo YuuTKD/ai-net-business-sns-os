@@ -11,7 +11,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// DEV_RIO_401 Metrics Ingestion — 実運用\n// 実測データを複数ソースから集約。欠損は unknown（推定と実測を分離）。\nconst i = $input.first().json;\nreturn [{ json: {\n  experiment_id: i.experiment_id ?? 'exp-001',\n  period_start: i.period_start ?? '2026-08-01',\n  period_end: i.period_end ?? '2026-08-07',\n  source_gumroad: i.source_gumroad ?? false,\n  source_brain: i.source_brain ?? false,\n  source_threads: i.source_threads ?? false,\n  source_yu_holdings_ai: i.source_yু_holdings_ai ?? false\n} }];"
+        "jsCode": "// DEV_RIO_401 Metrics Ingestion — 実運用\n// 実測データを複数ソースから集約。欠損は unknown（推定と実測を分離）。\nconst i = $input.first().json;\nreturn [{ json: {\n  experiment_id: i.experiment_id ?? 'exp-001',\n  period_start: i.period_start ?? '2026-08-01',\n  period_end: i.period_end ?? '2026-08-07',\n  source_gumroad: i.source_gumroad ?? false,\n  source_brain: i.source_brain ?? false,\n  source_threads: i.source_threads ?? false,\n  source_yu_holdings_ai: i.source_yu_holdings_ai ?? false\n} }];"
       },
       "id": "b1a10401-0000-4000-8000-000000000002",
       "name": "Collect Sources",

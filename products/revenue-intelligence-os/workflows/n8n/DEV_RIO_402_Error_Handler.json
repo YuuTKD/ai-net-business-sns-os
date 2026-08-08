@@ -1,0 +1,48 @@
+{
+  "name": "DEV_RIO_402_Error_Handler",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "e2a10402-0000-4000-8000-000000000001",
+      "name": "Error Trigger",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [360, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// エラー通知テキストを整形（メインWFがfailした時にError Triggerが受け取るpayloadを使用）。\nconst d = $input.first().json;\nconst wf = d.workflow && d.workflow.name ? d.workflow.name : 'unknown';\nconst err = d.execution && d.execution.error && d.execution.error.message ? d.execution.error.message : 'unknown error';\nconst node = d.execution && d.execution.lastNodeExecuted ? d.execution.lastNodeExecuted : '-';\nconst nl = String.fromCharCode(10);\nconst text = ['\\u26A0\\uFE0F RIO n8nワークフロー失敗', 'WF: ' + wf, '失敗ノード: ' + node, 'エラー: ' + err].join(nl);\nreturn [{ json: { notification_text: text } }];"
+      },
+      "id": "e2a10402-0000-4000-8000-000000000002",
+      "name": "Format Error",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [580, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "PASTE_SLACK_INCOMING_WEBHOOK_URL_HERE",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": {{ JSON.stringify($json.notification_text) }}\n}",
+        "options": { "timeout": 15000 }
+      },
+      "id": "e2a10402-0000-4000-8000-000000000003",
+      "name": "Slack Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [800, 300],
+      "continueOnFail": true
+    }
+  ],
+  "connections": {
+    "Error Trigger": { "main": [[{ "node": "Format Error", "type": "main", "index": 0 }]] },
+    "Format Error": { "main": [[{ "node": "Slack Alert", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": { "description": "DEV_RIO_402 Error Handler。メインWF(DEV_RIO_401_v2)のsettings→Error Workflowに指定して使う。メインWFが失敗するとError Triggerが起動しSlack #日報にアラート。Slackノードのurlにはメインと同じWebhook URLを貼る(認証なし)。無人運用のfail-stop条件。activeにする必要あり(Error Workflowは常時active)。" },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "ERROR" }]
+}
