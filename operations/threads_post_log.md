@@ -93,3 +93,7 @@ node scripts/daily_publish_orchestrator.js --day 2 --threads-live
 - [live] 2026-08-09T13:05:25.212Z / 餌-adhoc (adhoc)
     本投稿: https://www.threads.com/@ai_store_lab/post/Db0gLv0k_mw
     リンク返信: https://www.threads.com/@ai_store_lab/post/Db0gQcBE4CC
+
+- [live] 2026-08-09T15:28:25.185Z / 餌-adhoc (adhoc)
+    本投稿: https://www.threads.com/@ai_store_lab/post/Db0wjNzk823
+    リンク返信: https://www.threads.com/@ai_store_lab/post/Db0wn4ME8wI

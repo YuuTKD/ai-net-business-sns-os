@@ -280,6 +280,7 @@ X（@yu_____y12a）へのブラウザ自動操作投稿は禁止。本アーセ�
 
 | 日時 | 投稿 | トピック | 状態 | 投稿URL |
 |---|---|---|---|---|
+| 2026-08-10 | **WP-005送客（会計ソフト比較/A8.net・もしも高単価ASP・アフィリ最速1件目狙い）本文＋1コメント目リンク** | 個人事業主 | ✅ ライブ（sns-post-quality-check 8点PASS・金額表記(初年度0円)はWP-005本文と一致確認・ゆうさん承認済み） | https://www.threads.com/@ai_store_lab/post/Db0wjNzk823（リンク返信: https://www.threads.com/@ai_store_lab/post/Db0wn4ME8wI） |
 | 2026-08-09 | **WP-011送客（Amazon販促グッズまとめ/のぼり・POP・ポスターフレーム）本文＋1コメント目リンク** | 店舗経営 | ✅ ライブ（sns-post-quality-check 8点PASS・ゆうさん承認済み・アフィリンクは記事内のみ直貼りなし） | https://www.threads.com/@ai_store_lab/post/Db0gLv0k_mw（リンク返信: https://www.threads.com/@ai_store_lab/post/Db0gQcBE4CC） |
 | 2026-08-09 | **WP-010送客（Amazon消耗品まとめ買い/店舗オーナー向け）本文＋1コメント目リンク** | 店舗経営（Amazonアソシエイト初回） | ✅ ライブ（sns-post-quality-check 8点PASS・ゆうさん承認済み・アフィリンクは記事内のみ直貼りなし） | https://www.threads.com/@ai_store_lab/post/Db0dt9bEzfe（リンク返信: https://www.threads.com/@ai_store_lab/post/Db0dystk8fA） |
 | 2026-08-08 | **無料入口note着火A（設定ファイル概念フック / NOTE-FREE-01へ送客→¥1,480大全）** | AI活用 | ✅ ライブ（本文＋noteリンクカード展開OK・#店舗経営/#AI活用/#口コミ返信・sns-post-quality-check 9点PASS・ゆうさん承認済み） | https://www.threads.com/@ai_store_lab/post/DbxeCrZAWTl |
