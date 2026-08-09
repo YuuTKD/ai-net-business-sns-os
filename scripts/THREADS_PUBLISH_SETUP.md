@@ -115,9 +115,16 @@ node scripts/threads_queue_runner.js --disable
 node --env-file=.env.local scripts/threads_queue_runner.js --run
 ```
 
-### まだ揃っていないもの（有効化前に必要）
-- **SLACK_WEBHOOK_URL**: SlackのIncoming Webhook URLを発行し `.env.local` に追記（ゆうさんの作業。Claudeはこのファイルを開かない）
-  - Slackワークスペースで「Incoming Webhooks」アプリを追加 → 通知を送りたいチャンネルを選択 → 発行されたWebhook URL（`https://hooks.slack.com/services/...`）を控える
+### 2026-08-10 有効化済み
+- SLACK_WEBHOOK_URL 設定済み（既存Slackアプリ「RIOメトリクス通知機能」の`#日報`向けWebhookを流用）。テスト通知の到達を確認済み
+- `auto_post_enabled=true`・`daily_limit=1`（観察期間中）で有効化
+- **毎日10:00にmacOSのcronから自動実行**されるよう設定済み（`crontab -l`で確認可能）:
+  ```
+  0 10 * * * cd /Users/tokudayuya/ai-net-business-sns-os && /Users/tokudayuya/.nvm/versions/node/v22.23.1/bin/node --env-file=.env.local scripts/threads_queue_runner.js --run >> operations/threads_auto_cron.log 2>&1
+  ```
+  実行ログは `operations/threads_auto_cron.log`（gitignore対象）。停止したい場合は `node scripts/threads_queue_runner.js --disable` を実行するか、`crontab -e` で該当行を削除する。
+
+### まだ揃っていないもの
 - **トークン残日数の監視**: THREADS_ACCESS_TOKENの有効期限を定期確認する仕組み（別タスク）
-- **n8n Cronからの呼び出し**: 現状はこのスクリプトを手動 or Claude Codeのセッション内で実行する運用。n8n Cronから`--run`を定期実行する形に繋ぐのは、上記2点が揃ってから
-- **観察期間**: 有効化後14日間は `--daily-limit 1` で運用し、事故がないことを確認してから2〜3本に引き上げる
+- **n8n Cronからの呼び出し**: 上記の通りmacOSのcronで代替済み。n8n Cronへの移行は将来の検討課題
+- **観察期間**: 有効化後14日間（〜2026-08-24目安）は `--daily-limit 1` を維持し、事故がないことを確認してから2〜3本に引き上げる

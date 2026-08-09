@@ -21,3 +21,4 @@ data/forms/*_responses.csv
 !products/revenue-intelligence-os/workflows/n8n/*.json
 !products/revenue-intelligence-os/schemas/*.json
 scripts/threads_auto_state.json
+operations/threads_auto_cron.log
