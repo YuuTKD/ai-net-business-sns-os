@@ -99,7 +99,7 @@ PR #76（`design/PROPOSAL_THREADS_N8N_AUTO_SCHEDULE.md`）で承認された、�
 - `auto_post_enabled` フラグ（既定OFF）。誰でもいつでも `--disable` で即停止できる
 - 連続2回投稿失敗で自動的に `auto_post_enabled=false`（fail-stop）
 - 投稿前に必ずトークン疎通確認（失敗は「投稿失敗」としてカウント）
-- **LINE_NOTIFY_TOKEN が未設定の場合、`--run` は無人実行を拒否する**（scheduler-readiness-check の必須条件）
+- **SLACK_WEBHOOK_URL が未設定の場合、`--run` は無人実行を拒否する**（scheduler-readiness-check の必須条件）
 - 1日の投稿本数は `daily_limit`（既定2）で固定
 
 ### コマンド
@@ -111,12 +111,13 @@ node scripts/threads_queue_runner.js --status
 node scripts/threads_queue_runner.js --enable
 node scripts/threads_queue_runner.js --disable
 
-# 実行（LINE_NOTIFY_TOKEN必須。手動テストのみ --allow-no-line-notify で回避可）
+# 実行（SLACK_WEBHOOK_URL必須。手動テストのみ --allow-no-slack-notify で回避可）
 node --env-file=.env.local scripts/threads_queue_runner.js --run
 ```
 
 ### まだ揃っていないもの（有効化前に必要）
-- **LINE_NOTIFY_TOKEN**: LINE Notifyのアクセストークンを発行し `.env.local` に追記（ゆうさんの作業。Claudeはこのファイルを開かない）
+- **SLACK_WEBHOOK_URL**: SlackのIncoming Webhook URLを発行し `.env.local` に追記（ゆうさんの作業。Claudeはこのファイルを開かない）
+  - Slackワークスペースで「Incoming Webhooks」アプリを追加 → 通知を送りたいチャンネルを選択 → 発行されたWebhook URL（`https://hooks.slack.com/services/...`）を控える
 - **トークン残日数の監視**: THREADS_ACCESS_TOKENの有効期限を定期確認する仕組み（別タスク）
 - **n8n Cronからの呼び出し**: 現状はこのスクリプトを手動 or Claude Codeのセッション内で実行する運用。n8n Cronから`--run`を定期実行する形に繋ぐのは、上記2点が揃ってから
 - **観察期間**: 有効化後14日間は `--daily-limit 1` で運用し、事故がないことを確認してから2〜3本に引き上げる

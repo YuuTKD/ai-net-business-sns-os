@@ -12,8 +12,8 @@
  *     --disable で誰でもいつでも即OFFにできる（off_switch_confirmed）
  *   - 連続2回投稿失敗で自動的に auto_post_enabled=false（fail_stop_enabled）
  *   - トークン疎通確認（GET /me）を投稿前に必ず実施。失敗は「投稿失敗」として扱う
- *   - LINE通知（LINE_NOTIFY_TOKEN）が未設定の場合、--run は無人実行を拒否する
- *     （--allow-no-line-notify を明示した手動実行時のみ例外）
+ *   - Slack通知（SLACK_WEBHOOK_URL）が未設定の場合、--run は無人実行を拒否する
+ *     （--allow-no-slack-notify を明示した手動実行時のみ例外）
  *   - 1日の投稿本数は daily_limit で固定（デフォルト2、キューのCSVで運用ルールに合わせる）
  *
  * 使い方:
@@ -21,7 +21,7 @@
  *   node scripts/threads_queue_runner.js --enable
  *   node scripts/threads_queue_runner.js --disable
  *   node --env-file=.env.local scripts/threads_queue_runner.js --run
- *   node --env-file=.env.local scripts/threads_queue_runner.js --run --allow-no-line-notify   （手動テスト用）
+ *   node --env-file=.env.local scripts/threads_queue_runner.js --run --allow-no-slack-notify   （手動テスト用）
  */
 
 'use strict';
@@ -48,7 +48,7 @@ function parseArgs() {
     enable: a.includes('--enable'),
     disable: a.includes('--disable'),
     run: a.includes('--run'),
-    allowNoLineNotify: a.includes('--allow-no-line-notify'),
+    allowNoSlackNotify: a.includes("--allow-no-slack-notify"),
     dailyLimit: (() => {
       const i = a.indexOf('--daily-limit');
       return i !== -1 && a[i + 1] ? parseInt(a[i + 1], 10) : null;
@@ -232,28 +232,25 @@ async function publishText({ token, text, replyToId, delay = 30 }) {
   return { mediaId, permalink };
 }
 
-async function sendLineNotify(message) {
-  const token = process.env.LINE_NOTIFY_TOKEN;
-  if (!token) {
-    console.warn('⚠️  LINE_NOTIFY_TOKEN未設定のため通知をスキップしました（無人運用の必須条件が未達です）');
+async function sendSlackNotify(message) {
+  const webhookUrl = process.env.SLACK_WEBHOOK_URL;
+  if (!webhookUrl) {
+    console.warn('⚠️  SLACK_WEBHOOK_URL未設定のため通知をスキップしました（無人運用の必須条件が未達です）');
     return false;
   }
   try {
-    const res = await fetch('https://notify-api.line.me/api/notify', {
+    const res = await fetch(webhookUrl, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({ message }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: message }),
     });
     if (!res.ok) {
-      console.warn(`⚠️  LINE通知送信に失敗しました（HTTP ${res.status}）`);
+      console.warn(`⚠️  Slack通知送信に失敗しました（HTTP ${res.status}）`);
       return false;
     }
     return true;
   } catch (e) {
-    console.warn(`⚠️  LINE通知送信でエラー: ${e.message}`);
+    console.warn(`⚠️  Slack通知送信でエラー: ${e.message}`);
     return false;
   }
 }
@@ -330,11 +327,11 @@ async function main() {
     return;
   }
 
-  if (!process.env.LINE_NOTIFY_TOKEN && !args.allowNoLineNotify) {
+  if (!process.env.SLACK_WEBHOOK_URL && !args.allowNoSlackNotify) {
     console.log(
-      '❌ LINE_NOTIFY_TOKEN 未設定のため無人実行を拒否しました。\n' +
-        '   （scheduler-readiness-check の必須条件：LINE通知なしで完全無人は不可）\n' +
-        '   手動テストの場合のみ --allow-no-line-notify を付けて実行してください。'
+      '❌ SLACK_WEBHOOK_URL 未設定のため無人実行を拒否しました。\n' +
+        '   （scheduler-readiness-check の必須条件：通知なしで完全無人は不可）\n' +
+        '   手動テストの場合のみ --allow-no-slack-notify を付けて実行してください。'
     );
     return;
   }
@@ -378,7 +375,7 @@ async function main() {
     state.last_post_date = today;
     saveState(state);
 
-    await sendLineNotify(`✅ Threads自動投稿成功: ${next.id}（${next.related_wp_id}）\n${main1.permalink}`);
+    await sendSlackNotify(`✅ Threads自動投稿成功: ${next.id}（${next.related_wp_id}）\n${main1.permalink}`);
     console.log('🎉 完了。');
   } catch (e) {
     console.error(`\n❌ 失敗: ${e.message}`);
@@ -389,7 +386,7 @@ async function main() {
       stopped = true;
     }
     saveState(state);
-    await sendLineNotify(
+    await sendSlackNotify(
       `❌ Threads自動投稿失敗: ${next.id}（連続${state.consecutive_failures}回目）\n${e.message}` +
         (stopped ? '\n🔴 連続失敗のため auto_post_enabled を自動的にOFFにしました。' : '')
     );
