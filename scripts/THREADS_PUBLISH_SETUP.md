@@ -86,3 +86,37 @@ node --env-file=.env.local scripts/threads_publish.js --post 004 --live
 - 連投スレッドは1本目→数分空けて返信でぶら下げ（一括連投しない）。
 - リンクは本文に書かず1コメント目（このCLIは自動でそうする）。
 - 各投稿は `sns-post-quality-check` PASS 済み → ゆうさん承認 → `--live`。承認は1本ごと毎回。
+
+---
+
+## 6. 承認済みキューからの半自動実行（scripts/threads_queue_runner.js）
+
+PR #76（`design/PROPOSAL_THREADS_N8N_AUTO_SCHEDULE.md`）で承認された、安全装置つきの
+半自動実行ランナー。新規コンテンツは一切生成せず、`products/revenue-intelligence-os/data/threads_posts_queue.csv`
+に**ゆうさんが事前に承認済み**（`status=approved`）の投稿だけを、古い予定日順に1件ずつ公開する。
+
+### 安全装置
+- `auto_post_enabled` フラグ（既定OFF）。誰でもいつでも `--disable` で即停止できる
+- 連続2回投稿失敗で自動的に `auto_post_enabled=false`（fail-stop）
+- 投稿前に必ずトークン疎通確認（失敗は「投稿失敗」としてカウント）
+- **LINE_NOTIFY_TOKEN が未設定の場合、`--run` は無人実行を拒否する**（scheduler-readiness-check の必須条件）
+- 1日の投稿本数は `daily_limit`（既定2）で固定
+
+### コマンド
+```bash
+# 状態確認（現在ON/OFFか、キュー残数、次の投稿予定）
+node scripts/threads_queue_runner.js --status
+
+# 有効化・無効化（即OFFスイッチ）
+node scripts/threads_queue_runner.js --enable
+node scripts/threads_queue_runner.js --disable
+
+# 実行（LINE_NOTIFY_TOKEN必須。手動テストのみ --allow-no-line-notify で回避可）
+node --env-file=.env.local scripts/threads_queue_runner.js --run
+```
+
+### まだ揃っていないもの（有効化前に必要）
+- **LINE_NOTIFY_TOKEN**: LINE Notifyのアクセストークンを発行し `.env.local` に追記（ゆうさんの作業。Claudeはこのファイルを開かない）
+- **トークン残日数の監視**: THREADS_ACCESS_TOKENの有効期限を定期確認する仕組み（別タスク）
+- **n8n Cronからの呼び出し**: 現状はこのスクリプトを手動 or Claude Codeのセッション内で実行する運用。n8n Cronから`--run`を定期実行する形に繋ぐのは、上記2点が揃ってから
+- **観察期間**: 有効化後14日間は `--daily-limit 1` で運用し、事故がないことを確認してから2〜3本に引き上げる
