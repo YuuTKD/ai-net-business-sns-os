@@ -138,7 +138,7 @@ function writeQueue(header, records) {
 
 function findDraftFile(id) {
   const files = fs.readdirSync(DRAFTS_DIR);
-  const match = files.find((f) => f.startsWith(`${id}_`) && f.endsWith('.md'));
+  const match = files.find((f) => (f.startsWith(`${id}_`) || f === `${id}.md`) && f.endsWith('.md'));
   return match ? path.join(DRAFTS_DIR, match) : null;
 }
 
