@@ -118,7 +118,7 @@
 - **ステータス**: TODO（予定）
 - **ブランチ**: N/A（WordPress.com側の課金操作、リポジトリ変更なし）
 - **PR**: N/A
-- **期限**: 2026-08-10（月）
+- **期限**: 2026-08-17（月）※資金都合により1週間延期（2026-08-10時点）
 - **備考**: 現在は無料プラン（treecosme.home.blog、独自ドメイン不可・SEOプラグイン導入不可・広告表示あり）。収益記事の主エンジンとして`RIO_802_WORDPRESS_OPERATIONS_SOP.md`で位置づけ済みのため、ゆうさんの判断で2026-08-10にプレミアムプラン（US$8/月、年払いUS$96・税別）へアップグレード予定。プレミアムを選んだ理由：独自ドメイン・広告非表示に加え、パーソナルプランでは不可なサードパーティSEOプラグイン（Yoast等）導入とGoogleアナリティクス連携が可能になるため。決済はゆうさん本人が実施（CLAUDE.md禁止事項：カード情報入力はAI不可）。アップグレード後、独自ドメイン設定・SEOプラグイン導入・Search Console連携などのフォローアップタスクを別途起票する。
 
 ### TASK-022: Threads 投稿自動化パイプライン構築（毎日21:00自動投稿）
@@ -516,5 +516,37 @@
 - **影響範囲**: 既存ファイル4件への追記・修正。WordPress側の基準（§1a）・Brain側の基準（§1c）は変更なし。n8nワークフロー・本番パイプラインへの変更なし。
 - **pre-deploy-qa 判定**: 対象外（ドキュメント・データスキーマ修正のみ）
 - **確認事項**: 本PRのレビュー・マージ後、note記事は価格帯別基準、WordPress記事は記事タイプ別基準で運用開始する。
+
+### TASK-044: 売上リアルタイム通知システム構築（Brain API + Gmail IMAP + Slack）
+- **担当**: Claude Code
+- **ステータス**: DONE
+- **ブランチ**: feature/brain-registration-note-004-005-006
+- **PR**: （作成予定）
+- **期限**: 2026-08-10（完了）
+- **備考**: Brain（API）・note・楽天アフィリ・A8.net・もしもアフィリエイトの売上をリアルタイムでSlackに通知する仕組みを構築。`scripts/brain_sales_notifier.js`（10分ごとcronで実行）と`scripts/daily_sales_report.js`（毎日23:59実行）を新規作成。Brain APIはDevise Token Auth形式（Access-Token + Client + Uid の3ヘッダー）を使用。メール通知4媒体はGmailのIMAP（imapflow）で監視。`BRAIN_API_TOKEN`・`BRAIN_CLIENT`は期限切れになった場合、DevTools(Cmd+Option+I)→Network→sold_monthフィルタ→Request Headersから再取得が必要。初回の実売上（香奈枝/hydepan、¥3,980）をSlack通知で確認済み。
+
+### TASK-045: WP-012/013/014公開・Threads投稿キュー追加（8/16〜8/18）
+- **担当**: Claude Code
+- **ステータス**: DONE
+- **ブランチ**: feature/brain-registration-note-004-005-006
+- **PR**: （作成予定）
+- **期限**: 2026-08-10（完了）
+- **備考**: WP-012（レジ周り機器）・WP-013（物撮り・SNS）・WP-014（最先端AIアイテム）をブラウザ操作で公開（ゆうさん承認済み「ok」）。`wordpress_posts_queue.csv`にURLと公開日を記録。Threadsキューにはそれぞれ8/16・8/17・8/18の投稿としてTQ-007/008/009を追加（approved）。なお、WP-015（2026最先端PCガジェット）とWP-HUB（店舗開業ツール）は`qa_passed`状態のまま未公開。
+
+### TASK-046: WP-015/WP-HUB公開・Threadsキュー8/19〜8/20追加
+- **担当**: Claude Code
+- **ステータス**: DONE
+- **ブランチ**: feature/brain-registration-note-004-005-006
+- **PR**: （作成予定）
+- **期限**: 2026-08-10（完了）
+- **備考**: WP-015（2026年Copilot+PCガジェット）とWP-HUB（店舗開業ツール総まとめ）をブラウザ操作で公開（ゆうさん承認済み「ok」）。`wordpress_posts_queue.csv`にURLと公開日を記録。Threadsキューに8/19（WP-015）・8/20（WP-HUB）としてTQ-010/011を追加（approved）。これでThreadsキューは8/11〜8/20の10日分（TQ-002〜011）が確保完了。
+
+### TASK-047: 収益化加速施策実行（WP新記事7本執筆・A8.net承認確認・リンクライブラリ更新）
+- **担当**: Claude Code
+- **ステータス**: DONE
+- **ブランチ**: feature/brain-registration-note-004-005-006
+- **PR**: （作成予定）
+- **期限**: 2026-08-10
+- **備考**: ゆうさん指示「有料プラン後以外の提案は全て今から行なって！」を受けて実行。①WP新記事7本（WP-016〜022）を執筆・qa_passed（A8実リンク差し替え済み）。②A8.net新規承認済み：KANBEI SIGN（A8-004）・リピッテ（A8-005）をaffiliate_link_library_v2.csvに追加。③楽天アフィリリンクRKT-005〜021（17件）取得・rakuten_link_library.csvに追加・n8n DEV_RIO_705 Codeノードに転記。④WP-016〜022をWordPressに下書き作成（wp_queue_runner.js）→ゆうさんが全件公開完了（2026-08-10）。⑤published_url全件をwordpress_posts_queue.csvに記録（post=104〜110）。WP-016/018/020はaffiliate_link_status=pendingのまま公開済み（後日リンク追記必要）。
 
 <!-- 新しいタスクは上記フォーマットに従ってここに追加する -->
