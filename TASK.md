@@ -517,4 +517,20 @@
 - **pre-deploy-qa 判定**: 対象外（ドキュメント・データスキーマ修正のみ）
 - **確認事項**: 本PRのレビュー・マージ後、note記事は価格帯別基準、WordPress記事は記事タイプ別基準で運用開始する。
 
+### TASK-044: 売上リアルタイム通知システム構築（Brain API + Gmail IMAP + Slack）
+- **担当**: Claude Code
+- **ステータス**: DONE
+- **ブランチ**: feature/brain-registration-note-004-005-006
+- **PR**: （作成予定）
+- **期限**: 2026-08-10（完了）
+- **備考**: Brain（API）・note・楽天アフィリ・A8.net・もしもアフィリエイトの売上をリアルタイムでSlackに通知する仕組みを構築。`scripts/brain_sales_notifier.js`（10分ごとcronで実行）と`scripts/daily_sales_report.js`（毎日23:59実行）を新規作成。Brain APIはDevise Token Auth形式（Access-Token + Client + Uid の3ヘッダー）を使用。メール通知4媒体はGmailのIMAP（imapflow）で監視。`BRAIN_API_TOKEN`・`BRAIN_CLIENT`は期限切れになった場合、DevTools(Cmd+Option+I)→Network→sold_monthフィルタ→Request Headersから再取得が必要。初回の実売上（香奈枝/hydepan、¥3,980）をSlack通知で確認済み。
+
+### TASK-045: WP-012/013/014公開・Threads投稿キュー追加（8/16〜8/18）
+- **担当**: Claude Code
+- **ステータス**: DONE
+- **ブランチ**: feature/brain-registration-note-004-005-006
+- **PR**: （作成予定）
+- **期限**: 2026-08-10（完了）
+- **備考**: WP-012（レジ周り機器）・WP-013（物撮り・SNS）・WP-014（最先端AIアイテム）をブラウザ操作で公開（ゆうさん承認済み「ok」）。`wordpress_posts_queue.csv`にURLと公開日を記録。Threadsキューにはそれぞれ8/16・8/17・8/18の投稿としてTQ-007/008/009を追加（approved）。なお、WP-015（2026最先端PCガジェット）とWP-HUB（店舗開業ツール）は`qa_passed`状態のまま未公開。
+
 <!-- 新しいタスクは上記フォーマットに従ってここに追加する -->
