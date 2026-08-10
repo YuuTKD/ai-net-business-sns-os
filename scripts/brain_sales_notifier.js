@@ -175,7 +175,7 @@ async function checkBrainApi(state, dryRun) {
   const data = await new Promise((resolve, reject) => {
     const req = https.request(url, {
       method: 'GET',
-      headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+      headers: { 'Access-Token': token, 'Content-Type': 'application/json' },
     }, (res) => {
       let body = '';
       res.on('data', c => body += c);
