@@ -549,4 +549,12 @@
 - **期限**: 2026-08-10
 - **備考**: ゆうさん指示「有料プラン後以外の提案は全て今から行なって！」を受けて実行。①WP新記事7本（WP-016〜022）を執筆・qa_passed（A8実リンク差し替え済み）。②A8.net新規承認済み：KANBEI SIGN（A8-004）・リピッテ（A8-005）をaffiliate_link_library_v2.csvに追加。③楽天アフィリリンクRKT-005〜021（17件）取得・rakuten_link_library.csvに追加・n8n DEV_RIO_705 Codeノードに転記。④WP-016〜022をWordPressに下書き作成（wp_queue_runner.js）→ゆうさんが全件公開完了（2026-08-10）。⑤published_url全件をwordpress_posts_queue.csvに記録（post=104〜110）。WP-016/018/020はaffiliate_link_status=pendingのまま公開済み（後日リンク追記必要）。
 
+### TASK-048: WP記事3本執筆・Threadsキュー31本完成・1日3本スケジュール化
+- **担当**: Claude Code
+- **ステータス**: DONE
+- **ブランチ**: feature/brain-registration-note-004-005-006
+- **PR**: （作成予定）
+- **期限**: 2026-08-10
+- **備考**: ①TQ-022〜031（8/31〜9/9分）をthreads_posts_queue.csvに追加（WP-023/024/025新記事への送客文＋既存記事の別角度再活用）。②ゆうさん指示「1日3本」を受けてTQ-002〜031を全件リスケ（8/11〜8/20の10日間、各日3本）。③WP-026（青色申告初めてのやり方・A8-001）、WP-027（勤怠管理ソフト選び方・MOSHIMO-002）、WP-028（予約管理システム比較・A8-005）を執筆・qa_passed状態でwordpress_posts_queue.csvに追加（WP下書き作成はwp_queue_runner.js実行待ち）。
+
 <!-- 新しいタスクは上記フォーマットに従ってここに追加する -->
