@@ -8,9 +8,10 @@
  *   SLACK_WEBHOOK_URL      - 既存（threads_queue_runner.js と共有）
  *   GMAIL_EMAIL            - yuya_tokuda@trees-catering.com
  *   GMAIL_APP_PASSWORD     - Googleアカウントで発行した16桁のアプリパスワード
- *   BRAIN_API_TOKEN        - （任意）BrainサイトのAPIトークン。未設定時はBrainチェックをスキップ
- *                            取得方法: Brainにログイン → DevTools(F12) → Network →
- *                            api.brain-market.com のリクエスト → Request Headers の Authorization の値
+ *   BRAIN_API_TOKEN        - （任意）Brain Access-Token。未設定時はBrainチェックをスキップ
+ *   BRAIN_CLIENT           - （任意）Brain Client ヘッダー値（Access-Tokenとセット）
+ *                            取得方法: Brainにログイン → DevTools(Cmd+Option+I) → Network →
+ *                            sold_month でフィルタ → Request Headers の Access-Token / Client の値
  *
  * 使い方:
  *   node --env-file=.env.local scripts/brain_sales_notifier.js --check
@@ -163,8 +164,10 @@ async function sendSlack(text) {
 
 async function checkBrainApi(state, dryRun) {
   const token = process.env.BRAIN_API_TOKEN;
-  if (!token) {
-    console.log('[brain] BRAIN_API_TOKEN 未設定のためスキップ。');
+  const client = process.env.BRAIN_CLIENT;
+  const uid = process.env.GMAIL_EMAIL || 'yuya_tokuda@trees-catering.com';
+  if (!token || !client) {
+    console.log('[brain] BRAIN_API_TOKEN または BRAIN_CLIENT 未設定のためスキップ。');
     return 0;
   }
 
@@ -175,7 +178,12 @@ async function checkBrainApi(state, dryRun) {
   const data = await new Promise((resolve, reject) => {
     const req = https.request(url, {
       method: 'GET',
-      headers: { 'Access-Token': token, 'Content-Type': 'application/json' },
+      headers: {
+        'Access-Token': token,
+        'Client': client,
+        'Uid': uid,
+        'Content-Type': 'application/json',
+      },
     }, (res) => {
       let body = '';
       res.on('data', c => body += c);
@@ -187,7 +195,7 @@ async function checkBrainApi(state, dryRun) {
     req.end();
   });
 
-  if (!data || !Array.isArray(data.sales_histories)) {
+  if (!data || !Array.isArray(data.data)) {
     console.log('[brain] API レスポンス異常。トークン期限切れの可能性あり。');
     return 0;
   }
@@ -195,14 +203,13 @@ async function checkBrainApi(state, dryRun) {
   const seenIds = new Set((state.notified_uids.brain || []).map(String));
   let newCount = 0;
 
-  for (const sale of data.sales_histories) {
-    const id = String(sale.id || sale.created_at);
+  for (const sale of data.data) {
+    const id = String(sale.id);
     if (seenIds.has(id)) continue;
 
-    const product = sale.brain_title || sale.content_title || '不明な商品';
-    const price = sale.price || sale.amount || 0;
-    const reward = sale.reward || sale.author_reward || 0;
-    const buyer = sale.buyer_name || sale.buyer_nickname || '購入者';
+    const product = sale.article_title || '不明な商品';
+    const price = sale.price || 0;
+    const reward = sale.profit_price || 0;
     const dateStr = sale.created_at
       ? new Date(sale.created_at).toLocaleString('ja-JP', { timeZone: 'Asia/Tokyo' })
       : '不明';
@@ -211,7 +218,6 @@ async function checkBrainApi(state, dryRun) {
       `🎉 *Brain 売上通知！* 🎉\n` +
       `商品: *${product}*\n` +
       `金額: ¥${price.toLocaleString()}（手取り ¥${reward.toLocaleString()}）\n` +
-      `購入者: ${buyer}\n` +
       `日時: ${dateStr}\n` +
       `👉 <https://brain-market.com/sales/sales_history|Brain 販売履歴を確認>`;
 
@@ -364,7 +370,7 @@ async function main() {
     console.log(`合計 ${totalNew} 件の売上通知を送信しました。`);
   }
 
-  saveState(state);
+  if (!dryRun) saveState(state);
 }
 
 main().catch((e) => {
