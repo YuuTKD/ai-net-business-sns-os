@@ -33,6 +33,7 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const { ImapFlow } = require('imapflow');
+const { runPipeline } = require('./affiliate_auto_pipeline');
 
 const STATE_FILE = path.join(__dirname, 'affiliate_approval_checker_state.json');
 const CSV_PATH = path.join(__dirname, '../products/revenue-intelligence-os/data/affiliate_link_library_v2.csv');
@@ -223,9 +224,23 @@ async function checkOneAccount(imapClient, platforms, state, dryRun) {
           await sendSlack(slackText);
           console.log(`✅ [${platform.key}] Slack 通知送信完了: ${programName} (${statusText})`);
 
-          // 承認時のみ CSV 更新を試みる
-          if (isApproved && platform.key.startsWith('moshimo')) {
-            updateCsvStatus(programName);
+          // 承認時: CSV更新 + 自動パイプライン起動
+          if (isApproved) {
+            if (platform.key.startsWith('moshimo')) {
+              updateCsvStatus(programName);
+            }
+            // 自動パイプライン: 記事生成 → WPキュー → Threadsキュー → Slack通知
+            try {
+              console.log(`🚀 [Pipeline] 自動パイプライン起動: ${programName}`);
+              await runPipeline({
+                programName,
+                affiliateUrl: platform.dashboardUrl, // フォールバック（CSV検索で上書き）
+                network: platform.key.startsWith('moshimo') ? 'moshimo' : 'a8',
+                genre: '',
+              });
+            } catch (pipelineErr) {
+              console.error(`❌ [Pipeline] エラー（承認通知は送信済み）: ${pipelineErr.message}`);
+            }
           }
         }
 
