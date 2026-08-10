@@ -543,10 +543,10 @@
 
 ### TASK-047: 収益化加速施策実行（WP新記事7本執筆・A8.net承認確認・リンクライブラリ更新）
 - **担当**: Claude Code
-- **ステータス**: IN_PROGRESS
+- **ステータス**: DONE
 - **ブランチ**: feature/brain-registration-note-004-005-006
 - **PR**: （作成予定）
 - **期限**: 2026-08-10
-- **備考**: ゆうさん指示「有料プラン後以外の提案は全て今から行なって！」を受けて実行。①WP新記事7本（WP-016〜022）を執筆・qa_passed（affiliate_link_library_v2.csvのplaceholderは実リンクで差し替え済み）。②A8.net提携中プログラムを確認し、KANBEI SIGN（電子契約・7000〜10000円）・リピッテ（LINE予約・2000円）が新規承認済みと判明。③affiliate_link_library_v2.csvにA8-004（KANBEI SIGN）・A8-005（リピッテ）を追加登録。④WP-016〜022をwordpress_posts_queue.csvに追加（draft_saved）。残タスク: 楽天ROOM残り商品登録（開業什器8点・物撮り10点）、各記事のWordPress公開（ゆうさん承認後）。
+- **備考**: ゆうさん指示「有料プラン後以外の提案は全て今から行なって！」を受けて実行。①WP新記事7本（WP-016〜022）を執筆・qa_passed（A8実リンク差し替え済み）。②A8.net新規承認済み：KANBEI SIGN（A8-004）・リピッテ（A8-005）をaffiliate_link_library_v2.csvに追加。③楽天アフィリリンクRKT-005〜021（17件）取得・rakuten_link_library.csvに追加・n8n DEV_RIO_705 Codeノードに転記。④WP-016〜022をWordPressに下書き作成（wp_queue_runner.js）→ゆうさんが全件公開完了（2026-08-10）。⑤published_url全件をwordpress_posts_queue.csvに記録（post=104〜110）。WP-016/018/020はaffiliate_link_status=pendingのまま公開済み（後日リンク追記必要）。
 
 <!-- 新しいタスクは上記フォーマットに従ってここに追加する -->
