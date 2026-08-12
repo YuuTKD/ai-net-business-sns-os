@@ -2,21 +2,20 @@
   "name": "DEV_RIO_401_Metrics_Ingestion_Full",
   "nodes": [
     {
-      "parameters": {},
-      "id": "c2a10401-full-0001",
-      "name": "Schedule Trigger (Daily)",
-      "type": "n8n-nodes-base.scheduleTrigger",
-      "typeVersion": 1.2,
-      "position": [0, 300],
       "parameters": {
         "rule": {
           "interval": [{ "type": "days", "value": 1 }]
         }
-      }
+      },
+      "id": "c2a10401-full-0001",
+      "name": "Schedule Trigger (Daily)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 300]
     },
     {
       "parameters": {
-        "jsCode": "// 集計期間の設定（前日）\nconst today = new Date();\nconst yesterday = new Date(today);\nyesterday.setDate(yesterday.getDate() - 1);\nconst period_start = yesterday.toISOString().split('T')[0];\nconst period_end = today.toISOString().split('T')[0];\nreturn [{ json: {\n  experiment_id: 'daily-metrics',\n  period_start,\n  period_end,\n  execution_date: today.toISOString()\n} }];"
+        "jsCode": "// 集計期間の設定(前日)\nconst today = new Date();\nconst yesterday = new Date(today);\nyesterday.setDate(yesterday.getDate() - 1);\nconst period_start = yesterday.toISOString().split('T')[0];\nconst period_end = today.toISOString().split('T')[0];\nreturn [{ json: {\n  experiment_id: 'daily-metrics',\n  period_start,\n  period_end,\n  execution_date: today.toISOString()\n} }];"
       },
       "id": "c2a10401-full-0002",
       "name": "Config Period",
@@ -36,7 +35,7 @@
       "name": "API: Gumroad",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [440, 150],
+      "position": [440, 100],
       "continueOnFail": true
     },
     {
@@ -48,7 +47,7 @@
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
-            { "name": "Authorization", "value": "Bearer {{ $env.BRAIN_API_KEY }}" }
+            { "name": "Authorization", "value": "=Bearer {{ $env.BRAIN_API_KEY }}" }
           ]
         },
         "options": { "timeout": 15000 }
@@ -57,38 +56,93 @@
       "name": "API: Brain",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [440, 300],
+      "position": [440, 250],
       "continueOnFail": true
     },
     {
       "parameters": {
-        "jsCode": "// WordPress REST API: 投稿ごとの PV・クリック数を取得\n// 自社ブログの REST API エンドポイント\nconst cfg = $input.first().json;\nconst wp_url = $env.WORDPRESS_BLOG_URL ?? 'https://example.com';\nconst wp_user = $env.WORDPRESS_API_USER ?? '';\nconst wp_pass = $env.WORDPRESS_API_PASS ?? '';\n\n// 基本認証用の Base64 エンコード\nconst auth = Buffer.from(wp_user + ':' + wp_pass).toString('base64');\n\n// WordPress REST API で最新の投稿を取得（投稿別のビュー数取得は Jetpack Stats API 等が必要）\nreturn [{ json: { ...cfg, wp_url, wp_auth: auth, note: 'WordPress接続準備完了' } }];"
+        "jsCode": "// WordPress REST API: 将来のPV/クリック自動取得に備えた接続準備(現状は未使用・手入力はGoogle Sheetsで代替)\nconst cfg = $input.first().json;\nconst wp_url = $env.WORDPRESS_BLOG_URL ?? 'https://example.com';\nconst wp_user = $env.WORDPRESS_API_USER ?? '';\nconst wp_pass = $env.WORDPRESS_API_PASS ?? '';\nconst auth = Buffer.from(wp_user + ':' + wp_pass).toString('base64');\nreturn [{ json: { ...cfg, wp_url, wp_auth: auth, note: 'WordPress接続準備完了(未使用・Jetpack Stats API等の実装待ち)' } }];"
       },
       "id": "c2a10401-full-0005",
       "name": "Prepare WordPress Auth",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [440, 450]
+      "position": [440, 400]
     },
     {
       "parameters": {
-        "jsCode": "// Puppeteer でブラウザ自動操作: Threads・note・楽天room・Amazon データ取得\n// 複数の取得タスクを定義（実際の実装は環境に応じてカスタマイズ）\nconst cfg = $input.first().json;\n\n// 取得対象タスク\nconst tasks = {\n  threads: {\n    url: 'https://www.threads.net',\n    description: 'Threads投稿データ（インプレッション・反応）',\n    status: 'PENDING'\n  },\n  note: {\n    url: 'https://note.com',\n    description: 'note投稿データ（ビュー・スキ・売上）',\n    status: 'PENDING'\n  },\n  rakuten_room: {\n    url: 'https://room.rakuten.co.jp',\n    description: '楽天room商品売上',\n    status: 'PENDING'\n  },\n  amazon_associates: {\n    url: 'https://associates.amazon.com',\n    description: 'Amazonアソシエイト売上・クリック',\n    status: 'PENDING'\n  }\n};\n\nreturn [{ json: { ...cfg, browser_tasks: tasks, note: 'ブラウザ自動操作タスク定義完了' } }];"
+        "documentId": "={{ $env.GOOGLE_SHEETS_METRICS_ID ?? 'PASTE_SHEET_ID_HERE' }}",
+        "sheetName": "note_data",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2",
+        "options": {}
       },
-      "id": "c2a10401-full-0006",
-      "name": "Define Browser Tasks",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [660, 450]
+      "id": "c2a10401-full-0014",
+      "name": "Sheets: note_data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [440, 550],
+      "continueOnFail": true
     },
     {
       "parameters": {
-        "jsCode": "// Google Sheets 統合: note・Brain・楽天room・Amazon のデータ読み込み\n// スプレッドシート ID は環境変数から取得\nconst cfg = $input.first().json;\nconst sheets_id = $env.GOOGLE_SHEETS_METRICS_ID ?? 'PASTE_SHEET_ID_HERE';\n\n// シートの構造:\n// Sheet1: \"daily_metrics\" - 日次データ入力\n// Sheet2: \"note_data\" - note ユーザー手入力\n// Sheet3: \"brain_data\" - Brain ユーザー手入力\n// Sheet4: \"rakuten_data\" - 楽天room ユーザー手入力\n// Sheet5: \"amazon_data\" - Amazon ユーザー手入力\n\nreturn [{ json: { ...cfg, sheets_id, note: 'Google Sheets 接続準備完了（要: GOOGLE_SHEETS_METRICS_ID環境変数）' } }];"
+        "documentId": "={{ $env.GOOGLE_SHEETS_METRICS_ID ?? 'PASTE_SHEET_ID_HERE' }}",
+        "sheetName": "threads_data",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2",
+        "options": {}
       },
-      "id": "c2a10401-full-0007",
-      "name": "Prepare Google Sheets",
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [880, 450]
+      "id": "c2a10401-full-0015",
+      "name": "Sheets: threads_data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [440, 680],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "documentId": "={{ $env.GOOGLE_SHEETS_METRICS_ID ?? 'PASTE_SHEET_ID_HERE' }}",
+        "sheetName": "wordpress_data",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2",
+        "options": {}
+      },
+      "id": "c2a10401-full-0016",
+      "name": "Sheets: wordpress_data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [440, 810],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "documentId": "={{ $env.GOOGLE_SHEETS_METRICS_ID ?? 'PASTE_SHEET_ID_HERE' }}",
+        "sheetName": "rakuten_data",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2",
+        "options": {}
+      },
+      "id": "c2a10401-full-0017",
+      "name": "Sheets: rakuten_data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [440, 940],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "documentId": "={{ $env.GOOGLE_SHEETS_METRICS_ID ?? 'PASTE_SHEET_ID_HERE' }}",
+        "sheetName": "amazon_data",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2",
+        "options": {}
+      },
+      "id": "c2a10401-full-0018",
+      "name": "Sheets: amazon_data",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [440, 1070],
+      "continueOnFail": true
     },
     {
       "parameters": {
@@ -98,27 +152,27 @@
       "name": "Parse API Results",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1100, 225]
+      "position": [700, 175]
     },
     {
       "parameters": {
-        "jsCode": "// Google Sheets からデータを読み込み（手入力分）\n// 実装: Google Sheets ノードで以下のシートを読み込む\n// - note_sales, note_views\n// - brain_sales（API で取得できない場合のフォールバック）\n// - threads_impressions, threads_clicks\n// - rakuten_sales, rakuten_views\n// - amazon_clicks, amazon_conversions\n\nconst api_data = $input.first().json;\n\n// ここに Google Sheets から読み込んだ手入力データをマージ\nconst sheet_data = {\n  note_sales: api_data.manual_note_sales ?? 0,\n  note_views: api_data.manual_note_views ?? 0,\n  threads_impressions: api_data.manual_threads_impressions ?? 0,\n  threads_clicks: api_data.manual_threads_clicks ?? 0,\n  rakuten_sales: api_data.manual_rakuten_sales ?? 0,\n  rakuten_views: api_data.manual_rakuten_views ?? 0,\n  amazon_clicks: api_data.manual_amazon_clicks ?? 0,\n  amazon_conversions: api_data.manual_amazon_conversions ?? 0,\n  wordpress_pv: api_data.manual_wordpress_pv ?? 0,\n  wordpress_clicks: api_data.manual_wordpress_clicks ?? 0,\n  cost_anthropic: api_data.manual_cost_anthropic ?? 0,\n  cost_browser: api_data.manual_cost_browser ?? 0,\n  owner_hours: api_data.manual_owner_hours ?? 0\n};\n\nreturn [{ json: { ...api_data, ...sheet_data } }];"
+        "jsCode": "// Google Sheets(手入力分)を period_start の日付行でマッチングして取り込む。\n// 該当行が無い場合は捏造せず0+未取得フラグを立てる。\nconst apiData = $input.first().json;\nconst cfg = $('Config Period').first().json;\n\nfunction findRow(nodeName) {\n  try {\n    const rows = $(nodeName).all().map(i => i.json);\n    return rows.find(r => String(r.date) === cfg.period_start) ?? null;\n  } catch (e) {\n    return null;\n  }\n}\n\nconst noteRow = findRow('Sheets: note_data');\nconst threadsRow = findRow('Sheets: threads_data');\nconst wordpressRow = findRow('Sheets: wordpress_data');\nconst rakutenRow = findRow('Sheets: rakuten_data');\nconst amazonRow = findRow('Sheets: amazon_data');\n\nconst sheet_data = {\n  note_sales: Number(noteRow?.sales ?? 0),\n  note_views: Number(noteRow?.views ?? 0),\n  threads_impressions: Number(threadsRow?.impressions ?? 0),\n  threads_clicks: Number(threadsRow?.clicks ?? 0),\n  wordpress_pv: Number(wordpressRow?.pv ?? 0),\n  wordpress_clicks: Number(wordpressRow?.clicks ?? 0),\n  rakuten_sales: Number(rakutenRow?.sales ?? 0),\n  rakuten_views: Number(rakutenRow?.views ?? 0),\n  amazon_clicks: Number(amazonRow?.clicks ?? 0),\n  amazon_conversions: Number(amazonRow?.conversions ?? 0),\n  // Google Sheetsに費用/稼働時間の入力欄が未整備のため暫定0固定(既知の制約。TASK-048参照)\n  cost_anthropic: 0,\n  cost_browser: 0,\n  owner_hours: 0,\n  sheets_rows_found: {\n    note: !!noteRow,\n    threads: !!threadsRow,\n    wordpress: !!wordpressRow,\n    rakuten: !!rakutenRow,\n    amazon: !!amazonRow\n  }\n};\n\nreturn [{ json: { ...apiData, ...sheet_data } }];"
       },
       "id": "c2a10401-full-0009",
       "name": "Merge Google Sheets Data",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1100, 450]
+      "position": [920, 300]
     },
     {
       "parameters": {
-        "jsCode": "// 全媒体のデータを集約・整形\nconst d = $input.first().json;\n\nconst platform_breakdown = {\n  gumroad: { sales: d.gumroad_sales || 0, error: d.gumroad_error },\n  brain: { sales: d.brain_sales || 0, error: d.brain_error },\n  note: { sales: d.note_sales || 0, views: d.note_views || 0 },\n  threads: { impressions: d.threads_impressions || 0, clicks: d.threads_clicks || 0 },\n  wordpress: { pv: d.wordpress_pv || 0, clicks: d.wordpress_clicks || 0 },\n  rakuten: { sales: d.rakuten_sales || 0, views: d.rakuten_views || 0 },\n  amazon: { clicks: d.amazon_clicks || 0, conversions: d.amazon_conversions || 0 }\n};\n\nconst total_revenue = (d.gumroad_sales||0) + (d.brain_sales||0) + (d.note_sales||0) + (d.rakuten_sales||0) + (d.amazon_conversions||0);\nconst total_cost = (d.cost_anthropic||0) + (d.cost_browser||0);\nconst gross_profit = total_revenue - total_cost;\nconst kpi = d.owner_hours > 0 ? +(gross_profit / d.owner_hours).toFixed(1) : null;\n\nreturn [{ json: {\n  experiment_id: d.experiment_id,\n  period: d.period_start + ' 〜 ' + d.period_end,\n  platform_breakdown,\n  summary: {\n    total_revenue,\n    total_cost,\n    gross_profit,\n    owner_hours: d.owner_hours,\n    kpi_profit_per_hour: kpi\n  },\n  errors: { gumroad: d.gumroad_error, brain: d.brain_error },\n  state: 'READY_FOR_ANALYSIS',\n  data_completeness: 'INTEGRATED'\n} }];"
+        "jsCode": "// 全媒体のデータを集約・整形\nconst d = $input.first().json;\n\nconst platform_breakdown = {\n  gumroad: { sales: d.gumroad_sales || 0, error: d.gumroad_error },\n  brain: { sales: d.brain_sales || 0, error: d.brain_error },\n  note: { sales: d.note_sales || 0, views: d.note_views || 0 },\n  threads: { impressions: d.threads_impressions || 0, clicks: d.threads_clicks || 0 },\n  wordpress: { pv: d.wordpress_pv || 0, clicks: d.wordpress_clicks || 0 },\n  rakuten: { sales: d.rakuten_sales || 0, views: d.rakuten_views || 0 },\n  amazon: { clicks: d.amazon_clicks || 0, conversions: d.amazon_conversions || 0 }\n};\n\nconst total_revenue = (d.gumroad_sales||0) + (d.brain_sales||0) + (d.note_sales||0) + (d.rakuten_sales||0) + (d.amazon_conversions||0);\nconst total_cost = (d.cost_anthropic||0) + (d.cost_browser||0);\nconst gross_profit = total_revenue - total_cost;\nconst kpi = d.owner_hours > 0 ? +(gross_profit / d.owner_hours).toFixed(1) : null;\n\nreturn [{ json: {\n  experiment_id: d.experiment_id,\n  period: d.period_start + ' 〜 ' + d.period_end,\n  platform_breakdown,\n  summary: {\n    total_revenue,\n    total_cost,\n    gross_profit,\n    owner_hours: d.owner_hours,\n    kpi_profit_per_hour: kpi\n  },\n  errors: { gumroad: d.gumroad_error, brain: d.brain_error },\n  sheets_rows_found: d.sheets_rows_found,\n  state: 'READY_FOR_ANALYSIS',\n  data_completeness: 'INTEGRATED'\n} }];"
       },
       "id": "c2a10401-full-0010",
       "name": "Aggregate All Metrics",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1300, 300]
+      "position": [1140, 300]
     },
     {
       "parameters": {
@@ -128,7 +182,7 @@
       "name": "Format Slack Message",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [1500, 300]
+      "position": [1360, 300]
     },
     {
       "parameters": {
@@ -143,17 +197,26 @@
       "name": "Slack Notify (要設定)",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
-      "position": [1700, 300],
+      "position": [1580, 300],
       "continueOnFail": true,
       "disabled": true
     },
     {
-      "parameters": {},
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.N8N_WEBHOOK_BASE_URL ?? 'PASTE_N8N_WEBHOOK_BASE_URL_HERE' }}/rio-602-analysis",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": { "timeout": 20000 }
+      },
       "id": "c2a10401-full-0013",
-      "name": "Pass to DEV_RIO_602_603",
-      "type": "n8n-nodes-base.noOp",
-      "typeVersion": 1,
-      "position": [1900, 300]
+      "name": "Trigger DEV_RIO_602 Analysis",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1800, 300],
+      "continueOnFail": true,
+      "disabled": true
     }
   ],
   "connections": {
@@ -164,27 +227,27 @@
           { "node": "API: Gumroad", "type": "main", "index": 0 },
           { "node": "API: Brain", "type": "main", "index": 0 },
           { "node": "Prepare WordPress Auth", "type": "main", "index": 0 },
-          { "node": "Define Browser Tasks", "type": "main", "index": 0 },
-          { "node": "Prepare Google Sheets", "type": "main", "index": 0 }
+          { "node": "Sheets: note_data", "type": "main", "index": 0 },
+          { "node": "Sheets: threads_data", "type": "main", "index": 0 },
+          { "node": "Sheets: wordpress_data", "type": "main", "index": 0 },
+          { "node": "Sheets: rakuten_data", "type": "main", "index": 0 },
+          { "node": "Sheets: amazon_data", "type": "main", "index": 0 }
         ]
       ]
     },
     "API: Gumroad": { "main": [[{ "node": "Parse API Results", "type": "main", "index": 0 }]] },
     "API: Brain": { "main": [[{ "node": "Parse API Results", "type": "main", "index": 0 }]] },
-    "Prepare WordPress Auth": { "main": [[{ "node": "Merge Google Sheets Data", "type": "main", "index": 0 }]] },
-    "Define Browser Tasks": { "main": [[{ "node": "Merge Google Sheets Data", "type": "main", "index": 0 }]] },
-    "Prepare Google Sheets": { "main": [[{ "node": "Merge Google Sheets Data", "type": "main", "index": 0 }]] },
     "Parse API Results": { "main": [[{ "node": "Merge Google Sheets Data", "type": "main", "index": 0 }]] },
     "Merge Google Sheets Data": { "main": [[{ "node": "Aggregate All Metrics", "type": "main", "index": 0 }]] },
     "Aggregate All Metrics": { "main": [[{ "node": "Format Slack Message", "type": "main", "index": 0 }]] },
     "Format Slack Message": { "main": [[{ "node": "Slack Notify (要設定)", "type": "main", "index": 0 }]] },
-    "Slack Notify (要設定)": { "main": [[{ "node": "Pass to DEV_RIO_602_603", "type": "main", "index": 0 }]] }
+    "Slack Notify (要設定)": { "main": [[{ "node": "Trigger DEV_RIO_602 Analysis", "type": "main", "index": 0 }]] }
   },
   "settings": { "executionOrder": "v1" },
   "active": false,
   "pinData": {},
   "meta": {
-    "description": "DEV_RIO_401_Full メトリクス統合（全媒体対応）。API自動取得（Gumroad・Brain）+ Google Sheetsハイブリッド（note・threads・WordPress・楽天room・Amazon）。日次スケジュール実行。分析結果をDEV_RIO_602_603へ渡す準備完了。"
+    "description": "DEV_RIO_401_Full メトリクス統合(全媒体対応)。API自動取得(Gumroad・Brain)+ Google Sheets実読み取り(note/threads/wordpress/rakuten/amazon、DEV_RIO_SETUP_GoogleSheetsで作成した各シートのdate列でperiod_startと一致する行を取得)。日次スケジュール実行。Aggregate All Metrics の出力を DEV_RIO_602 のWebhookへ自動POSTする(要: N8N_WEBHOOK_BASE_URL環境変数、ノードは要設定のためdisabled)。cost_anthropic/cost_browser/owner_hoursはGoogle Sheets側に入力欄が未整備のため暫定0固定(TASK-048に既知の制約として記録)。fail-stop用のエラーワークフロー(DEV_RIO_402)連携はJSONでは設定不可のため、n8n UIでのワークフロー設定画面から個別に紐付けが必要。"
   },
   "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "METRICS" }, { "name": "FULL_STACK" }]
 }

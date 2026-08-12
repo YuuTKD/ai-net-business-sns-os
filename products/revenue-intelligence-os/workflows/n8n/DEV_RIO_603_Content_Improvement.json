@@ -2,16 +2,15 @@
   "name": "DEV_RIO_603_Content_Improvement",
   "nodes": [
     {
-      "parameters": {},
+      "parameters": {
+        "path": "rio-603-improvement",
+        "method": "POST"
+      },
       "id": "c2a10603-0000-4000-8000-000000000001",
       "name": "Webhook from DEV_RIO_602",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [0, 300],
-      "parameters": {
-        "path": "rio-603-improvement",
-        "method": "POST"
-      }
+      "position": [0, 300]
     },
     {
       "parameters": {

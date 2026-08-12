@@ -2,16 +2,15 @@
   "name": "DEV_RIO_602_Content_Analysis",
   "nodes": [
     {
-      "parameters": {},
+      "parameters": {
+        "path": "rio-602-analysis",
+        "method": "POST"
+      },
       "id": "c2a10602-0000-4000-8000-000000000001",
       "name": "Trigger from DEV_RIO_401",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [0, 300],
-      "parameters": {
-        "path": "rio-602-analysis",
-        "method": "POST"
-      }
+      "position": [0, 300]
     },
     {
       "parameters": {
@@ -146,13 +145,30 @@
     },
     {
       "parameters": {
-        "jsCode": "// ライターエージェント呼び出しの準備\n// 分析結果を JSON で出力（Claude Code へ webhook で渡す準備）\nconst d = $input.first().json;\nreturn [{ json: d, note: '分析完了。ライターエージェント呼び出し準備完了' }];"
+        "jsCode": "// ライターエージェント呼び出しの準備\n// 分析結果を JSON で出力（DEV_RIO_603 へ webhook で渡す準備）\nconst d = $input.first().json;\nreturn [{ json: { ...d, note: '分析完了。ライターエージェント呼び出し準備完了' } }];"
       },
       "id": "c2a10602-0000-4000-8000-000000000011",
       "name": "Prepare for Writer Agent",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [1700, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.N8N_WEBHOOK_BASE_URL ?? 'PASTE_N8N_WEBHOOK_BASE_URL_HERE' }}/rio-603-improvement",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": { "timeout": 20000 }
+      },
+      "id": "c2a10602-0000-4000-8000-000000000012",
+      "name": "Trigger DEV_RIO_603 Improvement",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1900, 300],
+      "continueOnFail": true,
+      "disabled": true
     }
   ],
   "connections": {
@@ -172,7 +188,8 @@
     "Claude: Generate Improvements": { "main": [[{ "node": "Parse Claude Results", "type": "main", "index": 0 }]] },
     "Parse Claude Results": { "main": [[{ "node": "Format Slack Report", "type": "main", "index": 0 }]] },
     "Format Slack Report": { "main": [[{ "node": "Slack Notify #all-daily-report", "type": "main", "index": 0 }]] },
-    "Slack Notify #all-daily-report": { "main": [[{ "node": "Prepare for Writer Agent", "type": "main", "index": 0 }]] }
+    "Slack Notify #all-daily-report": { "main": [[{ "node": "Prepare for Writer Agent", "type": "main", "index": 0 }]] },
+    "Prepare for Writer Agent": { "main": [[{ "node": "Trigger DEV_RIO_603 Improvement", "type": "main", "index": 0 }]] }
   },
   "settings": { "executionOrder": "v1" },
   "active": false,
