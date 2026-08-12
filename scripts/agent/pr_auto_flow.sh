@@ -26,6 +26,7 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 REPORTS_DIR="${REPO_ROOT}/data/reports"
 REVIEW_SCRIPT="${REPO_ROOT}/scripts/review/codex_pr_review.sh"
 MERGE_GATE_SCRIPT="${REPO_ROOT}/scripts/agent/safe_auto_merge_pr.sh"
+MAX_FIX_ATTEMPTS=3
 
 # 低リスクパターン（これだけなら自動Merge対象）
 LOW_RISK_PATTERNS=(
@@ -89,25 +90,47 @@ header() {
 
 PR_NUMBER=""
 DRY_RUN=0
+RESET_ATTEMPTS=0
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
-    --pr)      PR_NUMBER="$2"; shift 2 ;;
-    --dry-run) DRY_RUN=1; shift ;;
+    --pr)             PR_NUMBER="$2"; shift 2 ;;
+    --dry-run)        DRY_RUN=1; shift ;;
+    --reset-attempts) RESET_ATTEMPTS=1; shift ;;
     *) echo "不明なオプション: $1" >&2; exit 1 ;;
   esac
 done
 
 if [[ -z "$PR_NUMBER" ]]; then
-  echo "使い方: $0 --pr <PR番号> [--dry-run]" >&2
+  echo "使い方: $0 --pr <PR番号> [--dry-run] [--reset-attempts]" >&2
   exit 1
 fi
+
+# ━━━ FIX試行回数管理 ━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FIX_ATTEMPT_FILE="${REPORTS_DIR}/fix_attempt_pr_${PR_NUMBER}.txt"
+
+get_fix_attempt() {
+  if [[ -f "$FIX_ATTEMPT_FILE" ]]; then
+    cat "$FIX_ATTEMPT_FILE"
+  else
+    echo 0
+  fi
+}
+
+if [[ $RESET_ATTEMPTS -eq 1 ]]; then
+  rm -f "$FIX_ATTEMPT_FILE"
+  echo "  試行回数をリセットしました: ${FIX_ATTEMPT_FILE}"
+fi
+
+CURRENT_FIX_ATTEMPT=$(get_fix_attempt)
 
 # ━━━ 開始 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 header "PR Auto Flow — PR #${PR_NUMBER}"
-echo "  DRY_RUN : ${DRY_RUN}"
-echo "  Reports : ${REPORTS_DIR}"
+echo "  DRY_RUN      : ${DRY_RUN}"
+echo "  FIX試行回数  : ${CURRENT_FIX_ATTEMPT}/${MAX_FIX_ATTEMPTS}"
+echo "  Reports      : ${REPORTS_DIR}"
 echo ""
 
 # ━━━ [0] gh auth確認 ━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -229,38 +252,100 @@ case "$REVIEW_RESULT" in
     ok "Codex判定: GO — Merge Gateに進みます"
     ;;
   FIX)
-    warn "Codex判定: FIX — 修正指示ファイルを生成します"
+    NEXT_FIX_ATTEMPT=$((CURRENT_FIX_ATTEMPT + 1))
+    echo "$NEXT_FIX_ATTEMPT" > "$FIX_ATTEMPT_FILE"
+    mkdir -p "${REPORTS_DIR}"
+
+    warn "Codex判定: FIX — 試行 ${NEXT_FIX_ATTEMPT}/${MAX_FIX_ATTEMPTS}"
+
+    # Codexレビューから実際の指摘内容を抽出
+    FINDINGS=""
+    if [[ -f "${REVIEW_OUTPUT}" ]]; then
+      FINDINGS="$(grep -E '^\*\*FIX:|^\- \*\*FIX:|^- \*\*FIX:|^  - \*\*FIX:|\*\*Findings\*\*' "${REVIEW_OUTPUT}" | head -20 || true)"
+      if [[ -z "$FINDINGS" ]]; then
+        FINDINGS="$(grep -A 50 -i 'findings\|指摘\|修正' "${REVIEW_OUTPUT}" | head -30 || true)"
+      fi
+    fi
+
     FIX_FILE="${REPORTS_DIR}/fix_instruction_pr_${PR_NUMBER}.md"
     cat > "${FIX_FILE}" <<FIXEOF
-# FIX指示 — PR #${PR_NUMBER}
+# FIX指示 — PR #${PR_NUMBER}（試行 ${NEXT_FIX_ATTEMPT}/${MAX_FIX_ATTEMPTS}）
 
 生成日時: $(date '+%Y-%m-%d %H:%M:%S')
 Codexレビュー結果: FIX
+FIX試行回数: ${NEXT_FIX_ATTEMPT} / ${MAX_FIX_ATTEMPTS}（残り $((MAX_FIX_ATTEMPTS - NEXT_FIX_ATTEMPT)) 回）
 レビュー詳細: ${REVIEW_OUTPUT}
 
-## 修正指示
+## Codex指摘内容（抜粋）
 
-Codexレビューで以下の問題が指摘されました。
-詳細は \`${REVIEW_OUTPUT}\` を確認してください。
+\`\`\`
+${FINDINGS:-"詳細は codex_review_pr_${PR_NUMBER}.txt を参照"}
+\`\`\`
 
-## 次のアクション
+## Claude Code自動修正ルール
+
+### 修正してよい対象
+- CSV列数不整合（next_action等の欠落）
+- Markdownリンク修正（Obsidianリンクの相対パス問題）
+- Obsidianリンク修正（Vault外参照→注記に変更）
+- 表記ゆれ・typo
+- 日付・曜日不整合
+- docs / obsidian / data の整合性修正
+- コンプライアンス表現の安全な言い換え
+- 「公開前に公式確認が必要」等の注記追加
+- CSVヘッダーと行数の整合
+- model_id表記統一（SNS_AFFILIATE 等）
+
+### 修正してはいけない対象（即停止・人間確認）
+- scripts/** のロジック大幅変更
+- agents/** の実行処理変更
+- config/** の本番設定変更
+- .env / APIキー / Token / Secret
+- deploy / Scheduler / Cloud Run
+- 自動投稿 / 自動DM / 自動リプ / LINE / Gmail送信
+- Google Workspace本番書き込み
+- 決済処理 / 顧客データ
+- 商品マッチ先AI再開
+- 仕様判断が必要な変更
+- 法務判断が必要な変更
+
+## Claude Codeが実行するアクション手順
 
 1. \`${REVIEW_OUTPUT}\` を読む
-2. 指摘箇所を修正する
-3. 修正ファイルだけを \`git add\`（git add . は禁止）
-4. \`git commit\`
+2. 上記「修正してよい対象」に該当する箇所だけを最小修正する
+3. 修正ファイルだけを \`git add\`（git add . 禁止）
+4. \`git commit -m "fix: address pr ${PR_NUMBER} codex review findings (attempt ${NEXT_FIX_ATTEMPT})"\`
 5. \`git push\`
 6. 再度このスクリプトを実行: \`./scripts/agent/pr_auto_flow.sh --pr ${PR_NUMBER}\`
+$([[ $NEXT_FIX_ATTEMPT -ge $MAX_FIX_ATTEMPTS ]] && echo "⚠️ 次回（${NEXT_FIX_ATTEMPT}/${MAX_FIX_ATTEMPTS}）が最終試行です。FIXが続く場合は人間確認が必要です。")
 
 ## 禁止
 
 - git add .
 - 指摘を無視してMergeする
 - STOP判定の無視
+- 高リスク対象の変更
 FIXEOF
-    ok "FIX指示ファイル生成: ${FIX_FILE}"
+    ok "FIX指示ファイル生成 (試行${NEXT_FIX_ATTEMPT}): ${FIX_FILE}"
+
+    if [[ $NEXT_FIX_ATTEMPT -ge $MAX_FIX_ATTEMPTS ]]; then
+      echo ""
+      echo "${RED}${BOLD}━━━ FIX最大試行回数に達しました ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+      fail "FIX判定が${MAX_FIX_ATTEMPTS}回に達しました。自動修正を停止します。"
+      echo "${BOLD}  レビュー: ${REVIEW_OUTPUT}${RESET}"
+      echo "${BOLD}  FIX指示: ${FIX_FILE}${RESET}"
+      echo ""
+      echo "${BOLD}人間による確認が必要な項目:${RESET}"
+      echo "  1. 残存するFIX理由を ${REVIEW_OUTPUT} で確認"
+      echo "  2. 仕様変更・法務判断が必要な箇所を特定"
+      echo "  3. 修正後に以下でカウンタをリセット:"
+      echo "     ./scripts/agent/pr_auto_flow.sh --pr ${PR_NUMBER} --reset-attempts"
+      echo "${RED}${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+      exit 5
+    fi
+
     echo ""
-    fail "FIX判定のため停止します。${FIX_FILE} を確認して修正してください。"
+    fail "FIX判定（試行${NEXT_FIX_ATTEMPT}）— ${FIX_FILE} の指摘を修正後、スクリプトを再実行してください。"
     exit 2
     ;;
   STOP)
