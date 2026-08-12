@@ -551,9 +551,9 @@
 
 ### TASK-048: コンテンツPDCA自動化フロー構築（全媒体メトリクス収集→分析→改善提案）
 - **担当**: Claude Code（エンジニア）
-- **ステータス**: REVIEW（実装完了・n8nインポート待ち）
+- **ステータス**: IN_PROGRESS（PR #79 マージ済み・ゆうさんによるn8nインポート/セットアップ実施済み申告・詳細確認中）
 - **ブランチ**: claude/line-auto-delivery-activation-mehypj
-- **PR**: （作成予定）
+- **PR**: #79（マージ済み）
 - **期限**: -
 - **備考**: 当初「LINE自動配信（602/603）」の現状確認から着手したが、ゆうさんの真の要望は「Threads/WordPress/note/Brain/楽天room/Amazonアソシエイト/Xの全媒体パフォーマンスを毎日分析し、成功パターン抽出・改善提案・来週の投稿計画を自動生成してライターエージェントに渡すPDCAサイクル」と判明。旧LINE版602/603（Sales Funnel/Retention）は削除しSLACK版に置き換えた上で、602/603をコンテンツ分析・改善エンジンとして再設計した。
   - **CLAUDE.md改定**（2026-08-12）: 本番投稿ルールを「投稿ごとの承認制」から「媒体別の自動化可否」に変更。API経由投稿が可能な媒体（Threads/WordPress/Brain）は品質ゲート（sns-post-quality-check PASS等）を条件に自動投稿OK、Xは自動化ポリシー違反のため引き続き手動のみ、note/Substackは個別判断とした。
@@ -562,5 +562,6 @@
   - **DEV_RIO_603_Content_Improvement.json**（再設計）: 602の分析結果を受け取り、ライターエージェント向けの具体的編集案・成功パターンテンプレート・来週の投稿計画をClaudeAPIで生成、Slack通知＋Google Sheetsトラッキング。
   - **DEV_RIO_SETUP_GoogleSheets.json**（新規）: Google Sheets APIで分析用スプレッドシート（daily_metrics/note_data/threads_data/wordpress_data/rakuten_data/amazon_data/brain_data の7シート）を自動作成するセットアップ用ワークフロー。
   - **残タスク（ゆうさん側・screen操作/Credential）**: (1) 4ワークフローJSONのn8n UIインポート、(2) SETUP実行→Google Sheets ID取得、(3) 環境変数設定（GOOGLE_SHEETS_METRICS_ID・WORDPRESS_BLOG_URL・Slack Webhook URL）、(4) Anthropic API Credentialの割当確認、(5) Manual Triggerでのテスト実行、(6) 問題なければ401をスケジューラーON（`scheduler-readiness-check` Skill でREADY判定後、ゆうさんに確認してから）。RUNBOOK_n8n_metrics_activation.md の運用分担（Secret登録・Activateはゆうさんのみ）を踏襲。
+  - **2026-08-12追記**: ゆうさんより「したよ」との報告あり。具体的にどの工程（インポート／Sheetsセットアップ／Credential設定／テスト実行）まで完了したかは対話上明示されておらず、Claude Code側にn8n・Google Sheetsへの直接アクセス手段がないため実施内容を機械的に検証できていない。次回セッションでゆうさんに完了工程の一覧確認を行うか、画面操作オペレーターに実行結果のスクリーンショット確認を依頼して裏取りすること。Activate（スケジューラーON）は本タスクの完了報告だけでは実施しない——`scheduler-readiness-check`でREADY判定＋ゆうさんの明示承認が別途必要。
 
 <!-- 新しいタスクは上記フォーマットに従ってここに追加する -->
