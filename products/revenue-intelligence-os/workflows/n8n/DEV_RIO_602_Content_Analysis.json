@@ -146,7 +146,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// ライターエージェント呼び出しの準備\n// 分析結果を JSON で出力（Claude Code へ webhook で渡す準備）\nconst d = $input.first().json;\nreturn [{ json": d, note: '分析完了。ライターエージェント呼び出し準備完了' }];"
+        "jsCode": "// ライターエージェント呼び出しの準備\n// 分析結果を JSON で出力（Claude Code へ webhook で渡す準備）\nconst d = $input.first().json;\nreturn [{ json: d, note: '分析完了。ライターエージェント呼び出し準備完了' }];"
       },
       "id": "c2a10602-0000-4000-8000-000000000011",
       "name": "Prepare for Writer Agent",
