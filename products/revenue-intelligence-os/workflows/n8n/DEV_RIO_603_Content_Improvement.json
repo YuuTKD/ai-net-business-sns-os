@@ -1,0 +1,127 @@
+{
+  "name": "DEV_RIO_603_Content_Improvement",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "c2a10603-0000-4000-8000-000000000001",
+      "name": "Webhook from DEV_RIO_602",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [0, 300],
+      "parameters": {
+        "path": "rio-603-improvement",
+        "method": "POST"
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 602 からの分析結果を受け取り、改善対象を整理\nconst analysis = $input.first().json;\n\nconst improvement_tasks = {\n  success_patterns: analysis.success_patterns || [],\n  improvements_needed: analysis.improvement_suggestions || [],\n  low_performers: analysis.low_performers || [],\n  period: analysis.period,\n  state: 'IMPROVEMENT_PENDING'\n};\n\nreturn [{ json: improvement_tasks }];"
+      },
+      "id": "c2a10603-0000-4000-8000-000000000002",
+      "name": "Extract Improvement Tasks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ライターエージェント向けの実行指示を生成\nconst tasks = $input.first().json;\n\nconst writer_prompt = `【投稿改善タスク】\\n\\n期間: ${tasks.period}\\n\\n## 成功パターン（次の投稿で活かすべき）\\n${tasks.success_patterns.map(p => `• ${p.pattern}: ${p.reason}`).join('\\n')}\\n\\n## 改善が必要な投稿\\n${tasks.improvements_needed.map(i => `【${i.platform}】\\n改善内容: ${i.improvement}\\n新しい提案: ${i.new_title}\\n期待効果: ${i.expected_impact}`).join('\\n\\n')}\\n\\n## 実行内容\\n1. 低反応投稿の編集案を作成（見出し・段落構成・文体を修正）\\n2. 高反応投稿の成功パターンを分析して、パターンテンプレートを作成\\n3. 次週の投稿計画案を生成（成功パターンを反映）\\n\\n## 出力形式\\n{\\n  \"edits\": [{\"platform\": \"媒体\", \"original_title\": \"元のタイトル\", \"revised_title\": \"改善後\", \"reason\": \"改善理由\"}],\\n  \"success_template\": {\"pattern\": \"...\", \"structure\": \"...\", \"tone\": \"...\"},\\n  \"next_week_plan\": [{\"date\": \"YYYY-MM-DD\", \"platform\": \"媒体\", \"theme\": \"テーマ\", \"based_on_pattern\": \"どの成功パターンに基づくか\"}]\\n}`;\n\nconst anthropic_body = {\n  model: 'claude-haiku-4-5',\n  max_tokens: 2048,\n  messages: [{ role: 'user', content: writer_prompt }]\n};\n\nreturn [{ json: { ...tasks, anthropic_body, prompt: writer_prompt } }];"
+      },
+      "id": "c2a10603-0000-4000-8000-000000000003",
+      "name": "Build Writer Agent Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.anthropic_body }}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "c2a10603-0000-4000-8000-000000000004",
+      "name": "Claude: Generate Improvement Plan",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [660, 300],
+      "credentials": {
+        "anthropicApi": { "id": "gSjvXXaj0OLWBIza", "name": "Anthropic account" }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Claude応答をパース\nconst claude_result = $('Claude: Generate Improvement Plan').first().json;\nconst tasks = $input.first().json;\n\nlet improvement_plan = null;\nlet parse_error = null;\n\ntry {\n  if (claude_result?.content && claude_result.content[0]?.text) {\n    const text = claude_result.content[0].text;\n    const match = text.match(/\\{[\\s\\S]*\\}/);\n    improvement_plan = JSON.parse(match ? match[0] : text);\n  } else {\n    parse_error = 'claude_response_missing';\n  }\n} catch (e) {\n  parse_error = 'claude_parse_failed: ' + e.message;\n}\n\nif (parse_error) {\n  improvement_plan = {\n    error: parse_error,\n    edits: [],\n    success_template: { pattern: 'パース失敗' },\n    next_week_plan: []\n  };\n}\n\nreturn [{ json: {\n  ...tasks,\n  improvement_plan,\n  errors: parse_error ? [parse_error] : [],\n  state: 'READY_FOR_EXECUTION'\n} }];"
+      },
+      "id": "c2a10603-0000-4000-8000-000000000005",
+      "name": "Parse Improvement Plan",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Slack 投稿用に整形\nconst d = $input.first().json;\nconst plan = d.improvement_plan;\n\nconst lines = [\n  '📝 【投稿改善実行計画】' + d.period,\n  '',\n  '✏️ 改善対象投稿',\n  ...plan.edits.slice(0, 3).map(e => `  ${e.platform}: \"${e.original_title}\" → \"${e.revised_title}\"`),\n  '',\n  '🎯 成功パターンテンプレート',\n  `  構成: ${plan.success_template.structure}`,\n  `  文体: ${plan.success_template.tone}`,\n  '',\n  '📅 来週の投稿計画（成功パターンに基づく）',\n  ...plan.next_week_plan.slice(0, 5).map(p => `  ${p.date} ${p.platform}: ${p.theme}`),\n  '',\n  '🔄 次のステップ: ライターが編集案を Google Docs に作成します。確認して実施してください。'\n];\n\nreturn [{ json: { ...d, notification_text: lines.join('\\n') } }];"
+      },
+      "id": "c2a10603-0000-4000-8000-000000000006",
+      "name": "Format Slack Notification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "PASTE_SLACK_INCOMING_WEBHOOK_URL_HERE",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": {{ JSON.stringify($json.notification_text) }}\n}",
+        "options": { "timeout": 15000 }
+      },
+      "id": "c2a10603-0000-4000-8000-000000000007",
+      "name": "Slack Notify #all-daily-report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1300, 300],
+      "continueOnFail": true,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 改善計画を Google Sheets に保存（トラッキング用）\nconst d = $input.first().json;\n\nconst tracking_data = {\n  period: d.period,\n  total_edits: d.improvement_plan.edits?.length || 0,\n  next_posts: d.improvement_plan.next_week_plan?.length || 0,\n  state: 'TRACKED',\n  timestamp: new Date().toISOString()\n};\n\nreturn [{ json: { ...d, tracking_data } }];"
+      },
+      "id": "c2a10603-0000-4000-8000-000000000008",
+      "name": "Track in Google Sheets",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1500, 300]
+    }
+  ],
+  "connections": {
+    "Webhook from DEV_RIO_602": { "main": [[{ "node": "Extract Improvement Tasks", "type": "main", "index": 0 }]] },
+    "Extract Improvement Tasks": { "main": [[{ "node": "Build Writer Agent Prompt", "type": "main", "index": 0 }]] },
+    "Build Writer Agent Prompt": { "main": [[{ "node": "Claude: Generate Improvement Plan", "type": "main", "index": 0 }]] },
+    "Claude: Generate Improvement Plan": { "main": [[{ "node": "Parse Improvement Plan", "type": "main", "index": 0 }]] },
+    "Parse Improvement Plan": { "main": [[{ "node": "Format Slack Notification", "type": "main", "index": 0 }]] },
+    "Format Slack Notification": { "main": [[{ "node": "Slack Notify #all-daily-report", "type": "main", "index": 0 }]] },
+    "Slack Notify #all-daily-report": { "main": [[{ "node": "Track in Google Sheets", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": {
+    "description": "DEV_RIO_603 投稿改善実行エンジン。602の分析結果を受け取り、具体的な編集案・成功パターンテンプレート・来週の投稿計画をClaudeで自動生成。Google Sheetsでトラッキング、Slackで通知。"
+  },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "IMPROVEMENT" }, { "name": "CONTENT_PDCA" }]
+}

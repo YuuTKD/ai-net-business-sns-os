@@ -549,4 +549,18 @@
 - **期限**: 2026-08-10
 - **備考**: ゆうさん指示「有料プラン後以外の提案は全て今から行なって！」を受けて実行。①WP新記事7本（WP-016〜022）を執筆・qa_passed（A8実リンク差し替え済み）。②A8.net新規承認済み：KANBEI SIGN（A8-004）・リピッテ（A8-005）をaffiliate_link_library_v2.csvに追加。③楽天アフィリリンクRKT-005〜021（17件）取得・rakuten_link_library.csvに追加・n8n DEV_RIO_705 Codeノードに転記。④WP-016〜022をWordPressに下書き作成（wp_queue_runner.js）→ゆうさんが全件公開完了（2026-08-10）。⑤published_url全件をwordpress_posts_queue.csvに記録（post=104〜110）。WP-016/018/020はaffiliate_link_status=pendingのまま公開済み（後日リンク追記必要）。
 
+### TASK-048: コンテンツPDCA自動化フロー構築（全媒体メトリクス収集→分析→改善提案）
+- **担当**: Claude Code（エンジニア）
+- **ステータス**: REVIEW（実装完了・n8nインポート待ち）
+- **ブランチ**: claude/line-auto-delivery-activation-mehypj
+- **PR**: （作成予定）
+- **期限**: -
+- **備考**: 当初「LINE自動配信（602/603）」の現状確認から着手したが、ゆうさんの真の要望は「Threads/WordPress/note/Brain/楽天room/Amazonアソシエイト/Xの全媒体パフォーマンスを毎日分析し、成功パターン抽出・改善提案・来週の投稿計画を自動生成してライターエージェントに渡すPDCAサイクル」と判明。旧LINE版602/603（Sales Funnel/Retention）は削除しSLACK版に置き換えた上で、602/603をコンテンツ分析・改善エンジンとして再設計した。
+  - **CLAUDE.md改定**（2026-08-12）: 本番投稿ルールを「投稿ごとの承認制」から「媒体別の自動化可否」に変更。API経由投稿が可能な媒体（Threads/WordPress/Brain）は品質ゲート（sns-post-quality-check PASS等）を条件に自動投稿OK、Xは自動化ポリシー違反のため引き続き手動のみ、note/Substackは個別判断とした。
+  - **DEV_RIO_401_Metrics_Ingestion_Full.json**（新規）: 全媒体メトリクスの集約フロー。Gumroad/BrainはAPI自動取得、Threads/WordPress/note/楽天room/AmazonアソシエイトはGoogle Sheets手入力とのハイブリッド方式。
+  - **DEV_RIO_602_Content_Analysis.json**（再設計）: 401からのメトリクスを受け取り、高反応/低反応投稿をエンゲージメント率でランキングし、ClaudeAPIで成功パターン3件抽出＋低反応投稿への改善提案を生成。Slack #all-daily-report に通知。**実装時のjsCode構文エラー（`return [{ json": d, ...}]` の不正なオブジェクトリテラル）を本セッションで修正済み**（全JSONファイルのjq構文検証をパス）。
+  - **DEV_RIO_603_Content_Improvement.json**（再設計）: 602の分析結果を受け取り、ライターエージェント向けの具体的編集案・成功パターンテンプレート・来週の投稿計画をClaudeAPIで生成、Slack通知＋Google Sheetsトラッキング。
+  - **DEV_RIO_SETUP_GoogleSheets.json**（新規）: Google Sheets APIで分析用スプレッドシート（daily_metrics/note_data/threads_data/wordpress_data/rakuten_data/amazon_data/brain_data の7シート）を自動作成するセットアップ用ワークフロー。
+  - **残タスク（ゆうさん側・screen操作/Credential）**: (1) 4ワークフローJSONのn8n UIインポート、(2) SETUP実行→Google Sheets ID取得、(3) 環境変数設定（GOOGLE_SHEETS_METRICS_ID・WORDPRESS_BLOG_URL・Slack Webhook URL）、(4) Anthropic API Credentialの割当確認、(5) Manual Triggerでのテスト実行、(6) 問題なければ401をスケジューラーON（`scheduler-readiness-check` Skill でREADY判定後、ゆうさんに確認してから）。RUNBOOK_n8n_metrics_activation.md の運用分担（Secret登録・Activateはゆうさんのみ）を踏襲。
+
 <!-- 新しいタスクは上記フォーマットに従ってここに追加する -->
