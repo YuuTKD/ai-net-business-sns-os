@@ -44,10 +44,12 @@ const DRAFTS_DIR = path.join(
 function parseArgs() {
   const a = process.argv.slice(2);
   const updateIdx = a.indexOf('--update');
+  const updateLiveIdx = a.indexOf('--update-live');
   return {
     status: a.includes('--status'),
     run: a.includes('--run'),
     updateId: updateIdx !== -1 ? a[updateIdx + 1] : null,
+    updateLiveId: updateLiveIdx !== -1 ? a[updateLiveIdx + 1] : null,
   };
 }
 
@@ -292,6 +294,25 @@ async function updateDraftPost({ token, postId, title, content }) {
   return json;
 }
 
+// 公開済み(publish)記事の本文・タイトルを、原稿ファイルの最新内容で全文差し替える。
+// featured_imageは意図的に送らない（既存のアイキャッチをWP側で維持させるため）。
+// --update-live コマンド経由のみで使用（呼び出し側でゆうさんの承認確認済みであること）。
+async function updateLivePost({ token, postId, title, content }) {
+  const res = await fetch(`${API_BASE}/posts/${postId}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({ title, content, status: 'publish' }),
+  });
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(`WP API ${res.status}: ${JSON.stringify(json)}`);
+  }
+  return json;
+}
+
 function printStatus(readyRows) {
   console.log('\n==================== WP Queue Runner 状態 ====================');
   console.log(`draft_status=qa_passed（投稿待ち）件数: ${readyRows.length}`);
@@ -345,6 +366,45 @@ async function main() {
     console.log(`${args.updateId}: 下書き(post=${postId})を最新原稿で更新中...`);
     await updateDraftPost({ token, postId, title, content: html });
     console.log(`✅ ${args.updateId}: 下書き更新完了 → ${row.wp_edit_url}`);
+    return;
+  }
+
+  if (args.updateLiveId) {
+    const row = records.find((r) => r.id === args.updateLiveId);
+    if (!row) {
+      console.error(`❌ ${args.updateLiveId}: キューに見つかりません`);
+      process.exit(1);
+    }
+    if (row.draft_status !== 'published') {
+      console.error(`❌ ${args.updateLiveId}: draft_status=${row.draft_status}（publishedのみ対象）のためこのコマンドでは更新しません`);
+      process.exit(1);
+    }
+    if (!row.wp_edit_url) {
+      console.error(`❌ ${args.updateLiveId}: wp_edit_urlが未設定です`);
+      process.exit(1);
+    }
+    const postId = row.wp_edit_url.match(/post=(\d+)/)?.[1];
+    if (!postId) {
+      console.error(`❌ ${args.updateLiveId}: wp_edit_urlからpost IDを取得できません`);
+      process.exit(1);
+    }
+    const filePath = findDraftFile(args.updateLiveId);
+    if (!filePath) {
+      console.error(`❌ ${args.updateLiveId}: wp_drafts/ に原稿ファイルが見つかりません`);
+      process.exit(1);
+    }
+    const token = process.env.WP_ACCESS_TOKEN;
+    if (!token) {
+      console.error('❌ WP_ACCESS_TOKEN が未設定です（--env-file=.env.local を付けて実行してください）');
+      process.exit(1);
+    }
+    const md = fs.readFileSync(filePath, 'utf8');
+    const title = extractTitle(md);
+    const html = markdownToHtml(md);
+    console.log(`${args.updateLiveId}: 公開済み記事(post=${postId})を最新原稿で全文差し替え中... 「${title}」`);
+    const result = await updateLivePost({ token, postId, title, content: html });
+    const postUrl = result.URL || row.published_url;
+    console.log(`✅ ${args.updateLiveId}: 反映完了 → ${postUrl}`);
     return;
   }
 
