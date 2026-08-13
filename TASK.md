@@ -745,5 +745,23 @@
 - **期限**: 2026-08-10
 - **備考**: ①TQ-022〜031（8/31〜9/9分）をthreads_posts_queue.csvに追加（WP-023/024/025新記事への送客文＋既存記事の別角度再活用）。②ゆうさん指示「1日3本」を受けてTQ-002〜031を全件リスケ（8/11〜8/20の10日間、各日3本）。③WP-026（青色申告初めてのやり方・A8-001）、WP-027（勤怠管理ソフト選び方・MOSHIMO-002）、WP-028（予約管理システム比較・A8-005）を執筆・qa_passed状態でwordpress_posts_queue.csvに追加（WP下書き作成はwp_queue_runner.js実行待ち）。
 
+### TASK-060: WordPress画像あり自動公開ルール実装・WP-026/027/028公開・Threadsキュー17本追加・602/603アクティブ化
+- **担当**: Claude Code（CEO代理・エンジニア・SNS運用担当・画面操作オペレーター）
+- **ステータス**: DONE（WP公開はゆうさん実行、602/603アクティブ化はブラウザ操作で完了）
+- **ブランチ**: feature/brain-registration-note-004-005-006
+- **PR**: #78
+- **期限**: 2026-08-13
+- **背景**: ゆうさんから「WordPressは画像を添付されてる記事は自動で投稿できるようにルールを変更、画像が添付されていない記事は自動投稿せずSlackで通知」との指示。あわせて最優先3タスク（WP-026/027/028公開・Threads送客ドラフト投稿・REVIEW PR）とBLOCKED（602/603）の承認を一括で得た。
+- **実施内容**:
+  1. **wp_queue_runner.js 改修**: `hasImage(md)`（Markdown内 `![...]()` 検出）を追加し、画像あり記事は `status=publish` で自動公開＋`featured_image`自動設定、画像なし記事は投稿せず Slack 通知のみに変更。`createDraftPost`→`createPost({status})`にリネーム。`--status`表示も画像有無を表示するよう更新。
+  2. **WP-026/027/028 再公開**: `--status`で0件・WP REST APIで`unknown_post`と判明し、過去に`draft_saved`と記録されていたが実際はWP未作成だったことが確定。各記事にメディアライブラリ既存画像（ID244/243/242）をアイキャッチとして追加し、`draft_status`を`qa_passed`にリセット。ゆうさんが`--run`を手動実行し3本ともアイキャッチ付きで公開完了（published、post URLをCSV記録）。
+  3. **Threads送客ドラフト17本をキュー追加**: `content/threads_sokyaku_drafts.md`のWP-005〜019送客文をTQ-032〜048として`threads_posts_queue.csv`に追加（2026-08-21〜26、1日3本、status=approved）。旧ドメインURLはainetbiz.comで統一済み（TASK-054）。
+  4. **DEV_RIO_602/603 アクティブ化**: n8n REST APIで設計を確認し、両ワークフローとも最終ノードが「Stop Before Send」→「Result (draft only)」でLINE送信ノードが存在しない（下書き生成のみ・自動DM送信なし）ことを確認。CLAUDE.md「自動DM送信禁止」に抵触しないため、versionId付きでactivate（両方active:true）。
+  5. **.gitignore**: `node_modules/`・`*.log`を追加（誤混入防止）。
+  6. **origin/mainマージ**: PR#78がCONFLICTINGだったためmainを取り込み。TASK-048の番号衝突（現ブランチ「WP3本」vs main PR#79「PDCA自動化」）を解消し、main版TASK-048を維持・現ブランチ版をTASK-059にリネーム。CLAUDE.md本番投稿ルール改定（PR#79・API媒体は自動投稿OK）も取り込み。
+- **影響範囲**: `scripts/wp_queue_runner.js`・`.gitignore`・`threads_posts_queue.csv`・`wordpress_posts_queue.csv`・WP-026/027/028.md を変更。WordPress本番3記事を公開（ゆうさん実行）。n8n本番の602/603をアクティブ化（下書き生成のみ、外部送信なし）。
+- **pre-deploy-qa 判定**: 602/603アクティブ化は下書き生成のみで外部送信を伴わないため対象外。WP公開はゆうさん本人が最終実行。
+- **確認事項**: (1) PR#78・PR#51のマージ。(2) 602/603は下書き生成のみだが、生成物のSlack通知先・Google Sheets記録が想定通りか次回セッションで確認。(3) WP-029のアフィリリンク差し替えは採善策のA8提携承認待ち。
+
 
 <!-- 新しいタスクは上記フォーマットに従ってここに追加する -->
