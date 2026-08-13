@@ -42,7 +42,12 @@ const DRAFTS_DIR = path.join(
 
 function parseArgs() {
   const a = process.argv.slice(2);
-  return { status: a.includes('--status'), run: a.includes('--run') };
+  const updateIdx = a.indexOf('--update');
+  return {
+    status: a.includes('--status'),
+    run: a.includes('--run'),
+    updateId: updateIdx !== -1 ? a[updateIdx + 1] : null,
+  };
 }
 
 // ---- 簡易CSVパーサー（threads_queue_runner.js と同じ実装） ----
@@ -261,6 +266,24 @@ async function createDraftPost({ token, title, content }) {
   return json;
 }
 
+// 既存の下書き(draft)を、原稿ファイルの最新内容で上書きする。
+// 公開状態(publish)の記事には絶対に使わない（呼び出し側でdraft_statusを確認すること）。
+async function updateDraftPost({ token, postId, title, content }) {
+  const res = await fetch(`${API_BASE}/posts/${postId}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({ title, content, status: 'draft' }),
+  });
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(`WP API ${res.status}: ${JSON.stringify(json)}`);
+  }
+  return json;
+}
+
 function printStatus(readyRows) {
   console.log('\n==================== WP Queue Runner 状態 ====================');
   console.log(`draft_status=qa_passed（API下書き化待ち）件数: ${readyRows.length}`);
@@ -273,6 +296,44 @@ async function main() {
   const args = parseArgs();
   const { header, records } = loadQueue();
   const ready = records.filter((r) => r.draft_status === 'qa_passed');
+
+  if (args.updateId) {
+    const row = records.find((r) => r.id === args.updateId);
+    if (!row) {
+      console.error(`❌ ${args.updateId}: キューに見つかりません`);
+      process.exit(1);
+    }
+    if (row.draft_status === 'published') {
+      console.error(`❌ ${args.updateId}: 公開済み(published)のためこのコマンドでは更新しません`);
+      process.exit(1);
+    }
+    if (!row.wp_edit_url) {
+      console.error(`❌ ${args.updateId}: wp_edit_urlが未設定です（まだ下書き未作成）`);
+      process.exit(1);
+    }
+    const postId = row.wp_edit_url.match(/post=(\d+)/)?.[1];
+    if (!postId) {
+      console.error(`❌ ${args.updateId}: wp_edit_urlからpost IDを取得できません`);
+      process.exit(1);
+    }
+    const filePath = findDraftFile(args.updateId);
+    if (!filePath) {
+      console.error(`❌ ${args.updateId}: wp_drafts/ に原稿ファイルが見つかりません`);
+      process.exit(1);
+    }
+    const token = process.env.WP_ACCESS_TOKEN;
+    if (!token) {
+      console.error('❌ WP_ACCESS_TOKEN が未設定です（--env-file=.env.local を付けて実行してください）');
+      process.exit(1);
+    }
+    const md = fs.readFileSync(filePath, 'utf8');
+    const title = extractTitle(md);
+    const html = markdownToHtml(md);
+    console.log(`${args.updateId}: 下書き(post=${postId})を最新原稿で更新中...`);
+    await updateDraftPost({ token, postId, title, content: html });
+    console.log(`✅ ${args.updateId}: 下書き更新完了 → ${row.wp_edit_url}`);
+    return;
+  }
 
   if (args.status || !args.run) {
     printStatus(ready);
