@@ -10,7 +10,9 @@
 *.pem
 __pycache__/
 .DS_Store
+node_modules/
 logs/
+*.log
 private/
 backups/
 data/forms/

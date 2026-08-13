@@ -101,3 +101,15 @@ node scripts/daily_publish_orchestrator.js --day 2 --threads-live
 - [live] 2026-08-09T15:59:37.648Z / 餌-adhoc (adhoc)
     本投稿: https://www.threads.com/@ai_store_lab/post/Db00IL8k_dq
     リンク返信: https://www.threads.com/@ai_store_lab/post/Db00Mj9k8eU
+
+- [auto] 2026-08-11T01:01:20.161Z / TQ-002
+    本投稿: https://www.threads.com/@ai_store_lab/post/Db4W6ikk8V5
+    リンク返信: https://www.threads.com/@ai_store_lab/post/Db4W_BGk4h6
+
+- [auto] 2026-08-12T01:01:23.069Z / TQ-003
+    本投稿: https://www.threads.com/@ai_store_lab/post/Db67th_kzYg
+    リンク返信: https://www.threads.com/@ai_store_lab/post/Db67yH7kwJG
+
+- [auto] 2026-08-13T01:01:22.522Z / TQ-004
+    本投稿: (permalink取得失敗)
+    リンク返信: https://www.threads.com/@ai_store_lab/post/Db9glBXE5PX
