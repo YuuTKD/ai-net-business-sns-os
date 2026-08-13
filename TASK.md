@@ -549,14 +549,21 @@
 - **期限**: 2026-08-10
 - **備考**: ゆうさん指示「有料プラン後以外の提案は全て今から行なって！」を受けて実行。①WP新記事7本（WP-016〜022）を執筆・qa_passed（A8実リンク差し替え済み）。②A8.net新規承認済み：KANBEI SIGN（A8-004）・リピッテ（A8-005）をaffiliate_link_library_v2.csvに追加。③楽天アフィリリンクRKT-005〜021（17件）取得・rakuten_link_library.csvに追加・n8n DEV_RIO_705 Codeノードに転記。④WP-016〜022をWordPressに下書き作成（wp_queue_runner.js）→ゆうさんが全件公開完了（2026-08-10）。⑤published_url全件をwordpress_posts_queue.csvに記録（post=104〜110）。WP-016/018/020はaffiliate_link_status=pendingのまま公開済み（後日リンク追記必要）。
 
-### TASK-048: WP記事3本執筆・Threadsキュー31本完成・1日3本スケジュール化
-- **担当**: Claude Code
-- **ステータス**: DONE
-- **ブランチ**: feature/brain-registration-note-004-005-006
-- **PR**: （作成予定）
-- **期限**: 2026-08-10
-- **備考**: ①TQ-022〜031（8/31〜9/9分）をthreads_posts_queue.csvに追加（WP-023/024/025新記事への送客文＋既存記事の別角度再活用）。②ゆうさん指示「1日3本」を受けてTQ-002〜031を全件リスケ（8/11〜8/20の10日間、各日3本）。③WP-026（青色申告初めてのやり方・A8-001）、WP-027（勤怠管理ソフト選び方・MOSHIMO-002）、WP-028（予約管理システム比較・A8-005）を執筆・qa_passed状態でwordpress_posts_queue.csvに追加（WP下書き作成はwp_queue_runner.js実行待ち）。
-
+### TASK-048: コンテンツPDCA自動化フロー構築（全媒体メトリクス収集→分析→改善提案）
+- **担当**: Claude Code（エンジニア）
+- **ステータス**: IN_PROGRESS（PR #79 マージ済み・ゆうさんによるn8nインポート/セットアップ実施済み申告・詳細確認中）
+- **ブランチ**: claude/line-auto-delivery-activation-mehypj
+- **PR**: #79（マージ済み）
+- **期限**: -
+- **備考**: 当初「LINE自動配信（602/603）」の現状確認から着手したが、ゆうさんの真の要望は「Threads/WordPress/note/Brain/楽天room/Amazonアソシエイト/Xの全媒体パフォーマンスを毎日分析し、成功パターン抽出・改善提案・来週の投稿計画を自動生成してライターエージェントに渡すPDCAサイクル」と判明。旧LINE版602/603（Sales Funnel/Retention）は削除しSLACK版に置き換えた上で、602/603をコンテンツ分析・改善エンジンとして再設計した。
+  - **CLAUDE.md改定**（2026-08-12）: 本番投稿ルールを「投稿ごとの承認制」から「媒体別の自動化可否」に変更。API経由投稿が可能な媒体（Threads/WordPress/Brain）は品質ゲート（sns-post-quality-check PASS等）を条件に自動投稿OK、Xは自動化ポリシー違反のため引き続き手動のみ、note/Substackは個別判断とした。
+  - **DEV_RIO_401_Metrics_Ingestion_Full.json**（新規）: 全媒体メトリクスの集約フロー。Gumroad/BrainはAPI自動取得、Threads/WordPress/note/楽天room/AmazonアソシエイトはGoogle Sheets手入力とのハイブリッド方式。
+  - **DEV_RIO_602_Content_Analysis.json**（再設計）: 401からのメトリクスを受け取り、高反応/低反応投稿をエンゲージメント率でランキングし、ClaudeAPIで成功パターン3件抽出＋低反応投稿への改善提案を生成。Slack #all-daily-report に通知。**実装時のjsCode構文エラー（`return [{ json": d, ...}]` の不正なオブジェクトリテラル）を本セッションで修正済み**（全JSONファイルのjq構文検証をパス）。
+  - **DEV_RIO_603_Content_Improvement.json**（再設計）: 602の分析結果を受け取り、ライターエージェント向けの具体的編集案・成功パターンテンプレート・来週の投稿計画をClaudeAPIで生成、Slack通知＋Google Sheetsトラッキング。
+  - **DEV_RIO_SETUP_GoogleSheets.json**（新規）: Google Sheets APIで分析用スプレッドシート（daily_metrics/note_data/threads_data/wordpress_data/rakuten_data/amazon_data/brain_data の7シート）を自動作成するセットアップ用ワークフロー。
+  - **残タスク（ゆうさん側・screen操作/Credential）**: (1) 4ワークフローJSONのn8n UIインポート、(2) SETUP実行→Google Sheets ID取得、(3) 環境変数設定（GOOGLE_SHEETS_METRICS_ID・WORDPRESS_BLOG_URL・Slack Webhook URL）、(4) Anthropic API Credentialの割当確認、(5) Manual Triggerでのテスト実行、(6) 問題なければ401をスケジューラーON（`scheduler-readiness-check` Skill でREADY判定後、ゆうさんに確認してから）。RUNBOOK_n8n_metrics_activation.md の運用分担（Secret登録・Activateはゆうさんのみ）を踏襲。
+  - **2026-08-12追記**: ゆうさんより「したよ」との報告あり。具体的にどの工程（インポート／Sheetsセットアップ／Credential設定／テスト実行）まで完了したかは対話上明示されておらず、Claude Code側にn8n・Google Sheetsへの直接アクセス手段がないため実施内容を機械的に検証できていない。次回セッションでゆうさんに完了工程の一覧確認を行うか、画面操作オペレーターに実行結果のスクリーンショット確認を依頼して裏取りすること。Activate（スケジューラーON）は本タスクの完了報告だけでは実施しない——`scheduler-readiness-check`でREADY判定＋ゆうさんの明示承認が別途必要。
+  - **2026-08-12追記（QAセキュリティ担当のpre-deploy-qa/scheduler-readiness-check判定＋修正）**: ゆうさんの「手動確認は後回し、それ以外を進めて」指示を受け、QAセキュリティ担当にPR #79内容の判定を依頼。**pre-deploy-qa=要確認**（STOP該当なし。Secret直書き・active:true・自動投稿ノード等は無し）、**scheduler-readiness-check（401_Full）=NOT_READY**（fail-stop=DEV_RIO_402連携未結線／Slack通知disabled／Google Sheets読み取りが実装スタブ／602への受け渡しがnoOpで未結線）。指摘のうちscreen操作・Secretを要しない4点を本セッションで修正：(1) `DEV_RIO_401_Metrics_Ingestion_Full.json`: Threads/note/楽天room/Amazon向けの未使用ブラウザ自動操作スタブ「Define Browser Tasks」ノードを削除（Google Sheets手入力方針と矛盾し、X凍結と同型の automation policy 抵触リスクがあったため）。Google Sheets実読み取りノード5件（note/threads/wordpress/rakuten/amazon_data、`Sheets: <name>`）を新規追加し、`Merge Google Sheets Data`をperiod_start日付一致行を取得する実装に置き換え（該当行なしは0＋`sheets_rows_found`フラグで明示、捏造なし）。Brain APIヘッダーの式評価漏れ（`=`プレフィックス欠落）を修正。トリガーノードの`parameters`キー重複（パーサ依存の未定義動作）を解消。末尾の`noOp`を実際に602のWebhook(`rio-602-analysis`)へPOSTする`Trigger DEV_RIO_602 Analysis`ノード（`disabled:true`・要`N8N_WEBHOOK_BASE_URL`環境変数設定）に置換。(2) `DEV_RIO_602_Content_Analysis.json`: 同種のトリガーノード`parameters`キー重複を解消。末尾の`Prepare for Writer Agent`（ローカル整形のみ）の後段に、603のWebhook(`rio-603-improvement`)へ実際にPOSTする`Trigger DEV_RIO_603 Improvement`ノードを追加（同じくdisabled）。(3) `DEV_RIO_603_Content_Improvement.json`: トリガーノード`parameters`キー重複を解消。(4) `CLAUDE.md` L23: 旧セクション名「本番投稿・公開の承認制ルール」への孤立参照を現行の「本番投稿・公開のルール」に修正。全ファイル修正後にjq構文検証＋ノードID/名前の重複なし・接続の参照整合性をPythonスクリプトで検証済み。**未解決のまま残す事項**：①cost_anthropic/cost_browser/owner_hoursを入力するGoogle Sheets列が未整備（暫定0固定、別タスクで追加検討）、②旧ルールにあった「n8n等による完全無人スケジュール自動投稿は実行しない」という明文条項がCLAUDE.md改定で削除されており、新ポリシー「API経由媒体は自動投稿OK」が投稿都度の人間確認なしの完全無人投稿まで含む意図か、ゆうさんに次回直接確認が必要（現状602/603は投稿APIを呼ばず分析・提案のみのため実害はないが、解釈の幅を残さないよう確認推奨）、③DEV_RIO_402（エラーワークフロー）との連携はn8n UI側の「ワークフロー設定」画面でのみ行え、JSON側からは設定不可なため引き続きゆうさんの画面操作が必要。
 ### TASK-049: 全24記事の購買心理リライト・SEO基盤整備・収益導線強化（夜間セッション）
 - **担当**: Claude Code
 - **ステータス**: DONE（記事改良・SEO登録・技術検証）／ TODO（WordPress/n8n有料化はゆうさん対応待ち、2026-08-12予定）
@@ -730,5 +737,13 @@
 - **影響範囲**: n8n Cloud本番インスタンス（yuu1988）。DEV_RIO_401_Metrics_Ingestion_Fullが日次自動実行（スケジュール有効化）。
 - **残課題**: (1) brain_dataシートへの書き込みノードが未実装（Brain API整備後に追加予定）。(2) WordPress AuthノードのURL（`https://example.com` プレースホルダー）は未使用のため影響なし。
 - **Geminiパネル活用**: Google Sheetsのタブ追加はGeminiパネル（Buildモード）経由で実施。直接UI操作より10倍速く完了。今後同様の操作は全てGeminiパネル経由で実施する方針に確定（memory: feedback_use_gemini_for_sheets.md 参照）。
+### TASK-059: WP記事3本執筆・Threadsキュー31本完成・1日3本スケジュール化
+- **担当**: Claude Code
+- **ステータス**: DONE
+- **ブランチ**: feature/brain-registration-note-004-005-006
+- **PR**: （作成予定）
+- **期限**: 2026-08-10
+- **備考**: ①TQ-022〜031（8/31〜9/9分）をthreads_posts_queue.csvに追加（WP-023/024/025新記事への送客文＋既存記事の別角度再活用）。②ゆうさん指示「1日3本」を受けてTQ-002〜031を全件リスケ（8/11〜8/20の10日間、各日3本）。③WP-026（青色申告初めてのやり方・A8-001）、WP-027（勤怠管理ソフト選び方・MOSHIMO-002）、WP-028（予約管理システム比較・A8-005）を執筆・qa_passed状態でwordpress_posts_queue.csvに追加（WP下書き作成はwp_queue_runner.js実行待ち）。
+
 
 <!-- 新しいタスクは上記フォーマットに従ってここに追加する -->

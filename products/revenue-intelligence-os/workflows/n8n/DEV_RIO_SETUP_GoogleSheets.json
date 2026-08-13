@@ -1,0 +1,110 @@
+{
+  "name": "DEV_RIO_SETUP_GoogleSheets",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "setup-sheets-0001",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Google Sheets API でスプレッドシート作成\n// 実装: Google Drive API を使用\nconst config = {\n  spreadsheet_title: 'RIO Metrics - Daily Content Analysis',\n  spreadsheet_id: null, // 作成後に設定\n  sheets: [\n    {\n      title: 'daily_metrics',\n      headers: ['date', 'note_sales', 'note_views', 'threads_impressions', 'threads_clicks', 'wordpress_pv', 'wordpress_clicks', 'rakuten_sales', 'rakuten_views', 'amazon_clicks', 'amazon_conversions', 'brain_sales', 'cost_anthropic', 'cost_browser', 'owner_hours']\n    },\n    {\n      title: 'note_data',\n      headers: ['date', 'sales', 'views', 'conversion_rate']\n    },\n    {\n      title: 'threads_data',\n      headers: ['date', 'impressions', 'clicks', 'engagement_rate']\n    },\n    {\n      title: 'wordpress_data',\n      headers: ['date', 'pv', 'clicks', 'ctr']\n    },\n    {\n      title: 'rakuten_data',\n      headers: ['date', 'sales', 'views']\n    },\n    {\n      title: 'amazon_data',\n      headers: ['date', 'clicks', 'conversions']\n    },\n    {\n      title: 'brain_data',\n      headers: ['date', 'sales']\n    }\n  ]\n};\nreturn [{ json: config }];"
+      },
+      "id": "setup-sheets-0002",
+      "name": "Config Sheets Structure",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "resource": "spreadsheet",
+        "operation": "create",
+        "title": "={{ $json.spreadsheet_title }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2"
+      },
+      "id": "setup-sheets-0003",
+      "name": "Create Spreadsheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.2,
+      "position": [440, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 作成したスプレッドシートの ID を抽出\nconst result = $input.first().json;\nconst config = $('Config Sheets Structure').first().json;\n\nlet spreadsheet_id = null;\nlet create_error = null;\n\nif (result.spreadsheetId) {\n  spreadsheet_id = result.spreadsheetId;\n} else {\n  create_error = 'spreadsheet_creation_failed';\n}\n\nreturn [{ json: {\n  ...config,\n  spreadsheet_id,\n  create_error,\n  spreadsheet_url: spreadsheet_id ? `https://docs.google.com/spreadsheets/d/${spreadsheet_id}/edit` : null\n} }];"
+      },
+      "id": "setup-sheets-0004",
+      "name": "Extract Spreadsheet ID",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 各シートのヘッダー行を入力\nconst d = $input.first().json;\n\nif (!d.spreadsheet_id) {\n  return [{ json: { ...d, note: 'スプレッドシート作成失敗のため、スキップ' } }];\n}\n\n// 複数のシートにヘッダー行を追加する HTTP リクエストを準備\nconst requests = d.sheets.map((sheet, idx) => ({\n  updateCells: {\n    range: {\n      sheetId: idx,\n      rowIndex: 0,\n      columnIndex: 0\n    },\n    rows: [\n      {\n        values: sheet.headers.map(h => ({\n          userEnteredValue: {\n            stringValue: h\n          },\n          userEnteredFormat: {\n            textFormat: { bold: true },\n            backgroundColor: { red: 0.2, green: 0.2, blue: 0.2 }\n          }\n        }))\n      }\n    ],\n    fields: 'userEnteredValue,userEnteredFormat'\n  }\n}));\n\nreturn [{ json: { ...d, batch_update_requests: requests } }];"
+      },
+      "id": "setup-sheets-0005",
+      "name": "Prepare Header Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://sheets.googleapis.com/v4/spreadsheets/{{ $json.spreadsheet_id }}/batchUpdate",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleSheetsOAuth2",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"requests\": {{ JSON.stringify($json.batch_update_requests) }} }",
+        "options": { "timeout": 30000 }
+      },
+      "id": "setup-sheets-0006",
+      "name": "Apply Headers (Sheets API)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1100, 300],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 完了メッセージ\nconst d = $input.first().json;\n\nconst result = {\n  status: 'COMPLETED',\n  spreadsheet_id: d.spreadsheet_id,\n  spreadsheet_url: d.spreadsheet_url,\n  sheets_count: d.sheets.length,\n  sheets_names: d.sheets.map(s => s.title),\n  next_step: `n8n 環境変数に以下を設定してください:\\nGOOGLE_SHEETS_METRICS_ID=${d.spreadsheet_id}`,\n  note: 'セットアップ完了。401/602/603 で使用可能です。'\n};\n\nreturn [{ json: result }];"
+      },
+      "id": "setup-sheets-0007",
+      "name": "Completion Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 300]
+    },
+    {
+      "parameters": {},
+      "id": "setup-sheets-0008",
+      "name": "Result",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [1500, 300]
+    }
+  ],
+  "connections": {
+    "Manual Trigger": { "main": [[{ "node": "Config Sheets Structure", "type": "main", "index": 0 }]] },
+    "Config Sheets Structure": { "main": [[{ "node": "Create Spreadsheet", "type": "main", "index": 0 }]] },
+    "Create Spreadsheet": { "main": [[{ "node": "Extract Spreadsheet ID", "type": "main", "index": 0 }]] },
+    "Extract Spreadsheet ID": { "main": [[{ "node": "Prepare Header Rows", "type": "main", "index": 0 }]] },
+    "Prepare Header Rows": { "main": [[{ "node": "Apply Headers (Sheets API)", "type": "main", "index": 0 }]] },
+    "Apply Headers (Sheets API)": { "main": [[{ "node": "Completion Summary", "type": "main", "index": 0 }]] },
+    "Completion Summary": { "main": [[{ "node": "Result", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": {
+    "description": "DEV_RIO_SETUP_GoogleSheets セットアップワークフロー。Google Sheets を自動作成し、全媒体用のシート構造を構築。実行後、スプレッドシート ID が生成されます。"
+  },
+  "tags": [{ "name": "SETUP" }, { "name": "INFRASTRUCTURE" }]
+}

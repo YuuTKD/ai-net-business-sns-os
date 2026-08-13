@@ -1,5 +1,5 @@
 {
-  "name": "DEV_RIO_603_Retention_LINE",
+  "name": "DEV_RIO_603_Retention_SLACK",
   "nodes": [
     {
       "parameters": {},
@@ -18,7 +18,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// DEV_RIO_603 Retention【LINE 継続営業・下書き準備】\n// 既顧客への定期的な付加価値提供メッセージを LINE で準備。\nconst i = $input.first().json;\nreturn [{ json: {\n  customer_id: i.customer_id ?? 'cust-' + Math.random().toString(36).substr(2, 9),\n  line_user_id: i.line_user_id ?? 'U' + Math.random().toString(36).substr(2, 9),\n  customer_segment: i.customer_segment ?? 'general',\n  months_as_customer: i.months_as_customer ?? 6,\n  platform: 'line',\n  action_type: 'send_retention_offer'\n} }];"
+        "jsCode": "// DEV_RIO_603 Retention【Slack 継続営業・下書き準備】\n// 既顧客への定期的な付加価値提供メッセージを Slack で準備。\nconst i = $input.first().json;\nreturn [{ json: {\n  customer_id: i.customer_id ?? 'cust-' + Math.random().toString(36).substr(2, 9),\n  slack_user_id: i.slack_user_id ?? 'U' + Math.random().toString(36).substr(2, 9),\n  customer_segment: i.customer_segment ?? 'general',\n  months_as_customer: i.months_as_customer ?? 6,\n  platform: 'slack',\n  action_type: 'send_retention_offer'\n} }];"
       },
       "id": "b1a10603-0000-4000-8000-000000000002",
       "name": "Collect Customer Input",
@@ -65,7 +65,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// Claude応答をパース。顧客セグメント別の継続営業下書き生成\nconst input = $input.first().json;\nconst ctx = $('Collect Customer Input').first().json;\nlet offers = [];\nlet parse_error = null;\nif (input.error) {\n  parse_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    const match = cleaned.match(/\\[[\\s\\S]*\\]/);\n    offers = JSON.parse(match ? match[0] : cleaned);\n    if (!Array.isArray(offers) || offers.length === 0) throw new Error('offers missing/empty');\n  } catch (e) {\n    parse_error = 'parse_failed: ' + e.message;\n  }\n}\nif (parse_error) offers = [{ offer_type: '手動作成', retention_message: '（AI応答の取得/解析に失敗。手動で継続営業オファーを作成してください）' }];\nreturn [{ json: {\n  customer_id: ctx.customer_id,\n  line_user_id: ctx.line_user_id,\n  customer_segment: ctx.customer_segment,\n  retention_offers: offers,\n  state: 'WAITING_APPROVAL',\n  published: false,\n  draft_error: parse_error,\n  note: 'ドライラン。顧客継続営業下書きのみ。自動送信はしない。人間が確認して手動実行。'\n} }];"
+        "jsCode": "// Claude応答をパース。顧客セグメント別の継続営業下書き生成\nconst input = $input.first().json;\nconst ctx = $('Collect Customer Input').first().json;\nlet offers = [];\nlet parse_error = null;\nif (input.error) {\n  parse_error = 'anthropic_api_error: ' + JSON.stringify(input.error).slice(0, 300);\n} else {\n  try {\n    const text = input.content && input.content[0] && input.content[0].text;\n    if (!text) throw new Error('no text in response');\n    const cleaned = text.trim().replace(/^```json\\s*/i, '').replace(/```\\s*$/, '');\n    const match = cleaned.match(/\\[[\\s\\S]*\\]/);\n    offers = JSON.parse(match ? match[0] : cleaned);\n    if (!Array.isArray(offers) || offers.length === 0) throw new Error('offers missing/empty');\n  } catch (e) {\n    parse_error = 'parse_failed: ' + e.message;\n  }\n}\nif (parse_error) offers = [{ offer_type: '手動作成', retention_message: '（AI応答の取得/解析に失敗。手動で継続営業オファーを作成してください）' }];\nreturn [{ json: {\n  customer_id: ctx.customer_id,\n  slack_user_id: ctx.slack_user_id,\n  customer_segment: ctx.customer_segment,\n  retention_offers: offers,\n  state: 'WAITING_APPROVAL',\n  published: false,\n  draft_error: parse_error,\n  note: 'ドライラン。顧客継続営業下書きのみ。自動送信はしない。人間が確認して手動実行。'\n} }];"
       },
       "id": "b1a10603-0000-4000-8000-000000000005",
       "name": "Stop Before Send",
@@ -92,6 +92,6 @@
   "settings": { "executionOrder": "v1" },
   "active": false,
   "pinData": {},
-  "meta": { "description": "DEV_RIO_603 Retention. 既顧客セグメント別にLINE 継続営業下書きを生成。ドライラン・手動承認。自動送信なし。" },
-  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "LINE" }, { "name": "RETENTION" }]
+  "meta": { "description": "DEV_RIO_603 Retention. 既顧客セグメント別に Slack 継続営業下書きを生成。ドライラン・手動承認。自動送信なし。" },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "SLACK" }, { "name": "RETENTION" }]
 }

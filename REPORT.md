@@ -22,6 +22,26 @@
 
 ## 報告ログ
 
+### REPORT-045: TASK-048 QA判定と実装ギャップ修正（401 Google Sheets実装・401→602→603結線・式評価バグ）
+- **日時**: 2026-08-12
+- **担当**: Claude Code（エンジニア）／QAセキュリティ担当（判定）
+- **関連タスク**: TASK-048
+- **PR**: （作成予定）
+- **変更内容**: PR #79マージ後、CLAUDE.mdの作業前チェックリストに従いQAセキュリティ担当へpre-deploy-qa／scheduler-readiness-check判定を依頼。判定は pre-deploy-qa=要確認（STOP該当なし）、scheduler-readiness-check（401_Full）=NOT_READYで、実装ギャップ（Google Sheets読み取り未実装のスタブ・401→602の未結線・Brain認証ヘッダーの式評価漏れ・トリガーノードのparametersキー重複・自動化ポリシー抵触リスクのあるブラウザ操作スタブ）が指摘された。指摘のうちscreen操作・Secret登録を要しない範囲を本セッションで修正：`DEV_RIO_401_Metrics_Ingestion_Full.json`のGoogle Sheets読み取りを実ノード5件（note/threads/wordpress/rakuten/amazon_data、period_start日付一致行を取得、未取得は0＋フラグで明示）に置き換え、未使用の「Define Browser Tasks」スタブを削除、Brain APIヘッダーの`=`プレフィックス欠落を修正、401/602/603のトリガーノードのparametersキー重複を解消、401→602・602→603の連携をnoOpから実際のWebhook POSTノード（disabled・要環境変数設定）に置き換え。CLAUDE.md L23の旧セクション名参照も現行名に修正。全ファイルをjq構文検証＋Pythonでノードid/name重複・connections参照整合性を検証済み。
+- **影響範囲**: `products/revenue-intelligence-os/workflows/n8n/DEV_RIO_401_Metrics_Ingestion_Full.json`・`DEV_RIO_602_Content_Analysis.json`・`DEV_RIO_603_Content_Improvement.json`、`CLAUDE.md`、`TASK.md`。すべてのHTTPトリガーノードは`disabled:true`のまま。n8n実機への反映・Credential登録・Activateは未実施。
+- **pre-deploy-qa 判定**: 要確認（QAセキュリティ担当による判定。STOP該当なし。詳細はTASK-048備考およびQA担当ログ`obsidian/AI-NET-BUSINESS/AI_EMPLOYEES/07_QAセキュリティ.md`参照）
+- **確認事項**: (1) cost_anthropic/cost_browser/owner_hours用のGoogle Sheets入力列が未整備（暫定0固定）、(2) 旧CLAUDE.mdにあった「完全無人スケジュール自動投稿は実行しない」条項の削除意図をゆうさんに確認する必要あり、(3) DEV_RIO_402エラーワークフローとの連携はn8n UI上でのみ設定可能なため別途ゆうさんの画面操作が必要。
+
+### REPORT-044: コンテンツPDCA自動化フロー構築（401拡張＋602/603再設計＋Google Sheetsセットアップ）
+- **日時**: 2026-08-12
+- **担当**: Claude Code（エンジニア）
+- **関連タスク**: TASK-048
+- **PR**: （作成予定）
+- **変更内容**: 全媒体（Threads/WordPress/note/Brain/楽天room/Amazonアソシエイト/Gumroad）のパフォーマンスを毎日自動収集・分析し、成功パターン抽出と改善提案をライターエージェントに渡すPDCA自動化フローを構築。(1) `DEV_RIO_401_Metrics_Ingestion_Full.json`新規作成：Gumroad/BrainはAPI自動取得、その他はGoogle Sheets手入力のハイブリッド収集。(2) `DEV_RIO_602_Content_Analysis.json`を「LINEセールスファネル」から「投稿分析エンジン」に再設計：高反応/低反応投稿ランキング→Claude APIで成功パターン3件抽出＋改善提案生成→Slack通知。(3) `DEV_RIO_603_Content_Improvement.json`を「LINEリテンション」から「改善実行計画エンジン」に再設計：602の分析結果からライター向け具体編集案・成功パターンテンプレート・来週の投稿計画をClaude APIで生成。(4) `DEV_RIO_SETUP_GoogleSheets.json`新規作成：分析用スプレッドシート（7シート構成）をGoogle Sheets APIで自動生成。(5) 602のjsCode内に構文エラー（`return [{ json": d, ...}]`という不正なオブジェクトリテラル）があったため本セッションで修正、全JSONファイルがjq構文検証をパスすることを確認。あわせてCLAUDE.mdの本番投稿ルールを、投稿ごとの個別承認制から「API経由投稿可能な媒体（Threads/WordPress/Brain）は品質ゲート通過を条件に自動投稿OK、X/note等は従来どおり手動または個別判断」という媒体別ポリシーに改定した（2026-08-12改定）。
+- **影響範囲**: `products/revenue-intelligence-os/workflows/n8n/`配下の新規3ファイル・既存2ファイル再設計。CLAUDE.md本番投稿ルール節を改定。実際のn8nインポート・Credential登録・Activateは未実施（ゆうさん側の作業として残置）。
+- **pre-deploy-qa 判定**: 対象外（JSON下書き・ドキュメント改定のみ。n8nへの実接続・Activateは別途ゆうさん承認が必要）
+- **確認事項**: n8n UIへの4ワークフローインポート、Google Sheets ID取得、Slack Webhook URL・Anthropic Credential設定、Manual実行でのテスト、`scheduler-readiness-check` Skillでの READY判定取得後にスケジューラーON、が残タスク。X/note向け自動化ポリシーの解釈に疑問があれば運用開始前にゆうさんへ再確認。
+
 ### REPORT-043: note記事の目標文字数を価格帯別5段階に精緻化（WordPress/noteの基準分離）
 - **日時**: 2026-08-04
 - **担当**: Claude Code（CEO代理・SEOアーキテクト/編集長）

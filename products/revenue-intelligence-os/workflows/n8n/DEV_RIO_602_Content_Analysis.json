@@ -1,0 +1,201 @@
+{
+  "name": "DEV_RIO_602_Content_Analysis",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "rio-602-analysis",
+        "method": "POST"
+      },
+      "id": "c2a10602-0000-4000-8000-000000000001",
+      "name": "Trigger from DEV_RIO_401",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [0, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 401 からのメトリクスデータを受け取り、分析対象を抽出\nconst metrics = $input.first().json;\n\n// 投稿ごとのパフォーマンスデータを抽出\nconst analysis_period = metrics.period;\nconst platforms = metrics.platform_breakdown;\n\n// 各媒体の投稿データ\nconst posts_to_analyze = {\n  threads: {\n    platform: 'Threads',\n    impressions: platforms.threads.impressions || 0,\n    clicks: platforms.threads.clicks || 0,\n    engagement_rate: platforms.threads.impressions > 0 ? ((platforms.threads.clicks / platforms.threads.impressions) * 100).toFixed(2) : 0\n  },\n  note: {\n    platform: 'note',\n    views: platforms.note.views || 0,\n    sales: platforms.note.sales || 0,\n    conversion_rate: platforms.note.views > 0 ? ((platforms.note.sales / platforms.note.views) * 100).toFixed(2) : 0\n  },\n  wordpress: {\n    platform: 'WordPress',\n    pv: platforms.wordpress.pv || 0,\n    clicks: platforms.wordpress.clicks || 0,\n    ctr: platforms.wordpress.pv > 0 ? ((platforms.wordpress.clicks / platforms.wordpress.pv) * 100).toFixed(2) : 0\n  },\n  rakuten: {\n    platform: '楽天room',\n    views: platforms.rakuten.views || 0,\n    sales: platforms.rakuten.sales || 0\n  },\n  amazon: {\n    platform: 'Amazon',\n    clicks: platforms.amazon.clicks || 0,\n    conversions: platforms.amazon.conversions || 0\n  }\n};\n\nreturn [{ json: { period: analysis_period, posts_to_analyze } }];"
+      },
+      "id": "c2a10602-0000-4000-8000-000000000002",
+      "name": "Extract Analysis Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 高反応投稿と低反応投稿を特定\nconst data = $input.first().json;\nconst posts = data.posts_to_analyze;\n\n// エンゲージメント率でランキング\nconst rankings = [\n  { ...posts.threads, rank: 1, score: posts.threads.engagement_rate },\n  { ...posts.note, rank: 2, score: posts.note.conversion_rate },\n  { ...posts.wordpress, rank: 3, score: posts.wordpress.ctr }\n].sort((a, b) => b.score - a.score);\n\nconst high_performers = rankings.slice(0, 3);\nconst low_performers = rankings.slice(3);\n\nreturn [{ json: {\n  period: data.period,\n  high_performers,\n  low_performers,\n  all_posts: posts\n} }];"
+      },
+      "id": "c2a10602-0000-4000-8000-000000000003",
+      "name": "Identify High/Low Performers",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Claude API を使用して、高反応投稿から共通パターンを抽出\nconst data = $input.first().json;\nconst high_perf = data.high_performers;\n\nconst prompt = `以下は、最近の投稿の中で反応が最も高かった投稿です。\\n\\n${JSON.stringify(high_perf, null, 2)}\\n\\n\\nこれらの投稿に共通する要素（テーマ・文体・構成・ターゲット）を分析してください。次の投稿で活かすべき「成功パターン」を 3 つ抽出してください。\\n\\n出力形式（JSON）:\\n[\\n  { \"pattern\": \"成功パターン1\", \"reason\": \"理由\", \"example\": \"具体例\" },\\n  { \"pattern\": \"成功パターン2\", \"reason\": \"理由\", \"example\": \"具体例\" },\\n  { \"pattern\": \"成功パターン3\", \"reason\": \"理由\", \"example\": \"具体例\" }\\n]`;\n\nconst anthropic_body = {\n  model: 'claude-haiku-4-5',\n  max_tokens: 1024,\n  messages: [{ role: 'user', content: prompt }]\n};\n\nreturn [{ json: { ...data, anthropic_body, prompt } }];"
+      },
+      "id": "c2a10602-0000-4000-8000-000000000004",
+      "name": "Build Success Pattern Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 低反応投稿の改善案を Claude に生成させる\nconst data = $input.first().json;\nconst low_perf = data.low_performers;\n\nconst prompt = `以下は、最近の投稿の中で反応が低かった投稿です。\\n\\n${JSON.stringify(low_perf, null, 2)}\\n\\n\\nこれらの投稿を改善するために、以下を提案してください：\\n1. タイトル/文頭を改善した場合の新案\\n2. 文体・トーン・構成の変更提案\\n3. ターゲットまたはテーマの見直し\\n\\n出力形式（JSON）:\\n[\\n  { \"platform\": \"媒体名\", \"improvement\": \"改善内容\", \"new_title\": \"新しいタイトル例\", \"expected_impact\": \"期待される効果\" }\\n]`;\n\nconst anthropic_body = {\n  model: 'claude-haiku-4-5',\n  max_tokens: 1024,\n  messages: [{ role: 'user', content: prompt }]\n};\n\nreturn [{ json: { ...data, improvement_body: anthropic_body } }];"
+      },
+      "id": "c2a10602-0000-4000-8000-000000000005",
+      "name": "Build Improvement Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.anthropic_body }}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "c2a10602-0000-4000-8000-000000000006",
+      "name": "Claude: Extract Success Patterns",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [880, 200],
+      "credentials": {
+        "anthropicApi": { "id": "gSjvXXaj0OLWBIza", "name": "Anthropic account" }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json.improvement_body }}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "c2a10602-0000-4000-8000-000000000007",
+      "name": "Claude: Generate Improvements",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [880, 400],
+      "credentials": {
+        "anthropicApi": { "id": "gSjvXXaj0OLWBIza", "name": "Anthropic account" }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Claude 応答をパース（成功パターン）\nconst patterns_result = $('Claude: Extract Success Patterns').first().json;\nconst improvements_result = $('Claude: Generate Improvements').first().json;\nconst data = $input.first().json;\n\nlet success_patterns = null;\nlet improvement_suggestions = null;\nlet patterns_error = null;\nlet improvements_error = null;\n\ntry {\n  if (patterns_result?.content && patterns_result.content[0]?.text) {\n    const text = patterns_result.content[0].text;\n    const match = text.match(/\\[[\\s\\S]*\\]/);\n    success_patterns = JSON.parse(match ? match[0] : text);\n  } else {\n    patterns_error = 'patterns_parse_failed';\n  }\n} catch (e) {\n  patterns_error = 'patterns_json_error: ' + e.message;\n}\n\ntry {\n  if (improvements_result?.content && improvements_result.content[0]?.text) {\n    const text = improvements_result.content[0].text;\n    const match = text.match(/\\[[\\s\\S]*\\]/);\n    improvement_suggestions = JSON.parse(match ? match[0] : text);\n  } else {\n    improvements_error = 'improvements_parse_failed';\n  }\n} catch (e) {\n  improvements_error = 'improvements_json_error: ' + e.message;\n}\n\nif (patterns_error) success_patterns = [{ pattern: '分析失敗', reason: patterns_error }];\nif (improvements_error) improvement_suggestions = [{ platform: '不明', improvement: improvements_error }];\n\nreturn [{ json: {\n  period: data.period,\n  success_patterns,\n  improvement_suggestions,\n  high_performers: data.high_performers,\n  low_performers: data.low_performers,\n  state: 'READY_FOR_SLACK',\n  errors: { patterns: patterns_error, improvements: improvements_error }\n} }];"
+      },
+      "id": "c2a10602-0000-4000-8000-000000000008",
+      "name": "Parse Claude Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Slack 通知用に整形\nconst d = $input.first().json;\n\nconst lines = [\n  '📊 【投稿分析レポート】' + d.period,\n  '',\n  '🏆 高反応投稿 TOP 3',\n  ...d.high_performers.map(p => `  ${p.platform}: ${p.score}% (${p.impressions || p.views} 表示)`),\n  '',\n  '✨ 成功パターン',\n  ...d.success_patterns.slice(0, 3).map(p => `  • ${p.pattern}`),\n  '',\n  '⚠️ 改善が必要な投稿',\n  ...d.low_performers.map(p => `  ${p.platform}: ${p.score}% (改善案あり)`),\n  '',\n  '💡 改善提案',\n  ...d.improvement_suggestions.slice(0, 3).map(s => `  ${s.platform}: ${s.improvement}`),\n  '',\n  '👉 ライターエージェントが詳細な編集案を生成中...',\n  `📌 状態: ${d.state}`\n];\n\nreturn [{ json: { ...d, notification_text: lines.join('\\n') } }];"
+      },
+      "id": "c2a10602-0000-4000-8000-000000000009",
+      "name": "Format Slack Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1300, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "PASTE_SLACK_INCOMING_WEBHOOK_URL_HERE",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": {{ JSON.stringify($json.notification_text) }}\n}",
+        "options": { "timeout": 15000 }
+      },
+      "id": "c2a10602-0000-4000-8000-000000000010",
+      "name": "Slack Notify #all-daily-report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1500, 300],
+      "continueOnFail": true,
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// ライターエージェント呼び出しの準備\n// 分析結果を JSON で出力（DEV_RIO_603 へ webhook で渡す準備）\nconst d = $input.first().json;\nreturn [{ json: { ...d, note: '分析完了。ライターエージェント呼び出し準備完了' } }];"
+      },
+      "id": "c2a10602-0000-4000-8000-000000000011",
+      "name": "Prepare for Writer Agent",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1700, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.N8N_WEBHOOK_BASE_URL ?? 'PASTE_N8N_WEBHOOK_BASE_URL_HERE' }}/rio-603-improvement",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": { "timeout": 20000 }
+      },
+      "id": "c2a10602-0000-4000-8000-000000000012",
+      "name": "Trigger DEV_RIO_603 Improvement",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [1900, 300],
+      "continueOnFail": true,
+      "disabled": true
+    }
+  ],
+  "connections": {
+    "Trigger from DEV_RIO_401": { "main": [[{ "node": "Extract Analysis Data", "type": "main", "index": 0 }]] },
+    "Extract Analysis Data": { "main": [[{ "node": "Identify High/Low Performers", "type": "main", "index": 0 }]] },
+    "Identify High/Low Performers": {
+      "main": [
+        [
+          { "node": "Build Success Pattern Prompt", "type": "main", "index": 0 },
+          { "node": "Build Improvement Prompt", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Build Success Pattern Prompt": { "main": [[{ "node": "Claude: Extract Success Patterns", "type": "main", "index": 0 }]] },
+    "Build Improvement Prompt": { "main": [[{ "node": "Claude: Generate Improvements", "type": "main", "index": 0 }]] },
+    "Claude: Extract Success Patterns": { "main": [[{ "node": "Parse Claude Results", "type": "main", "index": 0 }]] },
+    "Claude: Generate Improvements": { "main": [[{ "node": "Parse Claude Results", "type": "main", "index": 0 }]] },
+    "Parse Claude Results": { "main": [[{ "node": "Format Slack Report", "type": "main", "index": 0 }]] },
+    "Format Slack Report": { "main": [[{ "node": "Slack Notify #all-daily-report", "type": "main", "index": 0 }]] },
+    "Slack Notify #all-daily-report": { "main": [[{ "node": "Prepare for Writer Agent", "type": "main", "index": 0 }]] },
+    "Prepare for Writer Agent": { "main": [[{ "node": "Trigger DEV_RIO_603 Improvement", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "pinData": {},
+  "meta": {
+    "description": "DEV_RIO_602 投稿分析エンジン。401からメトリクスを受け取り、高反応投稿の成功パターン抽出・低反応投稿の改善提案をClaudeで自動生成。結果をSlackに投稿後、ライターエージェントへ渡す。"
+  },
+  "tags": [{ "name": "DEV" }, { "name": "RIO" }, { "name": "ANALYSIS" }, { "name": "CONTENT_PDCA" }]
+}
