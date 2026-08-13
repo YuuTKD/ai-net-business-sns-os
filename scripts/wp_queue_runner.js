@@ -1,14 +1,15 @@
 /**
  * WordPress Queue Runner — 店主のAI時短メモ（treecosmehome.wordpress.com）
- * 「ゆうさん承認済み記事」をWordPress REST API経由で**下書きとして**作成するツール。
+ * 「ゆうさん承認済み記事」をWordPress REST API経由で投稿するツール。
  *
- * 設計方針（Threadsの自動化より慎重）:
- *   - 公開(status=publish)は絶対に行わない。常に status=draft で作成する。
- *   - 最終の公開ボタンは必ずゆうさんがwp-adminで押す。
+ * 設計方針:
+ *   - 画像（アイキャッチ）が添付されている記事 → status=publish で自動公開する。
+ *   - 画像が添付されていない記事 → 投稿せず、Slackで「画像が必要」と通知する。
+ *   - 画像の判定: Markdownファイル内に ![...](...) 形式の画像リンクが含まれること。
  *   - 新規コンテンツの生成・判断は行わない。wp_drafts/ に既に用意された
  *     Markdown原稿を、キュー(wordpress_posts_queue.csv)で draft_status=qa_passed
  *     のものだけ対象にする。
- *   - 完了後、Slack（SLACK_WEBHOOK_URL）で「下書きができました」と通知する。
+ *   - 完了後、Slack（SLACK_WEBHOOK_URL）で通知する。
  *   - cron等での無人実行はしない（手動 or Claude Codeセッション内でのみ実行）。
  *
  * 使い方:
@@ -231,6 +232,11 @@ function extractTitle(md) {
   return m ? m[1].trim() : null;
 }
 
+// Markdown内に画像リンク（![...](...) 形式）が含まれているか判定
+function hasImage(md) {
+  return /!\[.*?\]\((https?:\/\/[^\s)]+|\/[^\s)]+)\)/m.test(md);
+}
+
 async function sendSlackNotify(message) {
   const webhookUrl = process.env.SLACK_WEBHOOK_URL;
   if (!webhookUrl) {
@@ -250,14 +256,16 @@ async function sendSlackNotify(message) {
   }
 }
 
-async function createDraftPost({ token, title, content }) {
+async function createPost({ token, title, content, status, featured_image }) {
+  const params = { title, content, status };
+  if (featured_image) params.featured_image = featured_image;
   const res = await fetch(`${API_BASE}/posts/new`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: new URLSearchParams({ title, content, status: 'draft' }),
+    body: new URLSearchParams(params),
   });
   const json = await res.json();
   if (!res.ok) {
@@ -286,9 +294,14 @@ async function updateDraftPost({ token, postId, title, content }) {
 
 function printStatus(readyRows) {
   console.log('\n==================== WP Queue Runner 状態 ====================');
-  console.log(`draft_status=qa_passed（API下書き化待ち）件数: ${readyRows.length}`);
-  readyRows.forEach((r) => console.log(`  - ${r.id}: ${r.keyword}`));
-  console.log('※ 公開(publish)は行いません。常に下書き(draft)として作成し、公開はゆうさんが行います。');
+  console.log(`draft_status=qa_passed（投稿待ち）件数: ${readyRows.length}`);
+  readyRows.forEach((r) => {
+    const filePath = findDraftFile(r.id);
+    const md = filePath ? fs.readFileSync(filePath, 'utf8') : '';
+    const img = filePath && hasImage(md) ? '🖼️ 画像あり→自動公開' : '⚠️  画像なし→Slack通知のみ';
+    console.log(`  - ${r.id}: ${r.keyword} [${img}]`);
+  });
+  console.log('※ 画像あり記事は publish で自動公開。画像なし記事は Slack 通知のみ（投稿しない）。');
   console.log('================================================================\n');
 }
 
@@ -365,23 +378,36 @@ async function main() {
     }
     const html = markdownToHtml(md);
 
+    // 画像なし → Slack通知してスキップ
+    if (!hasImage(md)) {
+      console.warn(`⚠️  ${row.id}: 画像なし → スキップ（Slack通知）`);
+      await sendSlackNotify(
+        `🖼️ 画像未設定のためスキップしました: 「${title}」（${row.id}）\n画像を追加してから再実行してください。`
+      );
+      continue;
+    }
+
+    // 画像あり → 自動公開
     try {
-      console.log(`${row.id}: 下書き作成中... 「${title}」`);
-      const result = await createDraftPost({ token, title, content: html });
+      const imageMatch = md.match(/!\[.*?\]\((https?:\/\/[^\s)]+)\)/);
+      const featured_image = imageMatch ? imageMatch[1] : undefined;
+      console.log(`${row.id}: 公開中... 「${title}」${featured_image ? ` [画像: ${featured_image.split('/').pop()}]` : ''}`);
+      const result = await createPost({ token, title, content: html, status: 'publish', featured_image });
+      const postUrl = result.URL || `https://ainetbiz.com/?p=${result.ID}`;
       const editUrl = `https://treecosmehome.wordpress.com/wp-admin/post.php?post=${result.ID}&action=edit`;
 
       const idx = records.findIndex((r) => r.id === row.id);
-      records[idx].draft_status = 'draft_saved';
+      records[idx].draft_status = 'published';
       records[idx].wp_edit_url = editUrl;
+      records[idx].published_url = postUrl;
+      records[idx].published_at = new Date().toISOString().slice(0, 10);
       writeQueue(header, records);
 
-      console.log(`✅ ${row.id}: 下書き作成完了 → ${editUrl}`);
-      await sendSlackNotify(
-        `📝 WordPress下書きができました: 「${title}」\n${editUrl}\n内容確認のうえ、公開はご自身の操作でお願いします。`
-      );
+      console.log(`✅ ${row.id}: 公開完了 → ${postUrl}`);
+      await sendSlackNotify(`🚀 WordPress記事を公開しました: 「${title}」\n${postUrl}`);
     } catch (e) {
-      console.error(`❌ ${row.id}: 下書き作成失敗 - ${e.message}`);
-      await sendSlackNotify(`❌ WordPress下書き作成に失敗しました: ${row.id}\n${e.message}`);
+      console.error(`❌ ${row.id}: 公開失敗 - ${e.message}`);
+      await sendSlackNotify(`❌ WordPress記事の公開に失敗しました: ${row.id}\n${e.message}`);
     }
   }
 
