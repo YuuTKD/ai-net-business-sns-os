@@ -22,6 +22,16 @@
 
 ## 報告ログ
 
+### REPORT-045: TASK-048 QA判定と実装ギャップ修正（401 Google Sheets実装・401→602→603結線・式評価バグ）
+- **日時**: 2026-08-12
+- **担当**: Claude Code（エンジニア）／QAセキュリティ担当（判定）
+- **関連タスク**: TASK-048
+- **PR**: （作成予定）
+- **変更内容**: PR #79マージ後、CLAUDE.mdの作業前チェックリストに従いQAセキュリティ担当へpre-deploy-qa／scheduler-readiness-check判定を依頼。判定は pre-deploy-qa=要確認（STOP該当なし）、scheduler-readiness-check（401_Full）=NOT_READYで、実装ギャップ（Google Sheets読み取り未実装のスタブ・401→602の未結線・Brain認証ヘッダーの式評価漏れ・トリガーノードのparametersキー重複・自動化ポリシー抵触リスクのあるブラウザ操作スタブ）が指摘された。指摘のうちscreen操作・Secret登録を要しない範囲を本セッションで修正：`DEV_RIO_401_Metrics_Ingestion_Full.json`のGoogle Sheets読み取りを実ノード5件（note/threads/wordpress/rakuten/amazon_data、period_start日付一致行を取得、未取得は0＋フラグで明示）に置き換え、未使用の「Define Browser Tasks」スタブを削除、Brain APIヘッダーの`=`プレフィックス欠落を修正、401/602/603のトリガーノードのparametersキー重複を解消、401→602・602→603の連携をnoOpから実際のWebhook POSTノード（disabled・要環境変数設定）に置き換え。CLAUDE.md L23の旧セクション名参照も現行名に修正。全ファイルをjq構文検証＋Pythonでノードid/name重複・connections参照整合性を検証済み。
+- **影響範囲**: `products/revenue-intelligence-os/workflows/n8n/DEV_RIO_401_Metrics_Ingestion_Full.json`・`DEV_RIO_602_Content_Analysis.json`・`DEV_RIO_603_Content_Improvement.json`、`CLAUDE.md`、`TASK.md`。すべてのHTTPトリガーノードは`disabled:true`のまま。n8n実機への反映・Credential登録・Activateは未実施。
+- **pre-deploy-qa 判定**: 要確認（QAセキュリティ担当による判定。STOP該当なし。詳細はTASK-048備考およびQA担当ログ`obsidian/AI-NET-BUSINESS/AI_EMPLOYEES/07_QAセキュリティ.md`参照）
+- **確認事項**: (1) cost_anthropic/cost_browser/owner_hours用のGoogle Sheets入力列が未整備（暫定0固定）、(2) 旧CLAUDE.mdにあった「完全無人スケジュール自動投稿は実行しない」条項の削除意図をゆうさんに確認する必要あり、(3) DEV_RIO_402エラーワークフローとの連携はn8n UI上でのみ設定可能なため別途ゆうさんの画面操作が必要。
+
 ### REPORT-044: コンテンツPDCA自動化フロー構築（401拡張＋602/603再設計＋Google Sheetsセットアップ）
 - **日時**: 2026-08-12
 - **担当**: Claude Code（エンジニア）
