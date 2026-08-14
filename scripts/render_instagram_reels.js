@@ -129,11 +129,51 @@ function buildBeatHtml({ text, sceneNum, totalScenes }) {
 </html>`;
 }
 
-async function generateSceneAudio(narration, outAiff) {
+// ElevenLabsのAPIキーが.env.localに設定されていれば高品質な音声を使い、
+// 未設定ならmacOS標準TTS(Kyoko)にフォールバックする。
+// どちらも「台本の文章をそのまま読み上げる」だけなので、AI生成につきものの
+// テキスト内容のブレ（要約・誤変換）は起きない。
+async function generateSceneAudioElevenLabs(narration, outMp3) {
+  const apiKey = process.env.ELEVENLABS_API_KEY;
+  const voiceId = process.env.ELEVENLABS_VOICE_ID;
+  const res = await fetch(`https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`, {
+    method: 'POST',
+    headers: {
+      'xi-api-key': apiKey,
+      'Content-Type': 'application/json',
+      Accept: 'audio/mpeg',
+    },
+    body: JSON.stringify({
+      text: narration,
+      model_id: 'eleven_multilingual_v2',
+      voice_settings: { stability: 0.5, similarity_boost: 0.75 },
+    }),
+  });
+  if (!res.ok) {
+    const errText = await res.text().catch(() => '');
+    throw new Error(`ElevenLabs API ${res.status}: ${errText}`);
+  }
+  const buffer = Buffer.from(await res.arrayBuffer());
+  fs.writeFileSync(outMp3, buffer);
+  const outWav = outMp3.replace(/\.mp3$/, '.wav');
+  await execFileAsync('ffmpeg', ['-y', '-i', outMp3, '-ar', '44100', '-ac', '2', outWav]);
+  return outWav;
+}
+
+async function generateSceneAudioMacTts(narration, outAiff) {
   await execFileAsync('say', ['-v', TTS_VOICE, '-o', outAiff, narration]);
   const outWav = outAiff.replace(/\.aiff$/, '.wav');
   await execFileAsync('ffmpeg', ['-y', '-i', outAiff, '-ar', '44100', '-ac', '2', outWav]);
   return outWav;
+}
+
+async function generateSceneAudio(narration, outBasePath) {
+  const useElevenLabs = !!(process.env.ELEVENLABS_API_KEY && process.env.ELEVENLABS_VOICE_ID);
+  if (useElevenLabs) {
+    return generateSceneAudioElevenLabs(narration, `${outBasePath}.mp3`);
+  }
+  console.log('    ⚠️  ELEVENLABS_API_KEY未設定のためmacOS標準音声(Kyoko)にフォールバックします');
+  return generateSceneAudioMacTts(narration, `${outBasePath}.aiff`);
 }
 
 async function getAudioDuration(wavPath) {
@@ -239,9 +279,9 @@ async function renderReel(page, reelId, reel) {
     const isLastScene = sceneNum === reel.scenes.length;
 
     // 1. シーン全体のナレーション音声を1本生成
-    const aiffPath = path.join(reelTmpDir, `scene-${sceneNum}.aiff`);
+    const audioBasePath = path.join(reelTmpDir, `scene-${sceneNum}`);
     console.log(`  シーン${sceneNum}: 音声生成中...`);
-    const wavPath = await generateSceneAudio(scene.narration, aiffPath);
+    const wavPath = await generateSceneAudio(scene.narration, audioBasePath);
     const sceneDuration = await getAudioDuration(wavPath);
     audioPaths.push(wavPath);
 
