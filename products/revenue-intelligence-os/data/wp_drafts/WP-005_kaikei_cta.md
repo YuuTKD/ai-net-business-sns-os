@@ -237,3 +237,10 @@ A. 弥生はセルフ・ベーシックに初年度0円があります（2年目
   https://af.moshimo.com/af/c/click?a_id=5718256&p_id=888&pc_id=1087&pl_id=64712
 
 ※本記事は公開情報をもとに整理したものです。料金・プラン内容・キャンペーン期限は変更されることがあります。契約前に必ず各公式サイトの最新情報をご確認ください。当サイトはアフィリエイトプログラムにより収益を得ています。
+
+
+---
+
+📱 このブログの更新情報や、店舗運営に役立つヒントは Instagram・Threads でも発信しています。
+Instagram: [@ai_store_lab](https://www.instagram.com/ai_store_lab/)
+Threads: [@ai_store_lab](https://www.threads.com/@ai_store_lab)

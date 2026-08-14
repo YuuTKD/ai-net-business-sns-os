@@ -114,3 +114,10 @@ A. 契約自体は可能でも、料金が月十数万円規模のため、ス�
 - Remoba労務（オンライン労務アウトソーシング） … ※アフィリンク挿入予定（もしもアフィリエイト）
 
 ※本記事は公開情報をもとに整理したものです。料金・プラン内容・対応範囲は変更されることがあります。契約前に必ず公式サイトの最新情報をご確認ください。当サイトはアフィリエイトプログラムにより収益を得ています。
+
+
+---
+
+📱 このブログの更新情報や、店舗運営に役立つヒントは Instagram・Threads でも発信しています。
+Instagram: [@ai_store_lab](https://www.instagram.com/ai_store_lab/)
+Threads: [@ai_store_lab](https://www.threads.com/@ai_store_lab)

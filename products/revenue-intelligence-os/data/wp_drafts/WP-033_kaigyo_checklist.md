@@ -217,3 +217,10 @@ A. 規模と状況によります。事業として継続的に行うなら開�
 <!-- ※アフィリリンク挿入予定（A8-002 または MOSHIMO マネーフォワード クラウド確定申告） -->
 
 ※本記事の税務手続き・期限は2026年8月時点の一般的な目安です（出典：国税庁の各手続き案内ページ）。個別のケースの判断は、納税地を所轄する税務署または税理士にご確認ください。
+
+
+---
+
+📱 このブログの更新情報や、店舗運営に役立つヒントは Instagram・Threads でも発信しています。
+Instagram: [@ai_store_lab](https://www.instagram.com/ai_store_lab/)
+Threads: [@ai_store_lab](https://www.threads.com/@ai_store_lab)

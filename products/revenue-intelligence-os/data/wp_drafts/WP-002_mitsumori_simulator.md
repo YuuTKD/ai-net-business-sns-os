@@ -247,3 +247,10 @@ PACKPLANのような制作サービスの検討から始めます。料金の目
 - 🔗 [店の独自ドメイン、「初年度0円」で選ぶと損する？｜お名前.comの取得手順と更新料の落とし穴【店舗オーナー向け】](https://treecosme.home.blog/2026/08/07/%e5%ba%97%e3%81%ae%e7%8b%ac%e8%87%aa%e3%83%89%e3%83%a1%e3%82%a4%e3%83%b3%e3%82%92%e5%8f%96%e3%82%8b%e3%81%aa%e3%82%89%ef%bc%9f%e3%81%8a%e5%90%8d%e5%89%8d-com%e3%81%a7%e3%81%ae%e5%8f%96%e5%be%97/)
 - 🔗 [レジ周りの"地味に困る"を解消する機器まとめ【タブレットスタンド・バーコードリーダー・レシートプリンター】](https://treecosme.home.blog/2026/08/10/%e3%83%ac%e3%82%b8%e5%91%a8%e3%82%8a%e3%81%ae%e5%9c%b0%e5%91%b3%e3%81%ab%e5%9b%b0%e3%82%8b%e3%82%92%e8%a7%a3%e6%b6%88%e3%81%99%e3%82%8b%e6%a9%9f%e5%99%a8%e3%81%be%e3%81%a8%e3%82%81%e3%80%90/)
 - 🔗 [店舗オーナーが開業〜運営で揃えるツール総まとめ｜美容室・飲食店・整体院の「何から手をつける」を1本で](https://treecosme.home.blog/2026/08/10/%e5%ba%97%e8%88%97%e3%82%aa%e3%83%bc%e3%83%8a%e3%83%bc%e3%81%8c%e9%96%8b%e6%a5%ad%e3%80%9c%e9%81%8b%e5%96%b6%e3%81%a7%e6%8f%83%e3%81%88%e3%82%8b%e3%83%84%e3%83%bc%e3%83%ab%e7%b7%8f%e3%81%be%e3%81%a8/)
+
+
+---
+
+📱 このブログの更新情報や、店舗運営に役立つヒントは Instagram・Threads でも発信しています。
+Instagram: [@ai_store_lab](https://www.instagram.com/ai_store_lab/)
+Threads: [@ai_store_lab](https://www.threads.com/@ai_store_lab)

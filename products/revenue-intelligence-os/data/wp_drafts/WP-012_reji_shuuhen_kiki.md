@@ -96,3 +96,10 @@ A. レジ位置が固定で動かさないなら有線で十分です。品出�
 
 ※本記事は公開情報と一般的な店舗運営の知見をもとに整理したものです。価格・在庫・仕様は変動します。購入前に必ず各商品ページの最新情報をご確認ください。
 **Amazonのアソシエイトとして、当サイトは適格販売により収入を得ています。**
+
+
+---
+
+📱 このブログの更新情報や、店舗運営に役立つヒントは Instagram・Threads でも発信しています。
+Instagram: [@ai_store_lab](https://www.instagram.com/ai_store_lab/)
+Threads: [@ai_store_lab](https://www.threads.com/@ai_store_lab)

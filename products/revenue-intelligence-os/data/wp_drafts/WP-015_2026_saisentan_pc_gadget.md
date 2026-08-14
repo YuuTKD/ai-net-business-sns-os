@@ -91,3 +91,10 @@ PC・ヘッドセットは、毎日触れる道具だからこそ、少しの改
 
 ※本記事は公開情報をもとに整理したものです。価格・在庫・仕様等は変動します。購入前に必ず各商品ページの最新情報をご確認ください。
 **Amazonのアソシエイトとして、当サイトは適格販売により収入を得ています。**
+
+
+---
+
+📱 このブログの更新情報や、店舗運営に役立つヒントは Instagram・Threads でも発信しています。
+Instagram: [@ai_store_lab](https://www.instagram.com/ai_store_lab/)
+Threads: [@ai_store_lab](https://www.threads.com/@ai_store_lab)
