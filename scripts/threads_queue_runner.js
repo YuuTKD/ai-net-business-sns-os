@@ -341,56 +341,80 @@ async function main() {
     return;
   }
 
-  const next = approved.find((r) => (r.target_date || '') <= today) || null;
-  if (!next) {
-    console.log('ℹ️  本日公開可能な承認済み投稿がキューにありません（target_dateが未来のみ）。');
-    return;
+  // 1回の実行で daily_limit に達するまで、予定日を過ぎている承認済み投稿を
+  // 順番に消化する（バックログが溜まらないようにするための変更・2026-08-14）。
+  // 投稿間は間隔を空けてスパム的な連投に見えないようにする。
+  let postedCount = 0;
+  while (state.posts_today < state.daily_limit) {
+    const { records: freshRecords } = loadQueue();
+    const approvedNow = freshRecords
+      .filter((r) => r.status === 'approved')
+      .sort((a, b) => (a.target_date || '').localeCompare(b.target_date || ''));
+    const next = approvedNow.find((r) => (r.target_date || '') <= today) || null;
+    if (!next) {
+      if (postedCount === 0) {
+        console.log('ℹ️  本日公開可能な承認済み投稿がキューにありません（target_dateが未来のみ）。');
+      } else {
+        console.log('ℹ️  公開可能な投稿を使い切りました。');
+      }
+      break;
+    }
+
+    try {
+      console.log(`対象: ${next.id}（${next.related_wp_id}） / 予定日 ${next.target_date}`);
+      await verifyToken();
+
+      const token = getToken();
+      const main1 = await publishText({ token, text: next.post_text.replace(' / 👉', '\n👉') });
+      console.log(`✅ 本投稿 公開: ${main1.permalink}`);
+
+      let replyResult = null;
+      if (next.reply_url) {
+        replyResult = await publishText({ token, text: next.reply_url, replyToId: main1.mediaId });
+        console.log(`✅ リンク返信 公開: ${replyResult.permalink}`);
+      }
+
+      // キュー更新
+      const idx = freshRecords.findIndex((r) => r.id === next.id);
+      freshRecords[idx].status = 'published';
+      freshRecords[idx].published_url = main1.permalink;
+      freshRecords[idx].published_at = new Date().toISOString();
+      writeQueue(header, freshRecords);
+
+      appendLog({ id: next.id, permalink: main1.permalink, replyPermalink: replyResult?.permalink });
+
+      state.consecutive_failures = 0;
+      state.posts_today += 1;
+      state.last_post_date = today;
+      saveState(state);
+      postedCount += 1;
+
+      await sendSlackNotify(`✅ Threads自動投稿成功: ${next.id}（${next.related_wp_id}）\n${main1.permalink}`);
+      console.log('🎉 完了。');
+
+      // 次の投稿がある場合は連投に見えないよう間隔を空ける
+      if (state.posts_today < state.daily_limit) {
+        await sleep(600);
+      }
+    } catch (e) {
+      console.error(`\n❌ 失敗: ${e.message}`);
+      state.consecutive_failures += 1;
+      let stopped = false;
+      if (state.consecutive_failures >= 2) {
+        state.auto_post_enabled = false;
+        stopped = true;
+      }
+      saveState(state);
+      await sendSlackNotify(
+        `❌ Threads自動投稿失敗: ${next.id}（連続${state.consecutive_failures}回目）\n${e.message}` +
+          (stopped ? '\n🔴 連続失敗のため auto_post_enabled を自動的にOFFにしました。' : '')
+      );
+      process.exit(1);
+    }
   }
 
-  try {
-    console.log(`対象: ${next.id}（${next.related_wp_id}） / 予定日 ${next.target_date}`);
-    await verifyToken();
-
-    const token = getToken();
-    const main1 = await publishText({ token, text: next.post_text.replace(' / 👉', '\n👉') });
-    console.log(`✅ 本投稿 公開: ${main1.permalink}`);
-
-    let replyResult = null;
-    if (next.reply_url) {
-      replyResult = await publishText({ token, text: next.reply_url, replyToId: main1.mediaId });
-      console.log(`✅ リンク返信 公開: ${replyResult.permalink}`);
-    }
-
-    // キュー更新
-    const idx = records.findIndex((r) => r.id === next.id);
-    records[idx].status = 'published';
-    records[idx].published_url = main1.permalink;
-    records[idx].published_at = new Date().toISOString();
-    writeQueue(header, records);
-
-    appendLog({ id: next.id, permalink: main1.permalink, replyPermalink: replyResult?.permalink });
-
-    state.consecutive_failures = 0;
-    state.posts_today += 1;
-    state.last_post_date = today;
-    saveState(state);
-
-    await sendSlackNotify(`✅ Threads自動投稿成功: ${next.id}（${next.related_wp_id}）\n${main1.permalink}`);
-    console.log('🎉 完了。');
-  } catch (e) {
-    console.error(`\n❌ 失敗: ${e.message}`);
-    state.consecutive_failures += 1;
-    let stopped = false;
-    if (state.consecutive_failures >= 2) {
-      state.auto_post_enabled = false;
-      stopped = true;
-    }
-    saveState(state);
-    await sendSlackNotify(
-      `❌ Threads自動投稿失敗: ${next.id}（連続${state.consecutive_failures}回目）\n${e.message}` +
-        (stopped ? '\n🔴 連続失敗のため auto_post_enabled を自動的にOFFにしました。' : '')
-    );
-    process.exit(1);
+  if (postedCount > 1) {
+    console.log(`\n🎉 本日 ${postedCount} 本を公開しました。`);
   }
 }
 
