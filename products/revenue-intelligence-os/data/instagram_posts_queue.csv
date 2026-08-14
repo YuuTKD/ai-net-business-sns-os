@@ -1,0 +1,29 @@
+# =====================================================================
+# instagram_posts_queue.csv — Instagram カルーセル投稿 下書きキュー
+# =====================================================================
+# 作成: 2026-08-14（TASK-CLAUDE-001 Instagram自動運用・第一弾）
+# 位置づけ: 公開済みWordPress記事（wordpress_posts_queue.csv）をInstagram
+#   カルーセル投稿向けにリパーパスした下書きの管理表。
+#   テンプレート: prompts/instagram_prompt_templates.md（8枚構成）
+#
+# 重要: Instagram Graph APIの自動投稿はMetaビジネスアカウント審査が必要
+#   （TASK.md 2026年8月時点で審査状況未確認）。このキューは審査状況に
+#   関わらず「下書き準備のみ」を行う。投稿は必ずゆうさんが手動で実施する
+#   （CLAUDE.md 本番投稿ルール・DEV_RIO_700系と同じ設計思想）。
+#
+# カラム定義:
+#   id                : 一意ID（例: IG-001）
+#   source_wp_id      : 元記事のWordPress記事ID（wordpress_posts_queue.csvのid）
+#   theme             : カルーセルのテーマ・切り口
+#   qa_score          : セルフレビュースコア（100点満点）
+#   draft_status      : not_started / draft_saved / qa_passed / posted
+#   file_path         : instagram_drafts/配下のMarkdownファイル名
+#   added_date        : このキューに追加した日 YYYY-MM-DD
+#
+# 注意: 行頭が「#」の行はコメント。
+id,source_wp_id,theme,qa_score,draft_status,file_path,added_date
+IG-001,WP-011,店頭の販促グッズで「素通り」を止める,94,qa_passed,IG-001_hansoku_goods.md,2026-08-14
+IG-002,WP-023,帳簿は5ステップ＋まねで今日から始められる,95,qa_passed,IG-002_choubo_tsukekata.md,2026-08-14
+IG-003,WP-032,Googleマップの口コミを増やす方法と返信ルール,95,qa_passed,IG-003_google_kuchikomi.md,2026-08-14
+IG-004,WP-030,経費にできるか迷ったら3つの質問で判断,93,qa_passed,IG-004_keihi_ichiran.md,2026-08-14
+IG-005,WP-033,開業手続きで期限があるのは実は2枚だけ,94,qa_passed,IG-005_kaigyo_checklist.md,2026-08-14
