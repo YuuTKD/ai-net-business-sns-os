@@ -113,3 +113,7 @@ node scripts/daily_publish_orchestrator.js --day 2 --threads-live
 - [auto] 2026-08-13T01:01:22.522Z / TQ-004
     本投稿: (permalink取得失敗)
     リンク返信: https://www.threads.com/@ai_store_lab/post/Db9glBXE5PX
+
+- [auto] 2026-08-14T01:01:25.071Z / TQ-005
+    本投稿: https://www.threads.com/@ai_store_lab/post/DcAFTH7k2wy
+    リンク返信: https://www.threads.com/@ai_store_lab/post/DcAFX5NkxSn
