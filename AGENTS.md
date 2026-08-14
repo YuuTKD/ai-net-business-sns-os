@@ -62,6 +62,25 @@ Codex は提案にとどめ、実行判断は Claude Code とゆうさんが行�
 
 ---
 
+## 常時共有AIチーム方式（提案・ゆうさん承認待ち）
+
+以下は2026-08-14にゆうさんから依頼された「Claude Code + Codex 常時共有AIチーム方式」の提案。**このセクションはPRがマージされるまで有効ではない**。マージされるまで、上記「担当できないタスク」（ファイルシステムへの書き込みは提案のみ）が引き続き唯一の正式ルールとして適用される。
+
+### 提案内容
+
+- Git外の共有ディレクトリ `~/.ai-team/ai-net-business-sns-os/` を単一情報源として、Claude CodeとCodexが異なるgit worktree・branchで並行作業する
+- Codexは作業開始時に必ず `~/.ai-team/ai-net-business-sns-os/TEAM_STATE.md`・`TASK_BOARD.md`・`CLAUDE_STATUS.md`・`MESSAGES.md`・`LOCKS/` を読む
+- Codexの重要進捗は `CODEX_STATUS.md`・`ACTIVITY_LOG.md`・`DECISIONS.md` に記録する
+- 本提案が承認されて初めて、Codexは自分のTASKをTASK_BOARD上でCLAIMし、`LOCKS/` でファイルロックした上で、自分のbranch（例: `codex/<slug>`）に対して直接ファイル編集・commitを行えるようになる（現行の「提案のみ」制約からの変更）
+- Claude担当TASKを勝手に実装しない。Claude側のFILE LOCK（`LOCKS/`配下、`OWNER: CLAUDE`のもの）を無視しない
+- mainへのmerge・push、force push、他AIのbranch操作は引き続き禁止。main統合はゆうさんの承認必須
+
+### 承認後の運用
+
+承認後は本セクションから「（提案・ゆうさん承認待ち）」を外し、上部「Codexエージェントが担当**できない**タスク」の「ファイルシステムへの書き込み」を「`LOCKS/`でロックした自分のbranch内のファイルに限り可能」へ更新する。
+
+---
+
 ## このファイルの更新ルール
 
 ゆうさんの承認を得た PR を通じてのみ変更可。
