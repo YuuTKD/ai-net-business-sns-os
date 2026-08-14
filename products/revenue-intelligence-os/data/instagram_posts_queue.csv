@@ -43,3 +43,8 @@ IG-007,WP-026,初めての青色申告は申請書1枚から始まる,94,qa_pass
 IG-008,WP-021,紙の契約書の見えないコストは仕組みで消せる,93,qa_passed,IG-008_denshi_keiyaku.md,generated,2026-08-14,,,
 IG-009,WP-022,電話予約の取りこぼしをLINE予約で減らす,94,qa_passed,IG-009_line_yoyaku.md,generated,2026-08-14,,,
 IG-010,WP-024,インボイス登録の判断は取引先が誰かでほぼ決まる,94,qa_passed,IG-010_invoice_touroku.md,generated,2026-08-14,,,
+IG-011,WP-002,「料金いくら？」対応はサイトの有無で道が決まる,93,qa_passed,IG-011_mitsumori_simulator.md,generated,2026-08-15,,,
+IG-012,WP-027,勤怠管理ソフトは3タイプ×5ポイントで選ぶ,94,qa_passed,IG-012_kintai_erabikata.md,generated,2026-08-15,,,
+IG-013,WP-028,予約システムは3つの質問でほぼ決まる,94,qa_passed,IG-013_yoyaku_hikaku.md,generated,2026-08-15,,,
+IG-014,WP-HUB,開業ツールを揃える順番は4フェーズで決まる,94,qa_passed,IG-014_kaigyo_hub.md,generated,2026-08-15,,,
+IG-015,WP-029,応募が来ない求人は媒体か書き方に原因がある,93,qa_passed,IG-015_saiyou_kyujin.md,generated,2026-08-15,,,
