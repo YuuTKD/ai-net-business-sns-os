@@ -181,16 +181,39 @@ function markdownToHtml(md) {
       .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
   }
 
-  for (const rawLine of lines) {
+  // Markdownテーブル行（| col | col |）を解析。ヘッダー区切り行（|---|---|）はnullを返す
+  function parseTableRow(line) {
+    if (!/^\|.*\|$/.test(line)) return null;
+    const cells = line.slice(1, -1).split('|').map((c) => c.trim());
+    return cells;
+  }
+  const isSeparatorRow = (cells) => cells.every((c) => /^:?-+:?$/.test(c));
+
+  let i = 0;
+  const rawLines = lines;
+  while (i < rawLines.length) {
+    const rawLine = rawLines[i];
     const line = rawLine.trim();
+
     if (line === '') {
       flushPara();
+      i++;
       continue;
     }
     if (line === '---') {
       flushPara();
       closeList();
       out.push('<hr>');
+      i++;
+      continue;
+    }
+    // 画像: ![alt](url)
+    const img = line.match(/^!\[([^\]]*)\]\((\S+)\)$/);
+    if (img) {
+      flushPara();
+      closeList();
+      out.push(`<img src="${img[2]}" alt="${img[1]}" />`);
+      i++;
       continue;
     }
     const h2 = line.match(/^##\s+(.+)/);
@@ -198,6 +221,7 @@ function markdownToHtml(md) {
       flushPara();
       closeList();
       out.push(`<h2>${inlineFormat(h2[1])}</h2>`);
+      i++;
       continue;
     }
     const h3 = line.match(/^###\s+(.+)/);
@@ -205,11 +229,30 @@ function markdownToHtml(md) {
       flushPara();
       closeList();
       out.push(`<h3>${inlineFormat(h3[1])}</h3>`);
+      i++;
       continue;
     }
-    const li = line.match(/^[-|]\s*(.+)/);
-    // 表（|区切り）や箇条書き（- ）は簡易的に段落として扱うため、
-    // 明示的な "- " の箇条書きのみリスト化する
+    // テーブル: 1行目がヘッダー、2行目が区切り(|---|---|)であることを確認してからテーブル化
+    const headerCells = parseTableRow(line);
+    if (headerCells) {
+      const sepCells = i + 1 < rawLines.length ? parseTableRow(rawLines[i + 1].trim()) : null;
+      if (sepCells && isSeparatorRow(sepCells)) {
+        flushPara();
+        closeList();
+        const theadRow = `<tr>${headerCells.map((c) => `<th>${inlineFormat(c)}</th>`).join('')}</tr>`;
+        const bodyRows = [];
+        let j = i + 2;
+        while (j < rawLines.length) {
+          const cells = parseTableRow(rawLines[j].trim());
+          if (!cells) break;
+          bodyRows.push(`<tr>${cells.map((c) => `<td>${inlineFormat(c)}</td>`).join('')}</tr>`);
+          j++;
+        }
+        out.push(`<table><thead>${theadRow}</thead><tbody>${bodyRows.join('')}</tbody></table>`);
+        i = j;
+        continue;
+      }
+    }
     const bullet = line.match(/^-\s+(.+)/);
     if (bullet) {
       flushPara();
@@ -218,10 +261,12 @@ function markdownToHtml(md) {
         inList = true;
       }
       out.push(`<li>${inlineFormat(bullet[1])}</li>`);
+      i++;
       continue;
     }
     closeList();
     paraBuf.push(line);
+    i++;
   }
   flushPara();
   closeList();
