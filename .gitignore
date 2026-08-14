@@ -24,5 +24,6 @@ data/forms/*_responses.csv
 !products/revenue-intelligence-os/schemas/*.json
 !package.json
 !scripts/instagram_carousel_data.json
+!scripts/instagram_reel_data.json
 scripts/threads_auto_state.json
 operations/threads_auto_cron.log
