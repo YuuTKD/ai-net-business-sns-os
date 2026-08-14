@@ -18,12 +18,19 @@
 #   qa_score          : セルフレビュースコア（100点満点）
 #   draft_status      : not_started / draft_saved / qa_passed / posted
 #   file_path         : instagram_drafts/配下のMarkdownファイル名
+#   images_status      : none / generated（instagram_drafts/images/<id>/slide-01〜08.png）
 #   added_date        : このキューに追加した日 YYYY-MM-DD
 #
+# 画像生成について: AI画像生成（ChatGPT/Canva）は日本語テキストの描画精度が
+#   不安定だったため、scripts/render_instagram_carousels.js（HTML+CSSを
+#   Puppeteer/既存Chromeでスクリーンショット化）に切り替えた。文字はAI生成
+#   ではなく scripts/instagram_carousel_data.json のテキストをそのまま描画
+#   するため、文字化け・要約リスクがない。再生成: node scripts/render_instagram_carousels.js
+#
 # 注意: 行頭が「#」の行はコメント。
-id,source_wp_id,theme,qa_score,draft_status,file_path,added_date
-IG-001,WP-011,店頭の販促グッズで「素通り」を止める,94,qa_passed,IG-001_hansoku_goods.md,2026-08-14
-IG-002,WP-023,帳簿は5ステップ＋まねで今日から始められる,95,qa_passed,IG-002_choubo_tsukekata.md,2026-08-14
-IG-003,WP-032,Googleマップの口コミを増やす方法と返信ルール,95,qa_passed,IG-003_google_kuchikomi.md,2026-08-14
-IG-004,WP-030,経費にできるか迷ったら3つの質問で判断,93,qa_passed,IG-004_keihi_ichiran.md,2026-08-14
-IG-005,WP-033,開業手続きで期限があるのは実は2枚だけ,94,qa_passed,IG-005_kaigyo_checklist.md,2026-08-14
+id,source_wp_id,theme,qa_score,draft_status,file_path,images_status,added_date
+IG-001,WP-011,店頭の販促グッズで「素通り」を止める,94,qa_passed,IG-001_hansoku_goods.md,generated,2026-08-14
+IG-002,WP-023,帳簿は5ステップ＋まねで今日から始められる,95,qa_passed,IG-002_choubo_tsukekata.md,generated,2026-08-14
+IG-003,WP-032,Googleマップの口コミを増やす方法と返信ルール,95,qa_passed,IG-003_google_kuchikomi.md,generated,2026-08-14
+IG-004,WP-030,経費にできるか迷ったら3つの質問で判断,93,qa_passed,IG-004_keihi_ichiran.md,generated,2026-08-14
+IG-005,WP-033,開業手続きで期限があるのは実は2枚だけ,94,qa_passed,IG-005_kaigyo_checklist.md,generated,2026-08-14

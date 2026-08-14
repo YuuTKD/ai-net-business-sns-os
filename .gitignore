@@ -22,5 +22,7 @@ data/forms/*_responses.csv
 # 注意: Secret類は上位ルール(*secret*/*token*/*credentials*等)で除外継続。これらのdirにSecretを置かないこと。
 !products/revenue-intelligence-os/workflows/n8n/*.json
 !products/revenue-intelligence-os/schemas/*.json
+!package.json
+!scripts/instagram_carousel_data.json
 scripts/threads_auto_state.json
 operations/threads_auto_cron.log
