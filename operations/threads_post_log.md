@@ -117,3 +117,11 @@ node scripts/daily_publish_orchestrator.js --day 2 --threads-live
 - [auto] 2026-08-14T01:01:25.071Z / TQ-005
     本投稿: https://www.threads.com/@ai_store_lab/post/DcAFTH7k2wy
     リンク返信: https://www.threads.com/@ai_store_lab/post/DcAFX5NkxSn
+
+- [auto] 2026-08-14T14:30:20.975Z / TQ-006
+    本投稿: https://www.threads.com/@ai_store_lab/post/DcBh4UMEzUU
+    リンク返信: https://www.threads.com/@ai_store_lab/post/DcBh83hEwVc
+
+- [auto] 2026-08-14T14:41:44.147Z / TQ-007
+    本投稿: https://www.threads.com/@ai_store_lab/post/DcBjLprEwGK
+    リンク返信: https://www.threads.com/@ai_store_lab/post/DcBjQPDkw2i
