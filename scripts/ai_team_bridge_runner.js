@@ -339,4 +339,5 @@ if (require.main === module) {
 module.exports = {
   listInstructions, poll, collectResults, postMessage, uploadFile,
   parseTag, parseTaskId, assertNoSecret, fetchHistory,
+  loadState, saveState, nowIso,
 };

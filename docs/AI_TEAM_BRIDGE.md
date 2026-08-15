@@ -113,3 +113,24 @@ Bot を3チャンネルに招待すること（`/invite @bot` または チャ�
 }
 ```
 Secret は含めない。
+
+---
+
+## 完全自動化: Codex Bridge Worker（ローカルcodex CLI連携）
+
+`scripts/codex_bridge_worker.js` は、ローカルの `codex` CLI を使って
+Codexを人手ゼロでループに入れる（前提: `codex login` 済み・`SLACK_BOT_TOKEN` 設定済み）。
+
+```
+[INSTRUCTION](Slack) → Worker検出 → codex exec(read-only) → Codex応答 → [RESULT]自動投稿 → Claude回収
+```
+
+| コマンド | 動作 |
+|---------|------|
+| `node --env-file=.env.local scripts/codex_bridge_worker.js` | 未処理[INSTRUCTION]を全件処理 |
+| `... --once` | 最古の1件だけ処理 |
+| `... --dry-run` | Codexを叩かず対象だけ表示 |
+
+- codex は `read-only` サンドボックスで実行（本番操作・ファイル破壊をさせない）
+- 往復上限4回・processed_ts記録は runner と共用（重複防止）
+- cron例（3時間おき）: `0 */3 * * * cd <repo> && node --env-file=.env.local scripts/codex_bridge_worker.js >> operations/codex_bridge_worker.log 2>&1`
