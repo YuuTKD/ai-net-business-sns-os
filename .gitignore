@@ -25,6 +25,8 @@ data/forms/*_responses.csv
 !package.json
 !scripts/instagram_carousel_data.json
 !scripts/instagram_reel_data.json
+!products/revenue-intelligence-os/data/youtube_shorts_queue.json
+!products/revenue-intelligence-os/data/tiktok_queue.json
 scripts/threads_auto_state.json
 scripts/ai_team_sync_state.json
 operations/threads_auto_cron.log
