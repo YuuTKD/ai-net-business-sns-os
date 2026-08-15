@@ -1,0 +1,26 @@
+{
+  "_comment": "AI TEAM BRIDGE 設定。Secretは置かない（Bot Tokenは.env.localのSLACK_BOT_TOKEN）。",
+  "channels": {
+    "bridge": "C0BQHSGHVLH",
+    "strategy": "C0BRAD14TQQ",
+    "approvals": "C0BQ9R74NF5"
+  },
+  "channelNames": {
+    "bridge": "ai-team-bridge",
+    "strategy": "ai-team-strategy",
+    "approvals": "ai-team-approvals"
+  },
+  "limits": {
+    "maxRoundTripsPerTask": 4,
+    "historyFetchLimit": 100
+  },
+  "tags": [
+    "DISCUSSION",
+    "INSTRUCTION",
+    "RESULT",
+    "REVIEW",
+    "RISK",
+    "APPROVAL_REQUIRED",
+    "DECISION"
+  ]
+}
