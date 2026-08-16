@@ -1,0 +1,4 @@
+# daily_metrics_log.csv — Instagram投稿・WordPressサイトの日次メトリクス記録
+# PDCA基盤: インプレッションそのものではなく、WP記事・Brain商品への送客効果を追うためのログ
+date,source,id,metric_impressions,metric_reach,metric_saved,metric_likes,metric_comments,wp_views,wp_visitors,note
+2026-08-14,wordpress,site_total,,,,,,6,6,

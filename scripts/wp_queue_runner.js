@@ -44,10 +44,12 @@ const DRAFTS_DIR = path.join(
 function parseArgs() {
   const a = process.argv.slice(2);
   const updateIdx = a.indexOf('--update');
+  const updateLiveIdx = a.indexOf('--update-live');
   return {
     status: a.includes('--status'),
     run: a.includes('--run'),
     updateId: updateIdx !== -1 ? a[updateIdx + 1] : null,
+    updateLiveId: updateLiveIdx !== -1 ? a[updateLiveIdx + 1] : null,
   };
 }
 
@@ -179,16 +181,39 @@ function markdownToHtml(md) {
       .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
   }
 
-  for (const rawLine of lines) {
+  // Markdownテーブル行（| col | col |）を解析。ヘッダー区切り行（|---|---|）はnullを返す
+  function parseTableRow(line) {
+    if (!/^\|.*\|$/.test(line)) return null;
+    const cells = line.slice(1, -1).split('|').map((c) => c.trim());
+    return cells;
+  }
+  const isSeparatorRow = (cells) => cells.every((c) => /^:?-+:?$/.test(c));
+
+  let i = 0;
+  const rawLines = lines;
+  while (i < rawLines.length) {
+    const rawLine = rawLines[i];
     const line = rawLine.trim();
+
     if (line === '') {
       flushPara();
+      i++;
       continue;
     }
     if (line === '---') {
       flushPara();
       closeList();
       out.push('<hr>');
+      i++;
+      continue;
+    }
+    // 画像: ![alt](url)
+    const img = line.match(/^!\[([^\]]*)\]\((\S+)\)$/);
+    if (img) {
+      flushPara();
+      closeList();
+      out.push(`<img src="${img[2]}" alt="${img[1]}" />`);
+      i++;
       continue;
     }
     const h2 = line.match(/^##\s+(.+)/);
@@ -196,6 +221,7 @@ function markdownToHtml(md) {
       flushPara();
       closeList();
       out.push(`<h2>${inlineFormat(h2[1])}</h2>`);
+      i++;
       continue;
     }
     const h3 = line.match(/^###\s+(.+)/);
@@ -203,11 +229,30 @@ function markdownToHtml(md) {
       flushPara();
       closeList();
       out.push(`<h3>${inlineFormat(h3[1])}</h3>`);
+      i++;
       continue;
     }
-    const li = line.match(/^[-|]\s*(.+)/);
-    // 表（|区切り）や箇条書き（- ）は簡易的に段落として扱うため、
-    // 明示的な "- " の箇条書きのみリスト化する
+    // テーブル: 1行目がヘッダー、2行目が区切り(|---|---|)であることを確認してからテーブル化
+    const headerCells = parseTableRow(line);
+    if (headerCells) {
+      const sepCells = i + 1 < rawLines.length ? parseTableRow(rawLines[i + 1].trim()) : null;
+      if (sepCells && isSeparatorRow(sepCells)) {
+        flushPara();
+        closeList();
+        const theadRow = `<tr>${headerCells.map((c) => `<th>${inlineFormat(c)}</th>`).join('')}</tr>`;
+        const bodyRows = [];
+        let j = i + 2;
+        while (j < rawLines.length) {
+          const cells = parseTableRow(rawLines[j].trim());
+          if (!cells) break;
+          bodyRows.push(`<tr>${cells.map((c) => `<td>${inlineFormat(c)}</td>`).join('')}</tr>`);
+          j++;
+        }
+        out.push(`<table><thead>${theadRow}</thead><tbody>${bodyRows.join('')}</tbody></table>`);
+        i = j;
+        continue;
+      }
+    }
     const bullet = line.match(/^-\s+(.+)/);
     if (bullet) {
       flushPara();
@@ -216,10 +261,12 @@ function markdownToHtml(md) {
         inList = true;
       }
       out.push(`<li>${inlineFormat(bullet[1])}</li>`);
+      i++;
       continue;
     }
     closeList();
     paraBuf.push(line);
+    i++;
   }
   flushPara();
   closeList();
@@ -292,6 +339,25 @@ async function updateDraftPost({ token, postId, title, content }) {
   return json;
 }
 
+// 公開済み(publish)記事の本文・タイトルを、原稿ファイルの最新内容で全文差し替える。
+// featured_imageは意図的に送らない（既存のアイキャッチをWP側で維持させるため）。
+// --update-live コマンド経由のみで使用（呼び出し側でゆうさんの承認確認済みであること）。
+async function updateLivePost({ token, postId, title, content }) {
+  const res = await fetch(`${API_BASE}/posts/${postId}`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({ title, content, status: 'publish' }),
+  });
+  const json = await res.json();
+  if (!res.ok) {
+    throw new Error(`WP API ${res.status}: ${JSON.stringify(json)}`);
+  }
+  return json;
+}
+
 function printStatus(readyRows) {
   console.log('\n==================== WP Queue Runner 状態 ====================');
   console.log(`draft_status=qa_passed（投稿待ち）件数: ${readyRows.length}`);
@@ -345,6 +411,45 @@ async function main() {
     console.log(`${args.updateId}: 下書き(post=${postId})を最新原稿で更新中...`);
     await updateDraftPost({ token, postId, title, content: html });
     console.log(`✅ ${args.updateId}: 下書き更新完了 → ${row.wp_edit_url}`);
+    return;
+  }
+
+  if (args.updateLiveId) {
+    const row = records.find((r) => r.id === args.updateLiveId);
+    if (!row) {
+      console.error(`❌ ${args.updateLiveId}: キューに見つかりません`);
+      process.exit(1);
+    }
+    if (row.draft_status !== 'published') {
+      console.error(`❌ ${args.updateLiveId}: draft_status=${row.draft_status}（publishedのみ対象）のためこのコマンドでは更新しません`);
+      process.exit(1);
+    }
+    if (!row.wp_edit_url) {
+      console.error(`❌ ${args.updateLiveId}: wp_edit_urlが未設定です`);
+      process.exit(1);
+    }
+    const postId = row.wp_edit_url.match(/post=(\d+)/)?.[1];
+    if (!postId) {
+      console.error(`❌ ${args.updateLiveId}: wp_edit_urlからpost IDを取得できません`);
+      process.exit(1);
+    }
+    const filePath = findDraftFile(args.updateLiveId);
+    if (!filePath) {
+      console.error(`❌ ${args.updateLiveId}: wp_drafts/ に原稿ファイルが見つかりません`);
+      process.exit(1);
+    }
+    const token = process.env.WP_ACCESS_TOKEN;
+    if (!token) {
+      console.error('❌ WP_ACCESS_TOKEN が未設定です（--env-file=.env.local を付けて実行してください）');
+      process.exit(1);
+    }
+    const md = fs.readFileSync(filePath, 'utf8');
+    const title = extractTitle(md);
+    const html = markdownToHtml(md);
+    console.log(`${args.updateLiveId}: 公開済み記事(post=${postId})を最新原稿で全文差し替え中... 「${title}」`);
+    const result = await updateLivePost({ token, postId, title, content: html });
+    const postUrl = result.URL || row.published_url;
+    console.log(`✅ ${args.updateLiveId}: 反映完了 → ${postUrl}`);
     return;
   }
 

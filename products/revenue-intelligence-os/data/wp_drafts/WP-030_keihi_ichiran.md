@@ -158,3 +158,10 @@ A. 開業準備の支出は「開業費」等として扱える場合があり�
 - [マネーフォワード クラウド会計（公式サイト）](https://af.moshimo.com/af/c/click?a_id=5718256&p_id=888&pc_id=1087&pl_id=64712)
 
 ※本記事は2026年8月時点の国税庁公開情報（タックスアンサーNo.2210・No.2100等）に基づく一般的な解説です。税制は改正される可能性があります。個別の経費計上の可否は、税務署または税理士にご確認ください。
+
+
+---
+
+📱 このブログの更新情報や、店舗運営に役立つヒントは Instagram・Threads でも発信しています。
+Instagram: [@ai_store_lab](https://www.instagram.com/ai_store_lab/)
+Threads: [@ai_store_lab](https://www.threads.com/@ai_store_lab)
