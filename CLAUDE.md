@@ -70,6 +70,9 @@ Scheduler（Cloud Scheduler）の ON/OFF 変更は単独では行わない。
 |------|-----------|
 | **YouTube Shorts** | 10本/日 |
 | **Instagram リール** | 2本/日 |
+| **Threads** | 3本/日 |
+| **WordPress** | 3本/日 |
+| **Brain** | 2本/日 |
 
 詳細ルール・カウント方法: `operations/sns_posting_limits.md` を参照。
 投稿実行前に `operations/instagram_post_log.md` で当日分を確認し、上限に達していれば翌日に回す。
