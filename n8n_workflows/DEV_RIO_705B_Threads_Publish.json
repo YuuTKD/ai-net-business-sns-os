@@ -1,0 +1,738 @@
+{
+  "name": "DEV_RIO_705B_Threads_Publish",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "10 22 * * *"
+            },
+            {
+              "field": "cronExpression",
+              "expression": "10 3 * * *"
+            },
+            {
+              "field": "cronExpression",
+              "expression": "40 11 * * *"
+            }
+          ]
+        }
+      },
+      "id": "705b-0001-schedule",
+      "name": "Schedule Trigger (JST 07:10/12:10/20:40)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1120,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 現在時刻(JST)から slot番号を判定\nconst jstNow = new Date(Date.now() + 9 * 3600000);\nconst hour = jstNow.getUTCHours(); // +9h済みのためUTC関数でJST時刻が取れる\nconst slot = hour < 10 ? 1 : (hour < 17 ? 2 : 3);\nconst today = jstNow.toISOString().slice(0, 10);\nreturn [{ json: { slot, today } }];"
+      },
+      "id": "705b-0002-slot",
+      "name": "Detect Slot (JST)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -900,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "post_queue",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "705b-0003-read-queue",
+      "name": "Read post_queue",
+      "alwaysOutputData": true,
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -680,
+        200
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "705b-0004-read-posts",
+      "name": "Read posts",
+      "alwaysOutputData": true,
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -460,
+        200
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true,
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 当日・該当slot・status=ready の投稿を1件取得。日次上限3本を厳守\nconst ctx = $('Detect Slot (JST)').first().json;\nconst slot = ctx.slot;\nconst today = ctx.today;\nlet queue = [];\ntry { queue = $('Read post_queue').all().map(i => i.json).filter(r => r && r.itemCode); } catch (e) {}\nlet posts = [];\ntry { posts = $('Read posts').all().map(i => i.json).filter(r => r && r.thread_id); } catch (e) {}\n// 日次上限チェック（Threads 3本/日）\nconst todayPosts = posts.filter(r => String(r.posted_at || '').slice(0, 10) === today);\nif (todayPosts.length >= 3) {\n  return [{ json: { proceed: false, reason: 'daily_limit_reached', slot, today } }];\n}\nconst cand = queue.find(r => String(r.date) === today && Number(r.slot) === slot && String(r.status) === 'ready');\nif (!cand) {\n  return [{ json: { proceed: false, reason: 'no_ready_post', slot, today } }];\n}\nreturn [{ json: { ...cand, proceed: true, slot, today } }];"
+      },
+      "id": "705b-0005-select",
+      "name": "Select Post",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -240,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.proceed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "705b-0006-if-proceed",
+      "name": "IF Proceed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -20,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 投稿なし・上限到達時は何もせず終了\nreturn $input.all();"
+      },
+      "id": "705b-0007-noop",
+      "name": "No Post (End)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.threads.net/v1.0/me/threads",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "media_type",
+              "value": "TEXT"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "705b-0008-create",
+      "name": "Threads Create Media",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        200,
+        100
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "EqL89RW6m6CtCIbm",
+          "name": "Bearer Auth account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "amount": 30,
+        "unit": "seconds"
+      },
+      "id": "705b-0009-wait",
+      "name": "Wait 30s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        420,
+        100
+      ],
+      "webhookId": "705b-wait-publish-0001"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.threads.net/v1.0/me/threads_publish",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "creation_id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "705b-0010-publish",
+      "name": "Threads Publish",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        640,
+        100
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "EqL89RW6m6CtCIbm",
+          "name": "Bearer Auth account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 投稿成否を判定し、成功時は posts 行を組み立てる\nconst sel = $('Select Post').first().json;\nlet created = null;\ntry { created = $('Threads Create Media').first().json; } catch (e) {}\nlet pub = null;\ntry { pub = $input.first().json; } catch (e) {}\nconst createOk = created && created.id && !created.error;\nconst pubOk = pub && pub.id && !pub.error;\nif (!createOk || !pubOk) {\n  const detail = JSON.stringify((pub && pub.error) || (created && created.error) || pub || created || {}).slice(0, 300);\n  return [{ json: { ok: false, post_id: sel.post_id, status: 'failed', message: `⚠️ DEV_RIO_705B 投稿失敗 slot${sel.slot} ${sel.itemCode || ''}\\n${detail}` } }];\n}\nconst jstNow = new Date(Date.now() + 9 * 3600000);\nconst formats = { 1: 'morning_problem', 2: 'noon_specs', 3: 'night_story' };\nreturn [{ json: {\n  ok: true,\n  post_id: sel.post_id,\n  thread_id: pub.id,\n  posted_at: jstNow.toISOString().replace('Z', '+09:00'),\n  slot: sel.slot,\n  itemCode: sel.itemCode,\n  shopCode: sel.shopCode || '',\n  category: sel.category,\n  format: formats[Number(sel.slot)] || '',\n  tracking_id: sel.tracking_id\n} }];"
+      },
+      "id": "705b-0011-verify",
+      "name": "Verify & Build Post Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        860,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "705b-0012-if-ok",
+      "name": "IF Publish OK",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1080,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "705b-0013-append-posts",
+      "name": "Append posts",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1300,
+        20
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#ai-team-bridge",
+          "mode": "name"
+        },
+        "text": "={{ $json.message }}",
+        "otherOptions": {}
+      },
+      "id": "705b-0014-slack-error",
+      "name": "Slack Error Notify (#ai-team-bridge)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        1300,
+        200
+      ],
+      "webhookId": "705b-slack-error-0001",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "bWml4XelhrDy3QPK",
+          "name": "Slack account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// posted_items 追記行（append-only方式。既存行の更新はせず、読み込み側=705Aで集約する）\nconst v = $('Verify & Build Post Row').first().json;\nreturn [{ json: {\n  itemCode: v.itemCode,\n  last_posted_at: v.posted_at,\n  shopCode: v.shopCode || '',\n  category: v.category || '',\n  times_posted: 1,\n  post_id: v.post_id\n} }];"
+      },
+      "id": "705b-0015-build-posted-item",
+      "name": "Build posted_items Row",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posted_items",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "705b-0016-append-posted-items",
+      "name": "Append posted_items",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1740,
+        20
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// post_queue 更新行（status: ready → posted）\nconst v = $('Verify & Build Post Row').first().json;\nreturn [{ json: { post_id: v.post_id, status: 'posted', posted_at: v.posted_at } }];"
+      },
+      "id": "705b-0017-build-queue-posted",
+      "name": "Build Queue Update (posted)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1960,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "post_queue",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "post_id"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "705b-0018-update-queue-posted",
+      "name": "Update post_queue (posted)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2180,
+        20
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Sheets書き込み系ノード（continueOnFail）のエラーを検査し、あればSlack通知用メッセージを返す\nconst v = $('Verify & Build Post Row').first().json;\nconst checks = [\n  ['Append posts', 'posts追記'],\n  ['Append posted_items', 'posted_items追記'],\n  ['Update post_queue (posted)', 'post_queue更新']\n];\nconst fails = [];\nfor (const [nodeName, label] of checks) {\n  try {\n    const out = $(nodeName).first().json;\n    if (out && out.error) fails.push(`${label}: ${JSON.stringify(out.error).slice(0, 150)}`);\n  } catch (e) {\n    fails.push(`${label}: ノード未実行/出力なし`);\n  }\n}\nif (!fails.length) return [];\nreturn [{ json: { message: `⚠️ DEV_RIO_705B Sheets書込エラー（投稿自体は成功: ${v.post_id} / ${v.thread_id}）\\n` + fails.join('\\n') } }];"
+      },
+      "id": "705b-0019-check-sheet-errors",
+      "name": "Check Sheet Write Errors",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2400,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "post_queue",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "post_id"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "705b-0020-update-queue-failed",
+      "name": "Update post_queue (failed)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1300,
+        340
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger (JST 07:10/12:10/20:40)": {
+      "main": [
+        [
+          {
+            "node": "Detect Slot (JST)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Detect Slot (JST)": {
+      "main": [
+        [
+          {
+            "node": "Read post_queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read post_queue": {
+      "main": [
+        [
+          {
+            "node": "Read posts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read posts": {
+      "main": [
+        [
+          {
+            "node": "Select Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Post": {
+      "main": [
+        [
+          {
+            "node": "IF Proceed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Proceed": {
+      "main": [
+        [
+          {
+            "node": "Threads Create Media",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Post (End)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Threads Create Media": {
+      "main": [
+        [
+          {
+            "node": "Wait 30s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 30s": {
+      "main": [
+        [
+          {
+            "node": "Threads Publish",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Threads Publish": {
+      "main": [
+        [
+          {
+            "node": "Verify & Build Post Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify & Build Post Row": {
+      "main": [
+        [
+          {
+            "node": "IF Publish OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Publish OK": {
+      "main": [
+        [
+          {
+            "node": "Append posts",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update post_queue (failed)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Slack Error Notify (#ai-team-bridge)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append posts": {
+      "main": [
+        [
+          {
+            "node": "Build posted_items Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build posted_items Row": {
+      "main": [
+        [
+          {
+            "node": "Append posted_items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append posted_items": {
+      "main": [
+        [
+          {
+            "node": "Build Queue Update (posted)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Queue Update (posted)": {
+      "main": [
+        [
+          {
+            "node": "Update post_queue (posted)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update post_queue (posted)": {
+      "main": [
+        [
+          {
+            "node": "Check Sheet Write Errors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Sheet Write Errors": {
+      "main": [
+        [
+          {
+            "node": "Slack Error Notify (#ai-team-bridge)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

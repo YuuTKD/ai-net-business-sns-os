@@ -1,0 +1,187 @@
+{
+  "name": "DEV_RIO_705D_Daily_Close_Report",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "40 14 * * *"
+            }
+          ]
+        }
+      },
+      "id": "705d-0001-schedule",
+      "name": "Schedule Trigger (14:40 UTC / 23:40 JST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-880, 200]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posts",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "705d-0002-read-posts",
+      "name": "Read posts",
+      "alwaysOutputData": true,
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [-660, 200],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "post_queue",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "705d-0003-read-queue",
+      "name": "Read post_queue",
+      "alwaysOutputData": true,
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [-440, 200],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 当日分の集計（Phase1: views/clicks未取得のため投稿実績中心）\nconst jst = new Date(Date.now() + 9 * 3600000);\nconst today = jst.toISOString().slice(0, 10);\nlet posts = [];\ntry { posts = $('Read posts').all().map(i => i.json).filter(r => r && r.thread_id); } catch (e) {}\nlet queue = [];\ntry { queue = $('Read post_queue').all().map(i => i.json).filter(r => r && r.itemCode); } catch (e) {}\nconst todayPosts = posts.filter(r => String(r.posted_at || '').slice(0, 10) === today);\nconst todayQueue = queue.filter(r => String(r.date) === today);\nconst postedSlots = [...new Set(todayPosts.map(r => Number(r.slot)))].sort();\nconst skippedSlots = [1, 2, 3].filter(s => !postedSlots.includes(s));\nconst explorationCount = todayQueue.filter(r => r.is_exploration === true || String(r.is_exploration).toLowerCase() === 'true').length;\nconst readyLeft = todayQueue.filter(r => String(r.status) === 'ready').length;\nreturn [{ json: {\n  date: today,\n  posts_count: todayPosts.length,\n  queue_count: todayQueue.length,\n  posted_slots: postedSlots.join(','),\n  skipped_slots: skippedSlots.join(','),\n  exploration_count: explorationCount,\n  ready_left: readyLeft\n} }];"
+      },
+      "id": "705d-0004-aggregate",
+      "name": "Aggregate Today",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-220, 200]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 異常検知 + 日報Markdown組み立て\nconst j = $input.first().json;\nconst alerts = [];\nif (j.queue_count === 0) alerts.push('🔴 キュー生成失敗（当日post_queue 0件。705Aの実行ログとコンプラゲート全落ちを確認）');\nif (j.posts_count === 0) alerts.push('🔴 投稿0本');\nif (j.queue_count > 0 && j.posts_count === 0) alerts.push('🔴 キューはあるが投稿されず（705Bの実行ログを確認）');\nconst lines = [\n  `*DEV_RIO_705 日報 — ${j.date}*`,\n  '',\n  `- 投稿数: ${j.posts_count}/3（投稿済み枠: ${j.posted_slots || 'なし'}）`,\n  `- スキップ枠: ${j.skipped_slots || 'なし'}`,\n  `- 当日キュー: ${j.queue_count}件（未投稿ready残: ${j.ready_left}件）`,\n  `- 探索枠(ε): ${j.exploration_count}件`\n];\nif (alerts.length) {\n  lines.push('', ...alerts);\n} else {\n  lines.push('', '✅ 異常なし');\n}\nlines.push('', '※Phase1のため views/clicks は未計測。投稿実績のみの集計。');\nreturn [{ json: {\n  date: j.date,\n  posts_count: j.posts_count,\n  queue_count: j.queue_count,\n  posted_slots: j.posted_slots,\n  skipped_slots: j.skipped_slots,\n  exploration_count: j.exploration_count,\n  alerts: alerts.join(' / '),\n  report: lines.join('\\n')\n} }];"
+      },
+      "id": "705d-0005-anomaly",
+      "name": "Anomaly Check & Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [0, 200]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "daily_stats",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "705d-0006-append-stats",
+      "name": "Append daily_stats",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [220, 200],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#ai-team-bridge",
+          "mode": "name"
+        },
+        "text": "={{ $('Anomaly Check & Report').first().json.report }}",
+        "otherOptions": {}
+      },
+      "id": "705d-0007-slack",
+      "name": "Slack Daily Report (#ai-team-bridge)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [440, 200],
+      "webhookId": "705d-slack-report-0001",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "bWml4XelhrDy3QPK",
+          "name": "Slack account"
+        }
+      },
+      "continueOnFail": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger (14:40 UTC / 23:40 JST)": {
+      "main": [[{ "node": "Read posts", "type": "main", "index": 0 }]]
+    },
+    "Read posts": {
+      "main": [[{ "node": "Read post_queue", "type": "main", "index": 0 }]]
+    },
+    "Read post_queue": {
+      "main": [[{ "node": "Aggregate Today", "type": "main", "index": 0 }]]
+    },
+    "Aggregate Today": {
+      "main": [[{ "node": "Anomaly Check & Report", "type": "main", "index": 0 }]]
+    },
+    "Anomaly Check & Report": {
+      "main": [[{ "node": "Append daily_stats", "type": "main", "index": 0 }]]
+    },
+    "Append daily_stats": {
+      "main": [[{ "node": "Slack Daily Report (#ai-team-bridge)", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
