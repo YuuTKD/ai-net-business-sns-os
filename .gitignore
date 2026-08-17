@@ -27,7 +27,10 @@ data/forms/*_responses.csv
 !scripts/instagram_reel_data.json
 !products/revenue-intelligence-os/data/youtube_shorts_queue.json
 !products/revenue-intelligence-os/data/tiktok_queue.json
+!scripts/ai_team_bridge_config.json
+!n8n_workflows/*.json
 scripts/threads_auto_state.json
 scripts/ai_team_sync_state.json
+scripts/ai_team_bridge_state.json
 operations/threads_auto_cron.log
 operations/ai_team_sync_check.log

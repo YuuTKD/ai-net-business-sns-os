@@ -1,0 +1,888 @@
+{
+  "name": "DEV_RIO_705A_Rakuten_Ingest_Score_Queue",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 20 * * *"
+            }
+          ]
+        }
+      },
+      "id": "705a-0001-schedule",
+      "name": "Schedule Trigger (20:00 UTC / 05:00 JST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "model_params",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "705a-0002-model-params",
+      "name": "Read model_params",
+      "alwaysOutputData": true,
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -1180,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "posted_items",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "705a-0003-posted-items",
+      "name": "Read posted_items",
+      "alwaysOutputData": true,
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -960,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "item_pool",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "705a-0004-item-pool",
+      "name": "Read item_pool",
+      "alwaysOutputData": true,
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -740,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// model_params 読込失敗時のデフォルト値（Phase1 初期値）\nconst defaults = {\n  w1: 0.10, w2: 0.12, w3: 0.08, w4: 0.16, w5: 0.16, w6: 0.13, w7: 0.20, w8: 0.05,\n  sigma: 0.55,\n  epsilon: 0.20,\n  pstar: { gadget: 12000, supplement: 6000, bag_wallet: 25000, book: 1800, stationery: 5000, food_gift: 6500 }\n};\nconst params = JSON.parse(JSON.stringify(defaults));\ntry {\n  const rows = $('Read model_params').all().map(i => i.json).filter(r => r && !r.error);\n  if (rows.length) {\n    const r = rows[rows.length - 1]; // 最新1行\n    for (const k of ['w1','w2','w3','w4','w5','w6','w7','w8','sigma','epsilon']) {\n      if (r[k] !== undefined && r[k] !== '' && isFinite(Number(r[k]))) params[k] = Number(r[k]);\n    }\n    for (const c of Object.keys(defaults.pstar)) {\n      const key = 'pstar_' + c;\n      if (r[key] !== undefined && r[key] !== '' && isFinite(Number(r[key]))) params.pstar[c] = Number(r[key]);\n    }\n  }\n} catch (e) { /* デフォルト値で続行 */ }\n\n// posted_items: 過去60日の itemCode 一覧\n// append-only方式のため同一itemCodeが複数行あり得る。itemCodeで集約し、最新のlast_posted_atを採用（出現回数=times_posted相当）。旧スキーマのdate列にもフォールバック対応\nlet postedCodes = [];\ntry {\n  const cutoff = Date.now() - 60 * 86400000;\n  const latest = {};\n  for (const i of $('Read posted_items').all()) {\n    const r = i.json;\n    if (!r || !r.itemCode) continue;\n    const ds = r.last_posted_at || r.date || '';\n    const t = ds ? new Date(ds).getTime() : NaN;\n    const code = String(r.itemCode);\n    if (!isFinite(t)) { latest[code] = Math.max(latest[code] || 0, Date.now()); continue; } // 日付不明行は安全側で除外対象に含める\n    latest[code] = Math.max(latest[code] || 0, t);\n  }\n  postedCodes = Object.keys(latest).filter(c => latest[c] >= cutoff);\n} catch (e) { /* 履歴なしとして続行 */ }\n\n// item_pool: 直近7日のshop出現回数 / 直近3日の前日順位\nconst recentShops = {};\nconst prevRanks = {};\ntry {\n  const rows = $('Read item_pool').all().map(i => i.json).filter(r => r && r.itemCode);\n  const now = Date.now();\n  for (const r of rows) {\n    const t = r.date ? new Date(r.date).getTime() : 0;\n    if (now - t <= 7 * 86400000 && r.shopCode) {\n      recentShops[r.shopCode] = (recentShops[r.shopCode] || 0) + 1;\n    }\n    if (now - t <= 3 * 86400000 && r.rank !== undefined && r.rank !== '') {\n      prevRanks[String(r.itemCode)] = Number(r.rank);\n    }\n  }\n} catch (e) { /* 履歴なしとして続行 */ }\n\nconst jst = new Date(Date.now() + 9 * 3600000);\nconst today = jst.toISOString().slice(0, 10);\nreturn [{ json: { params, postedCodes, recentShops, prevRanks, today } }];"
+      },
+      "id": "705a-0005-load-params",
+      "name": "Load Params & Defaults",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 6カテゴリ x 3クエリ = 18リクエスト\n// genreId はREADME記載の通り「要確認」。誤っていればREADMEの手順で修正すること。\nconst ctx = $json;\nconst cats = [\n  { key: 'gadget',     label: 'ガジェット・PC周辺機器',   genreId: '100026' },\n  { key: 'supplement', label: '健康・サプリ',             genreId: '100938' },\n  { key: 'bag_wallet', label: '高級ビジネスバッグ・財布', genreId: '216131' },\n  { key: 'book',       label: '経営・リーダーシップ本',   genreId: '200162' },\n  { key: 'stationery', label: '高級文具・手帳',           genreId: '215783' },\n  { key: 'food_gift',  label: '食品ギフト・高級グルメ',   genreId: '100227' }\n];\nconst baseRanking = 'https://openapi.rakuten.co.jp/ichibaranking/api/IchibaItem';\nconst baseSearch = 'https://openapi.rakuten.co.jp/ichibams/api/IchibaItem';\nconst reqs = [];\nfor (const c of cats) {\n  const pstar = ctx.params.pstar[c.key] || 6000;\n  // (a) ランキングAPI\n  reqs.push({ json: { category: c.key, label: c.label, reqType: 'ranking',\n    url: `${baseRanking}/Ranking/20220601?format=json&genreId=${c.genreId}` } });\n  // (b) 検索API レビュー数順\n  reqs.push({ json: { category: c.key, label: c.label, reqType: 'review',\n    url: `${baseSearch}/Search/20260701?format=json&genreId=${c.genreId}&sort=${encodeURIComponent('-reviewCount')}&hits=30` } });\n  // (c) 検索API 価格帯指定（最適価格帯の0.6〜1.8倍）\n  const minPrice = Math.round(pstar * 0.6);\n  const maxPrice = Math.round(pstar * 1.8);\n  reqs.push({ json: { category: c.key, label: c.label, reqType: 'price',\n    url: `${baseSearch}/Search/20260701?format=json&genreId=${c.genreId}&minPrice=${minPrice}&maxPrice=${maxPrice}&sort=${encodeURIComponent('-reviewAverage')}&hits=30` } });\n}\nreturn reqs;"
+      },
+      "id": "705a-0006-build-requests",
+      "name": "Build Requests",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -300,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "705a-0007-split",
+      "name": "Loop Requests (1 req/sec)",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -80,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "amount": 1.2,
+        "unit": "seconds"
+      },
+      "id": "705a-0008-wait",
+      "name": "Wait 1.2s (Rate Limit)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        140,
+        400
+      ],
+      "webhookId": "705a-wait-ratelimit-0001"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpCustomAuth",
+        "options": {
+          "timeout": 20000
+        }
+      },
+      "id": "705a-0009-rakuten-api",
+      "name": "Rakuten API Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        360,
+        400
+      ],
+      "credentials": {
+        "httpCustomAuth": {
+          "id": "hOSUm32dSZvT2lgg",
+          "name": "楽天市場API"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 全ループ実行分のAPIレスポンスを回収し、itemCodeで一意化\n// 楽天APIは Items/items, Item/item のキー大文字小文字が版により揺れるため両対応\nconst reqs = $('Build Requests').all().map(i => i.json);\nconst collected = [];\nlet run = 0;\nwhile (run < reqs.length) {\n  let items;\n  try { items = $('Rakuten API Request').all(0, run); } catch (e) { break; }\n  const meta = reqs[run] || {};\n  for (const it of items) collected.push({ res: it.json, meta });\n  run++;\n}\nconst map = {};\nfor (const { res, meta } of collected) {\n  if (!res || res.error) continue;\n  const rawArr = Array.isArray(res.Items) ? res.Items : (Array.isArray(res.items) ? res.items : []);\n  for (const w of rawArr) {\n    const it = w.Item || w.item || w;\n    const code = String(it.itemCode || '');\n    if (!code) continue;\n    let imageUrl = '';\n    const imgs = it.mediumImageUrls;\n    if (Array.isArray(imgs) && imgs.length) {\n      const m = imgs[0];\n      imageUrl = typeof m === 'string' ? m : (m.imageUrl || '');\n    }\n    const rec = {\n      itemCode: code,\n      itemName: String(it.itemName || ''),\n      itemPrice: Number(it.itemPrice || 0),\n      itemUrl: String(it.itemUrl || ''),\n      affiliateUrl: String(it.affiliateUrl || ''),\n      reviewCount: Number(it.reviewCount || 0),\n      reviewAverage: Number(it.reviewAverage || 0),\n      shopCode: String(it.shopCode || ''),\n      shopName: String(it.shopName || ''),\n      imageUrl,\n      genreId: String(it.genreId || ''),\n      availability: Number(it.availability !== undefined ? it.availability : 1),\n      postageFlag: Number(it.postageFlag || 0),\n      itemCaption: String(it.itemCaption || ''),\n      rank: Number(it.rank || 0),\n      category: meta.category,\n      categoryLabel: meta.label\n    };\n    if (!map[code]) {\n      map[code] = rec;\n    } else if (rec.rank && !map[code].rank) {\n      map[code].rank = rec.rank;\n    }\n  }\n}\nreturn Object.values(map).map(j => ({ json: j }));"
+      },
+      "id": "705a-0010-normalize",
+      "name": "Normalize & Dedupe",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        140,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Hard Gate: 機械的除外条件 (Phase1: 条件緩和)\nconst ctx = $('Load Params & Defaults').first().json;\nconst posted = new Set(ctx.postedCodes || []);\nconst recentShops = ctx.recentShops || {};\nconst ngName = /中古|訳あり|福袋|ポイント消化/;\nconst out = [];\nfor (const item of $input.all()) {\n  const j = item.json;\n  if (j.reviewAverage < 3.0) continue;\n  if (j.reviewCount < 1) continue;\n  if (j.itemPrice < 500) continue;\n  if (posted.has(j.itemCode)) continue;\n  if ((recentShops[j.shopCode] || 0) >= 2) continue;\n  if (ngName.test(j.itemName)) continue;\n  out.push(item);\n}\nreturn out;"
+      },
+      "id": "705a-0011-hard-gate",
+      "name": "Hard Gate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        360,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Deterministic Score (f1..f6, f8)\nconst ctx = $('Load Params & Defaults').first().json;\nconst p = ctx.params;\nconst prevRanks = ctx.prevRanks || {};\n// カテゴリ別推定料率（Phase1 初期値: 一律0.03）\nconst rates = { gadget: 0.03, supplement: 0.03, bag_wallet: 0.03, book: 0.03, stationery: 0.03, food_gift: 0.03 };\nconst clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));\nconst out = [];\nfor (const item of $input.all()) {\n  const j = item.json;\n  const rate = rates[j.category] || 0.03;\n  const reward = Math.min(j.itemPrice * rate, 1000);\n  const f1 = reward / 1000;\n  const f2 = Math.min(Math.log10(1 + j.reviewCount) / Math.log10(3001), 1);\n  const f3 = clamp((j.reviewAverage - 3.5) / 1.5, 0, 1);\n  const pstar = p.pstar[j.category] || 6000;\n  const sigma = p.sigma || 0.55;\n  const f4 = Math.exp(-Math.pow(Math.log(j.itemPrice) - Math.log(pstar), 2) / (2 * Math.pow(sigma, 2)));\n  const prev = prevRanks[j.itemCode];\n  const f5 = (prev !== undefined && j.rank > 0) ? clamp((prev - j.rank) / 15, 0, 1) : 0.7; // 前日データ無し(新規)は0.7\n  const f6 = 0.5; // Phase1: カテゴリ実績データ無しのため固定\n  const f8 = 0.5; // Phase1: 季節性固定\n  const num = p.w1 * f1 + p.w2 * f2 + p.w3 * f3 + p.w4 * f4 + p.w5 * f5 + p.w6 * f6 + p.w8 * f8;\n  const den = p.w1 + p.w2 + p.w3 + p.w4 + p.w5 + p.w6 + p.w8;\n  const baseScore = 100 * num / den;\n  out.push({ json: { ...j, f1, f2, f3, f4, f5, f6, f8, baseScore: Math.round(baseScore * 100) / 100 } });\n}\nreturn out;"
+      },
+      "id": "705a-0012-det-score",
+      "name": "Deterministic Score",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        580,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// baseScore降順で上位25件に絞る\nconst items = $input.all();\nitems.sort((a, b) => b.json.baseScore - a.json.baseScore);\nreturn items.slice(0, 25);"
+      },
+      "id": "705a-0013-sort-limit",
+      "name": "Sort & Top 25",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 25件を1回のAIコールでまとめて採点するためのペイロード構築\nconst items = $input.all().map(i => i.json);\nconst brief = items.map(j => ({\n  itemCode: j.itemCode,\n  name: j.itemName.slice(0, 80),\n  price: j.itemPrice,\n  category: j.categoryLabel,\n  reviewCount: j.reviewCount,\n  reviewAverage: j.reviewAverage,\n  caption: (j.itemCaption || '').slice(0, 120)\n}));\nconst prompt = items.length === 0 ? 'NO_CANDIDATES' :\n  'あなたは経営者向け楽天アフィリエイト商品の目利きです。ターゲットは会長・社長・代表・店長。' +\n  '以下の商品リストの各商品について、ターゲット適合度 aiFit（0〜1の数値）と、購買意欲を引く1文の hook を付けてください。' +\n  '出力は必ずJSON配列のみ。各要素は {\"itemCode\":\"...\",\"aiFit\":0.0,\"hook\":\"...\"} の形式。説明文・コードブロック記号は一切不要。\\n\\n商品リスト:\\n' +\n  JSON.stringify(brief);\nreturn [{ json: { items, prompt } }];"
+      },
+      "id": "705a-0014-ai-payload",
+      "name": "Prepare AI Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1020,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 3000, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "705a-0015-ai-score",
+      "name": "AI Fit Score (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1240,
+        200
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "gSjvXXaj0OLWBIza",
+          "name": "Anthropic account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// AI採点結果のパース。失敗時は aiFit=0.5 フォールバック\nconst payload = $('Prepare AI Payload').first().json;\nconst items = payload.items || [];\nconst fits = {};\ntry {\n  const res = $input.first().json;\n  const text = (res && res.content && res.content[0] && res.content[0].text) ? res.content[0].text : '';\n  const m = text.match(/\\[[\\s\\S]*\\]/);\n  const arr = JSON.parse(m ? m[0] : text);\n  for (const a of arr) {\n    const fit = Number(a.aiFit);\n    fits[String(a.itemCode)] = {\n      aiFit: isFinite(fit) ? Math.max(0, Math.min(1, fit)) : 0.5,\n      hook: String(a.hook || '')\n    };\n  }\n} catch (e) { /* 全件フォールバック */ }\nreturn items.map(j => ({ json: {\n  ...j,\n  aiFit: fits[j.itemCode] ? fits[j.itemCode].aiFit : 0.5,\n  hook: fits[j.itemCode] ? fits[j.itemCode].hook : '',\n  aiFallback: !fits[j.itemCode]\n} }));"
+      },
+      "id": "705a-0016-parse-ai",
+      "name": "Parse AI Scores",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1460,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Final Score & 枠割当（ε-greedy探索付き）\nconst ctx = $('Load Params & Defaults').first().json;\nconst p = ctx.params;\nconst items = $input.all().map(i => i.json);\nconst slots = { 1: ['gadget', 'stationery'], 2: ['supplement', 'food_gift'], 3: ['bag_wallet', 'book'] };\n// 静的ペナルティ + finalScore（同日同カテゴリ分は選択時に加算）\nfor (const j of items) {\n  const capBad = !j.itemCaption || j.itemCaption.length < 30;\n  j.pen0 = 15 * (j.postageFlag === 1 ? 1 : 0) + 20 * (capBad ? 1 : 0);\n  const s = p.w1 * j.f1 + p.w2 * j.f2 + p.w3 * j.f3 + p.w4 * j.f4 + p.w5 * j.f5 + p.w6 * j.f6 + p.w7 * j.aiFit + p.w8 * j.f8;\n  j.score0 = 100 * s - j.pen0;\n}\nconst catCount = {};\nconst out = [];\nfor (const slot of [1, 2, 3]) {\n  const pool = items\n    .filter(j => slots[slot].includes(j.category))\n    .map(j => ({ ...j, finalScore: Math.round((j.score0 - 10 * (catCount[j.category] || 0)) * 100) / 100 }))\n    .sort((a, b) => b.finalScore - a.finalScore);\n  const eligible = pool.filter(j => j.finalScore >= 55);\n  // コンプラゲート落ち時のフォールバック用に上位3件を候補として持つ\n  let picks = eligible.slice(0, 3).map((j, idx) => ({ ...j, rankInSlot: idx + 1, is_exploration: false }));\n  // ε=epsilon の確率で 45〜75 帯からランダム差し替え（探索枠）\n  if (Math.random() < (p.epsilon !== undefined ? p.epsilon : 0.20)) {\n    const band = pool.filter(j => j.finalScore >= 45 && j.finalScore <= 75);\n    if (band.length) {\n      const ex = band[Math.floor(Math.random() * band.length)];\n      const rest = picks.filter(x => x.itemCode !== ex.itemCode).slice(0, 2)\n        .map((j, i) => ({ ...j, rankInSlot: i + 2 }));\n      picks = [{ ...ex, rankInSlot: 1, is_exploration: true }, ...rest];\n    }\n  }\n  // 候補ゼロの枠は空にする（無理に埋めない）\n  if (picks.length) {\n    catCount[picks[0].category] = (catCount[picks[0].category] || 0) + 1;\n    for (const j of picks) {\n      j.slot = slot;\n      out.push({ json: j });\n    }\n  }\n}\nreturn out;"
+      },
+      "id": "705a-0017-final-select",
+      "name": "Final Score & Select",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 枠別フォーマットでの投稿文生成を1回のAIコールにまとめる\nconst cands = $input.all().map(i => i.json);\nconst formats = {\n  1: '朝枠=課題提起型。「昨日、◯◯で困った経営者へ」のように経営現場の課題から入る。',\n  2: '昼枠=数字・比較・スペック型。具体的な数値・スペック・比較を軸に淡々と語る。',\n  3: '夜枠=ストーリー型。「これを買った人の共通点」のように物語・人物像で語る。'\n};\nconst list = cands.map(c => ({\n  itemCode: c.itemCode,\n  slot: c.slot,\n  format: formats[c.slot],\n  name: c.itemName.slice(0, 80),\n  price: c.itemPrice,\n  category: c.categoryLabel,\n  reviewCount: c.reviewCount,\n  reviewAverage: c.reviewAverage,\n  hook: c.hook || ''\n}));\nconst prompt = cands.length === 0 ? 'NO_CANDIDATES' :\n  'あなたは経営者向けThreadsアカウントのコピーライターです。以下の各商品について、slotごとに指定されたformatでThreads投稿文を書いてください。\\n' +\n  '共通制約:\\n' +\n  '- 冒頭は必ず「#PR」で始める\\n' +\n  '- 本文は180〜320字\\n' +\n  '- 絵文字禁止\\n' +\n  '- URLは本文に一切含めない（後工程で末尾に1本だけ付与される）\\n' +\n  '- ターゲットは会長・社長・代表・店長\\n' +\n  '- 誇大表現（絶対・必ず・最安・日本一・No.1）禁止\\n' +\n  '- 薬機法NG表現（治る・治療・効く・効果がある・改善する・予防・痩せる・若返る・病気・症状）禁止\\n' +\n  '出力は必ずJSON配列のみ。各要素は {\"itemCode\":\"...\",\"slot\":1,\"text\":\"...\"} の形式。説明文・コードブロック記号は不要。\\n\\n候補:\\n' +\n  JSON.stringify(list);\nreturn [{ json: { candidates: cands, prompt } }];"
+      },
+      "id": "705a-0018-copy-payload",
+      "name": "Prepare Copy Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1900,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 4000, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "705a-0019-copy-gen",
+      "name": "Copy Gen (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2120,
+        200
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "gSjvXXaj0OLWBIza",
+          "name": "Anthropic account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 生成コピーを候補にマージ。text欠損の候補はコンプラゲートでスキップされる\nconst payload = $('Prepare Copy Payload').first().json;\nconst cands = payload.candidates || [];\nconst texts = {};\ntry {\n  const res = $input.first().json;\n  const text = (res && res.content && res.content[0] && res.content[0].text) ? res.content[0].text : '';\n  const m = text.match(/\\[[\\s\\S]*\\]/);\n  const arr = JSON.parse(m ? m[0] : text);\n  for (const a of arr) texts[String(a.itemCode) + '_' + String(a.slot)] = String(a.text || '');\n} catch (e) { /* text無しのまま流す */ }\nreturn cands.map(c => ({ json: { ...c, text: texts[String(c.itemCode) + '_' + String(c.slot)] || '' } }));"
+      },
+      "id": "705a-0020-parse-copy",
+      "name": "Parse Copy Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2340,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compliance Gate: 違反は自動修正せずスキップし、同一枠の次点候補にフォールバック\nconst cands = $input.all().map(i => i.json);\nconst yakki = /治る|治療|効く|効果がある|改善する|予防|痩せる|若返る|病気|症状/;\nconst kodai = /絶対|必ず|最安|日本一|No\\.?1|ナンバーワン/;\nconst urlRe = /https?:\\/\\//g;\nconst bySlot = {};\nfor (const c of cands) {\n  (bySlot[c.slot] = bySlot[c.slot] || []).push(c);\n}\nconst out = [];\nfor (const slot of Object.keys(bySlot)) {\n  const list = bySlot[slot].sort((a, b) => a.rankInSlot - b.rankInSlot);\n  let chosen = null;\n  for (const c of list) {\n    const t = String(c.text || '').trim();\n    if (!t) continue;\n    if (!t.startsWith('#PR')) continue;            // 冒頭#PR必須\n    if (yakki.test(t)) continue;                    // 薬機法NG\n    if (kodai.test(t)) continue;                    // 誇大表現NG\n    if (t.length > 480) continue;                   // 全体480字以内（URL付与後の余裕込み）\n    if ((t.match(urlRe) || []).length > 0) continue; // 本文にURL不可（末尾付与で計1本にする）\n    chosen = c;\n    break;\n  }\n  if (chosen) out.push({ json: chosen });\n  // 全候補が違反した枠は空のまま（無理に埋めない）\n}\nreturn out;"
+      },
+      "id": "705a-0021-compliance",
+      "name": "Compliance Gate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2560,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 計測ID付与 + post_queue行の組み立て\nconst jst = new Date(Date.now() + 9 * 3600000);\nconst dateStr = jst.toISOString().slice(0, 10);\nconst ymd = dateStr.replace(/-/g, '');\nconst out = [];\nfor (const item of $input.all()) {\n  const j = item.json;\n  const tail = String(j.itemCode).slice(-6).replace(/[^A-Za-z0-9]/g, '');\n  const trackingId = `t705_${ymd}_s${j.slot}_${tail}`;\n  const base = j.affiliateUrl || j.itemUrl;\n  const url = base + (base.includes('?') ? '&' : '?') + 't705=' + trackingId;\n  const text = String(j.text).trim() + '\\n\\n' + url;\n  out.push({ json: {\n    post_id: `705_${ymd}_s${j.slot}`,\n    date: dateStr,\n    slot: j.slot,\n    itemCode: j.itemCode,\n    itemName: j.itemName,\n    price: j.itemPrice,\n    category: j.category,\n    shopCode: j.shopCode || '',\n    f1: j.f1, f2: j.f2, f3: j.f3, f4: j.f4, f5: j.f5, f6: j.f6, f7: j.aiFit, f8: j.f8,\n    baseScore: j.baseScore,\n    aiFit: j.aiFit,\n    finalScore: j.finalScore,\n    is_exploration: j.is_exploration === true,\n    text,\n    url,\n    tracking_id: trackingId,\n    status: 'ready'\n  } });\n}\nreturn out;"
+      },
+      "id": "705a-0022-tracking",
+      "name": "Build Tracking URL & Queue Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2780,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "post_queue",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "705a-0023-append-queue",
+      "name": "Append post_queue",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3000,
+        200
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// item_pool 追記行（スコア済み全件を記録し、翌日以降のf5突合・shop重複判定に使う）\nconst jst = new Date(Date.now() + 9 * 3600000);\nconst dateStr = jst.toISOString().slice(0, 10);\nreturn $input.all().map(i => {\n  const j = i.json;\n  return { json: {\n    date: dateStr,\n    itemCode: j.itemCode,\n    rank: j.rank || '',\n    price: j.itemPrice,\n    reviewCount: j.reviewCount,\n    reviewAverage: j.reviewAverage,\n    shopCode: j.shopCode,\n    category: j.category,\n    baseScore: j.baseScore\n  } };\n});"
+      },
+      "id": "705a-0024-pool-rows",
+      "name": "Build Pool Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "item_pool",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "705a-0025-append-pool",
+      "name": "Append item_pool",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1020,
+        420
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 実行サマリーとエラー判定\nlet queued = 0;\ntry { queued = $('Build Tracking URL & Queue Rows').all().length; } catch (e) {}\nconst errors = [];\nif (queued === 0) errors.push('post_queue 追加0件（候補ゼロ・AI失敗・コンプラ全落ちの可能性）');\ntry {\n  if ($('Parse AI Scores').all().some(i => i.json.aiFallback)) {\n    errors.push('AI採点フォールバック発生（aiFit=0.5適用）');\n  }\n} catch (e) {}\ntry {\n  const appended = $('Append post_queue').all();\n  if (appended.some(i => i.json && i.json.error)) errors.push('post_queue への書き込みエラー');\n} catch (e) { errors.push('post_queue への書き込みエラー'); }\nconst message = `DEV_RIO_705A 実行結果: キュー追加 ${queued}件` + (errors.length ? `\\n⚠️ ${errors.join(' / ')}` : '');\nreturn [{ json: { hasError: errors.length > 0, message } }];"
+      },
+      "id": "705a-0026-summary",
+      "name": "Run Summary & Error Check",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3220,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.hasError }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "705a-0027-if-error",
+      "name": "IF Has Error",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        3440,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#ai-team-bridge",
+          "mode": "name"
+        },
+        "text": "={{ $json.message }}",
+        "otherOptions": {}
+      },
+      "id": "705a-0028-slack-error",
+      "name": "Slack Error Notify (#ai-team-bridge)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        3660,
+        120
+      ],
+      "webhookId": "705a-slack-error-0001",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "bWml4XelhrDy3QPK",
+          "name": "Slack account"
+        }
+      },
+      "continueOnFail": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger (20:00 UTC / 05:00 JST)": {
+      "main": [
+        [
+          {
+            "node": "Read model_params",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read model_params": {
+      "main": [
+        [
+          {
+            "node": "Read posted_items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read posted_items": {
+      "main": [
+        [
+          {
+            "node": "Read item_pool",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read item_pool": {
+      "main": [
+        [
+          {
+            "node": "Load Params & Defaults",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Params & Defaults": {
+      "main": [
+        [
+          {
+            "node": "Build Requests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Requests": {
+      "main": [
+        [
+          {
+            "node": "Loop Requests (1 req/sec)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Requests (1 req/sec)": {
+      "main": [
+        [
+          {
+            "node": "Normalize & Dedupe",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait 1.2s (Rate Limit)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 1.2s (Rate Limit)": {
+      "main": [
+        [
+          {
+            "node": "Rakuten API Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rakuten API Request": {
+      "main": [
+        [
+          {
+            "node": "Loop Requests (1 req/sec)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize & Dedupe": {
+      "main": [
+        [
+          {
+            "node": "Hard Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hard Gate": {
+      "main": [
+        [
+          {
+            "node": "Deterministic Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Deterministic Score": {
+      "main": [
+        [
+          {
+            "node": "Sort & Top 25",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Build Pool Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort & Top 25": {
+      "main": [
+        [
+          {
+            "node": "Prepare AI Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare AI Payload": {
+      "main": [
+        [
+          {
+            "node": "AI Fit Score (Claude)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Fit Score (Claude)": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Scores",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Scores": {
+      "main": [
+        [
+          {
+            "node": "Final Score & Select",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final Score & Select": {
+      "main": [
+        [
+          {
+            "node": "Prepare Copy Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Copy Payload": {
+      "main": [
+        [
+          {
+            "node": "Copy Gen (Claude)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copy Gen (Claude)": {
+      "main": [
+        [
+          {
+            "node": "Parse Copy Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Copy Results": {
+      "main": [
+        [
+          {
+            "node": "Compliance Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compliance Gate": {
+      "main": [
+        [
+          {
+            "node": "Build Tracking URL & Queue Rows",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Tracking URL & Queue Rows": {
+      "main": [
+        [
+          {
+            "node": "Append post_queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append post_queue": {
+      "main": [
+        [
+          {
+            "node": "Run Summary & Error Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Pool Rows": {
+      "main": [
+        [
+          {
+            "node": "Append item_pool",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run Summary & Error Check": {
+      "main": [
+        [
+          {
+            "node": "IF Has Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Has Error": {
+      "main": [
+        [
+          {
+            "node": "Slack Error Notify (#ai-team-bridge)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}
