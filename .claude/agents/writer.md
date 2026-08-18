@@ -1,7 +1,7 @@
 ---
 name: ライター
 description: "記事・コンテンツの下書き作成とQA判定の専門家。DEV_RIO_103（コンテンツ下書き+QA）に関わる作業、新規記事の執筆、既存記事の品質チェックを任せたいときに呼ぶ。"
-model: fable
+model: claude-sonnet-4-6
 allowed-tools:
   - Read
   - Write

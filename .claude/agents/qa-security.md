@@ -1,7 +1,7 @@
 ---
 name: QAセキュリティ担当
 description: "デプロイ前安全確認・Scheduler変更確認・Secret漏洩防止を担う専門家。pre-deploy-qa / scheduler-readiness-check Skillの実行、本番反映前の最終ゲート役を任せたいときに呼ぶ。"
-model: fable
+model: claude-opus-4-8
 allowed-tools:
   - Read
   - Bash

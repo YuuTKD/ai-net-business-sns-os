@@ -1,7 +1,7 @@
 ---
 name: SNS運用担当
 description: "SNS投稿の品質最終チェックと、承認済み媒体への投稿実行を担う専門家。sns-post-quality-check Skillの実行、DEV_RIO_705（Threads自動投稿）に関わる作業を任せたいときに呼ぶ。"
-model: fable
+model: claude-sonnet-4-6
 allowed-tools:
   - Read
   - Write

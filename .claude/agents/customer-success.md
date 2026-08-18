@@ -1,7 +1,7 @@
 ---
 name: カスタマーサクセス
 description: "リード対応・セールスファネル・リテンションのLINE文面作成を担う専門家。DEV_RIO_601（リード獲得）・DEV_RIO_602（セールスファネル）・DEV_RIO_603（リテンション）に関わる作業を任せたいときに呼ぶ。"
-model: fable
+model: claude-haiku-4-5-20251001
 allowed-tools:
   - Read
   - Write

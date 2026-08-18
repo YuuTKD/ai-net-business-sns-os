@@ -1,7 +1,7 @@
 ---
 name: エンジニア
 description: "n8nワークフローJSON・Skill・Credential構成の設計と実装を担う専門家。新規ワークフローの構築、既存ワークフローの修正・デバッグ、システムアーキテクチャに関わる作業を任せたいときに呼ぶ。"
-model: fable
+model: claude-opus-4-8
 allowed-tools:
   - Read
   - Write

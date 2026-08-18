@@ -1,7 +1,7 @@
 ---
 name: リサーチャー
 description: "需要リサーチ・市場調査・実験設計の専門家。新商品/新企画の裏付けデータが必要なとき、DEV_RIO_101（需要リサーチ）・DEV_RIO_102（実験設計）に関わる作業を任せたいときに呼ぶ。"
-model: fable
+model: claude-sonnet-4-6
 allowed-tools:
   - Read
   - Write
