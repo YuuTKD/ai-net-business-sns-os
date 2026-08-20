@@ -1,0 +1,192 @@
+{
+  "name": "DEV_RIO_715_Morning_AruAru_Threads",
+  "active": false,
+  "nodes": [
+    {
+      "id": "715-0001-schedule",
+      "name": "Schedule Trigger (03:00 UTC / 12:00 JST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 300],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 3 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "715-0002-determine-genre",
+      "name": "業種を決定",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [220, 300],
+      "parameters": {
+        "jsCode": "const now = new Date();\nconst jstDate = new Date(now.getTime() + 9 * 3600000);\nconst dayOfYear = Math.floor((jstDate - new Date(jstDate.getFullYear(), 0, 0)) / 86400000);\n\nconst genres = [\n  {\n    name: '飲食業',\n    description: '飲食店・カフェ・居酒屋などの個人店オーナー',\n    themes: ['仕込み・調理の苦労', '接客あるある', '売上・集客の悩み', 'SNS運用のリアル', 'スタッフ管理', 'メニュー開発', '原価率・利益', '常連客との関係'],\n    emoji: '🍽️'\n  },\n  {\n    name: '美容サロン',\n    description: '美容室・ネイル・まつ毛・エステなどの個人サロンオーナー',\n    themes: ['予約管理のあるある', '技術練習の大変さ', 'カルテ・顧客管理', 'SNS集客のリアル', 'ドタキャン・無断キャンセル', '値上げの悩み', '道具・消耗品コスト', '常連様との関係'],\n    emoji: '💇'\n  },\n  {\n    name: '整体・マッサージ',\n    description: '整体院・接骨院・マッサージ・リラクゼーションの個人店オーナー',\n    themes: ['施術中のあるある', '腰痛・体の疲れのリアル', '口コミ・紹介の大切さ', '予約管理の悩み', 'リピーター定着の工夫', '道具メンテナンス', '患者様との信頼構築', '施術メニュー設計'],\n    emoji: '🤲'\n  }\n];\n\nconst genre = genres[dayOfYear % 3];\nconst theme = genre.themes[dayOfYear % genre.themes.length];\nconst dateStr = `${jstDate.getFullYear()}-${String(jstDate.getMonth()+1).padStart(2,'0')}-${String(jstDate.getDate()).padStart(2,'0')}`;\n\nreturn [{\n  json: {\n    genre: genre.name,\n    description: genre.description,\n    theme,\n    emoji: genre.emoji,\n    date: dateStr\n  }\n}];"
+      }
+    },
+    {
+      "id": "715-0003-claude",
+      "name": "Claude 投稿文生成",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [440, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {"name": "anthropic-version", "value": "2023-06-01"},
+            {"name": "content-type", "value": "application/json"}
+          ]
+        },
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "application/json",
+        "body": "={{ JSON.stringify({ model: 'claude-haiku-4-5-20251001', max_tokens: 800, messages: [{ role: 'user', content: 'あなたは飲食業・美容サロン・整体マッサージ店向けSNS投稿のプロライターです。\\n\\n以下の条件でThreads投稿文を1本作成してください。\\n\\n【業種】' + $json.genre + '（' + $json.description + '）\\n【テーマ】' + $json.theme + '\\n\\n【作成ルール】\\n- 文字数：200〜400字（絵文字込み）\\n- ターゲット：オーナー・店長・スタッフ・お客様のいずれか（テーマに合わせて選ぶ）\\n- 文体：親しみやすく共感できる口語体。「あるある」「わかる〜」「そうそう！」と思わせる\\n- 構成：①リアルな状況描写（店や接客の現場）→ ②あるある/悩み/苦しみの共感 → ③前向きな一言or気づき\\n- 絵文字：3〜5個を自然に使用\\n- ハッシュタグ：なし（本文のみ）\\n- 禁止：冒頭#PR・誇大表現（必ず/絶対/完全）・URL・「詳しくは〜」等のメタ案内\\n\\n投稿文のみを返してください。説明は不要です。' }] }) }}",
+        "options": {"timeout": 30000}
+      },
+      "credentials": {
+        "anthropicApi": {
+          "id": "gSjvXXaj0OLWBIza",
+          "name": "Anthropic account"
+        }
+      }
+    },
+    {
+      "id": "715-0004-build-text",
+      "name": "投稿文を整形",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 300],
+      "parameters": {
+        "jsCode": "const genre = $('業種を決定').first().json.genre;\nconst emoji = $('業種を決定').first().json.emoji;\nconst date = $('業種を決定').first().json.date;\nconst theme = $('業種を決定').first().json.theme;\n\n// Anthropic APIレスポンスからテキストを取得\nlet text = '';\nconst content = $json.content;\nif (Array.isArray(content)) {\n  text = content.map(c => c.text || '').join('').trim();\n}\n\nif (!text) throw new Error('Claude からの投稿文が空です');\n\n// 480字チェック\nif (text.length > 480) {\n  text = text.slice(0, 477) + '…';\n}\n\nreturn [{\n  json: { text, genre, emoji, date, theme }\n}];"
+      }
+    },
+    {
+      "id": "715-0005-threads-create",
+      "name": "Threads Create Media",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.threads.net/v1.0/me/threads",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "media_type", "value": "TEXT"},
+            {"name": "text", "value": "={{ $json.text }}"}
+          ]
+        },
+        "options": {"timeout": 30000}
+      },
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "EqL89RW6m6CtCIbm",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "id": "715-0006-wait",
+      "name": "Wait 30s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1100, 300],
+      "webhookId": "715-wait-publish-0001",
+      "parameters": {
+        "amount": 30,
+        "unit": "seconds"
+      }
+    },
+    {
+      "id": "715-0007-threads-publish",
+      "name": "Threads Publish",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, 300],
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.threads.net/v1.0/me/threads_publish",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "creation_id", "value": "={{ $json.id }}"}
+          ]
+        },
+        "options": {"timeout": 30000}
+      },
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "EqL89RW6m6CtCIbm",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "id": "715-0008-slack",
+      "name": "Slack 投稿成功通知",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [1540, 300],
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#ai-team-bridge",
+          "mode": "name"
+        },
+        "text": "={{ '✅ [715] 朝投稿完了 ' + $('業種を決定').first().json.emoji + '\\n業種: ' + $('業種を決定').first().json.genre + '\\nテーマ: ' + $('業種を決定').first().json.theme + '\\n\\n' + $('投稿文を整形').first().json.text.slice(0, 100) + '…' }}",
+        "otherOptions": {}
+      },
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "bWml4XelhrDy3QPK",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (22:00 UTC / 07:00 JST)": {
+      "main": [[{"node": "業種を決定", "type": "main", "index": 0}]]
+    },
+    "業種を決定": {
+      "main": [[{"node": "Claude 投稿文生成", "type": "main", "index": 0}]]
+    },
+    "Claude 投稿文生成": {
+      "main": [[{"node": "投稿文を整形", "type": "main", "index": 0}]]
+    },
+    "投稿文を整形": {
+      "main": [[{"node": "Threads Create Media", "type": "main", "index": 0}]]
+    },
+    "Threads Create Media": {
+      "main": [[{"node": "Wait 30s", "type": "main", "index": 0}]]
+    },
+    "Wait 30s": {
+      "main": [[{"node": "Threads Publish", "type": "main", "index": 0}]]
+    },
+    "Threads Publish": {
+      "main": [[{"node": "Slack 投稿成功通知", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

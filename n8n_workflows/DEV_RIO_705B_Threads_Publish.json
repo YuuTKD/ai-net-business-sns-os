@@ -7,21 +7,13 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "10 22 * * *"
-            },
-            {
-              "field": "cronExpression",
-              "expression": "10 3 * * *"
-            },
-            {
-              "field": "cronExpression",
-              "expression": "40 11 * * *"
+              "expression": "0 22 * * *"
             }
           ]
         }
       },
       "id": "705b-0001-schedule",
-      "name": "Schedule Trigger (JST 07:10/12:10/20:40)",
+      "name": "Schedule Trigger (JST 07:00 daily)",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [
@@ -107,7 +99,7 @@
     },
     {
       "parameters": {
-        "jsCode": "// 当日・該当slot・status=ready の投稿を1件取得。日次上限3本を厳守\nconst ctx = $('Detect Slot (JST)').first().json;\nconst slot = ctx.slot;\nconst today = ctx.today;\nlet queue = [];\ntry { queue = $('Read post_queue').all().map(i => i.json).filter(r => r && r.itemCode); } catch (e) {}\nlet posts = [];\ntry { posts = $('Read posts').all().map(i => i.json).filter(r => r && r.thread_id); } catch (e) {}\n// 日次上限チェック（Threads 3本/日）\nconst todayPosts = posts.filter(r => String(r.posted_at || '').slice(0, 10) === today);\nif (todayPosts.length >= 3) {\n  return [{ json: { proceed: false, reason: 'daily_limit_reached', slot, today } }];\n}\nconst cand = queue.find(r => String(r.date) === today && Number(r.slot) === slot && String(r.status) === 'ready');\nif (!cand) {\n  return [{ json: { proceed: false, reason: 'no_ready_post', slot, today } }];\n}\nreturn [{ json: { ...cand, proceed: true, slot, today } }];"
+        "jsCode": "// 当日分の status=ready を全slotから横断し、finalScoreが最も高い1件を選ぶ。\n// 705B自体は1日1回のみ起動(2026-08-19改定: 3回起動のうち2回は日次上限で必ず空振りだったため統合)。\n// 705Aは引き続き1日3ジャンル分(gadget/stationery, supplement/food_gift, bag_wallet/book)を候補として積むが、\n// 実際に投稿するのはその中の最高スコア1件のみ。選ばれなかった同日分は投稿後にskipped_daily_limitへ更新する。\nconst ctx = $('Detect Slot (JST)').first().json;\nconst today = ctx.today;\nlet queue = [];\ntry { queue = $('Read post_queue').all().map(i => i.json).filter(r => r && r.itemCode); } catch (e) {}\nlet posts = [];\ntry { posts = $('Read posts').all().map(i => i.json).filter(r => r && r.thread_id); } catch (e) {}\n\nconst byRecency = queue.filter(r => String(r.status) === 'failed' || String(r.status) === 'posted')\n  .sort((a, b) => (String(b.date) + String(b.slot).padStart(2, '0')).localeCompare(String(a.date) + String(a.slot).padStart(2, '0')));\nlet consecFail = 0;\nfor (const r of byRecency) { if (String(r.status) === 'failed') consecFail++; else break; }\nif (consecFail >= 3) {\n  return [{ json: { proceed: false, reason: 'consecutive_failures_stop', today, consecFail } }];\n}\n\nconst todayPosts = posts.filter(r => String(r.posted_at || '').slice(0, 10) === today);\nif (todayPosts.length >= 1) {\n  return [{ json: { proceed: false, reason: 'daily_limit_reached', today } }];\n}\n\nconst candidates = queue.filter(r => String(r.date) === today && String(r.status) === 'ready');\nif (!candidates.length) {\n  return [{ json: { proceed: false, reason: 'no_ready_post', today } }];\n}\ncandidates.sort((a, b) => Number(b.finalScore || 0) - Number(a.finalScore || 0));\nconst cand = candidates[0];\nconst siblingPostIds = candidates.slice(1).map(r => r.post_id);\nreturn [{ json: { ...cand, proceed: true, today, siblingPostIds } }];"
       },
       "id": "705b-0005-select",
       "name": "Select Post",
@@ -516,21 +508,62 @@
         }
       },
       "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 選ばれなかった同日候補(他slot分)をskipped_daily_limitへ更新する行を組み立てる\nconst sel = $('Select Post').first().json;\nconst ids = sel.siblingPostIds || [];\nreturn ids.map(pid => ({ json: { post_id: pid, status: 'skipped_daily_limit' } }));"
+      },
+      "id": "705b-skip-build",
+      "name": "Build Sibling Skip Rows",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2180,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "post_queue",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "post_id"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "705b-skip-update",
+      "name": "Update post_queue (skip siblings)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2400,
+        200
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
     }
   ],
   "pinData": {},
   "connections": {
-    "Schedule Trigger (JST 07:10/12:10/20:40)": {
-      "main": [
-        [
-          {
-            "node": "Detect Slot (JST)",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Detect Slot (JST)": {
       "main": [
         [
@@ -711,6 +744,11 @@
             "node": "Check Sheet Write Errors",
             "type": "main",
             "index": 0
+          },
+          {
+            "node": "Build Sibling Skip Rows",
+            "type": "main",
+            "index": 0
           }
         ]
       ]
@@ -720,6 +758,28 @@
         [
           {
             "node": "Slack Error Notify (#ai-team-bridge)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Sibling Skip Rows": {
+      "main": [
+        [
+          {
+            "node": "Update post_queue (skip siblings)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger (JST 12:10 daily)": {
+      "main": [
+        [
+          {
+            "node": "Detect Slot (JST)",
             "type": "main",
             "index": 0
           }
