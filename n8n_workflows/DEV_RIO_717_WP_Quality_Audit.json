@@ -1,0 +1,111 @@
+{
+  "name": "DEV_RIO_717_WP_Quality_Audit",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtDay": [1],
+              "triggerAtHour": 1,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "trig-weekly",
+      "name": "毎週月曜 10:00 JST",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-600, 0],
+      "notes": "毎週月曜 10:00 JST (UTC 01:00) に全記事QAスキャンを実行"
+    },
+    {
+      "parameters": {
+        "command": "cd /Users/tokudayuya/ai-net-business-sns-os && node --env-file=.env.local scripts/wp_post_qa.js --slack 2>&1"
+      },
+      "id": "node-qa-scan",
+      "name": "WP記事QAスキャン",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [-380, 0],
+      "notes": "5項目チェック: デザイン/免責文/H2スタイル/CTAリンク/本文長。違反があればSlack通知。"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{ $json.exitCode }}",
+              "operation": "equal",
+              "value2": 1
+            }
+          ]
+        }
+      },
+      "id": "node-if-violation",
+      "name": "違反あり？",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [-160, 0]
+    },
+    {
+      "parameters": {
+        "command": "cd /Users/tokudayuya/ai-net-business-sns-os && node --env-file=.env.local scripts/wp_design_patcher.js --run 2>&1 && node --env-file=.env.local scripts/wp_html_design_patcher.js --run 2>&1"
+      },
+      "id": "node-auto-fix",
+      "name": "デザイン自動修正",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [60, -80],
+      "notes": "デザイン未適用の記事を自動修正。修正後Slackで報告。"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "webhookUri": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "text": "={{ '🔧 WP記事QA違反を自動修正しました\\n' + $json.stdout }}",
+        "otherOptions": {}
+      },
+      "id": "node-slack-fixed",
+      "name": "Slack: 修正完了通知",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [280, -80]
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "webhookUri": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "text": "✅ *WP記事週次QA: 全件OK*\n違反ゼロ。デザイン・免責・CTA全て準拠。",
+        "otherOptions": {}
+      },
+      "id": "node-slack-ok",
+      "name": "Slack: 全件OK通知",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [60, 80]
+    }
+  ],
+  "connections": {
+    "毎週月曜 10:00 JST": {
+      "main": [[{ "node": "WP記事QAスキャン", "type": "main", "index": 0 }]]
+    },
+    "WP記事QAスキャン": {
+      "main": [[{ "node": "違反あり？", "type": "main", "index": 0 }]]
+    },
+    "違反あり？": {
+      "main": [
+        [{ "node": "デザイン自動修正", "type": "main", "index": 0 }],
+        [{ "node": "Slack: 全件OK通知", "type": "main", "index": 0 }]
+      ]
+    },
+    "デザイン自動修正": {
+      "main": [[{ "node": "Slack: 修正完了通知", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "staticData": null,
+  "tags": ["wp", "qa", "weekly-audit"],
+  "meta": { "instanceId": "dev-rio-717" }
+}
