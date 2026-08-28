@@ -31,6 +31,10 @@ search_intent: 情報収集（§2: 強引な購入誘導を避け、比較・関
 
 なお、紹介するツールは全て契約して検証したものではなく、各公式サイトの公開情報をもとに整理したものです（2026年8月時点）。料金・仕様は変わるため、契約前に必ず各公式サイトで最新をご確認ください。本記事には広告（アフィリエイトリンク）を含みます。
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">この記事で分かること</h2>
+</div>
+
 ## この記事で分かること
 
 - 開業〜運営で必要になるツールの全体像（4フェーズ・16ジャンル）
@@ -38,18 +42,42 @@ search_intent: 情報収集（§2: 強引な購入誘導を避け、比較・関
 - 各ジャンルの要点と、詳しく読むための個別記事への入口
 - ツール導入で失敗しやすい注意点と、お金をかけすぎないための考え方
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<!-- wp:image {"id":1340,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-HUB-img01.png" alt="店舗開業から運営までの4フェーズ" class="wp-image-1340"/></figure>
+<!-- /wp:image -->
+
+<h2 style="margin:0;font-size:1.2rem;">まず全体像：開業〜運営の「4フェーズ」で揃える</h2>
+</div>
+
 ## まず全体像：開業〜運営の「4フェーズ」で揃える
 
 店舗の裏側で動くツールは、導入するタイミングで4つのフェーズに分かれます。**自分が今どのフェーズにいるかを決めてから、該当する章だけ読む**のが一番の近道です。
 
-| フェーズ | 時期の目安 | 揃えるもの | この記事の章 |
-|---|---|---|---|
-| フェーズ1：お金の土台 | 開業前〜開業直後 | POSレジ／会計・確定申告ソフト | 第1章 |
-| フェーズ2：集客の土台 | 開業前後〜集客開始 | 独自ドメイン／Googleビジネスプロフィール／店頭販促 | 第2章 |
-| フェーズ3：運営の効率化 | 営業が回り始めたら | 見積対応／予約システム／電子契約／店舗設備 | 第3章 |
-| フェーズ4：人を雇ったら | スタッフ採用の前後 | 求人／労務手続き／勤怠管理／労務代行 | 第4章 |
+<table style="width:100%;border-collapse:collapse;margin:24px 0;">
+<thead><tr style="background:#1a6b3c;color:#fff;">
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">フェーズ</th>
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">時期の目安</th>
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">揃えるもの</th>
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">この記事の章</th>
+</tr></thead>
+<tbody>
+<tr style="background:#f9f9f9;"><td style="padding:10px;border:1px solid #ddd;">フェーズ1：お金の土台</td><td style="padding:10px;border:1px solid #ddd;">開業前〜開業直後</td><td style="padding:10px;border:1px solid #ddd;">POSレジ／会計・確定申告ソフト</td><td style="padding:10px;border:1px solid #ddd;">第1章</td></tr>
+<tr><td style="padding:10px;border:1px solid #ddd;">フェーズ2：集客の土台</td><td style="padding:10px;border:1px solid #ddd;">開業前後〜集客開始</td><td style="padding:10px;border:1px solid #ddd;">独自ドメイン／Googleビジネスプロフィール／店頭販促</td><td style="padding:10px;border:1px solid #ddd;">第2章</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px;border:1px solid #ddd;">フェーズ3：運営の効率化</td><td style="padding:10px;border:1px solid #ddd;">営業が回り始めたら</td><td style="padding:10px;border:1px solid #ddd;">見積対応／予約システム／電子契約／店舗設備</td><td style="padding:10px;border:1px solid #ddd;">第3章</td></tr>
+<tr><td style="padding:10px;border:1px solid #ddd;">フェーズ4：人を雇ったら</td><td style="padding:10px;border:1px solid #ddd;">スタッフ採用の前後</td><td style="padding:10px;border:1px solid #ddd;">求人／労務手続き／勤怠管理／労務代行</td><td style="padding:10px;border:1px solid #ddd;">第4章</td></tr>
+</tbody>
+</table>
 
 迷ったらフェーズ1から。以下、フェーズ順に要点と「次に読む記事」を案内します。
+
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<!-- wp:image {"id":1341,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-HUB-img02.png" alt="レジと会計で店舗経営の土台を作る" class="wp-image-1341"/></figure>
+<!-- /wp:image -->
+
+<h2 style="margin:0;font-size:1.2rem;">第1章【フェーズ1】お金の土台：レジと会計を最初に固める</h2>
+</div>
 
 ## 第1章【フェーズ1】お金の土台：レジと会計を最初に固める
 
@@ -71,18 +99,36 @@ search_intent: 情報収集（§2: 強引な購入誘導を避け、比較・関
 
 → 2つの詳しい比較は **[個人事業主の会計ソフト、弥生とマネーフォワードを店舗目線で比較](https://treecosme.home.blog/2026/08/07/個人事業主の会計ソフト、弥生とマネーフォワー/)** にまとめています。どちらも無料で試せる入口があるので、まず触って合うほうを選ぶのが低リスクです（本記事末尾の【実リンク】参照。リンクは広告で、クリックすると各公式サイトへ移動します）。
 
+<div style="text-align:center;margin:32px 0;">
+<a href="https://px.a8.net/svt/ejp?a8mat=4B8B4X+FNTJFE+35XE+5YJRM" style="background:#f59e0b;color:#fff;padding:14px 32px;border-radius:8px;font-weight:bold;text-decoration:none;font-size:1.1rem;display:inline-block;">やよいの青色申告オンライン 無料で試す →</a>
+</div>
+
 ### 会計まわりで一緒に読みたい記事（制度・手続き編）
 
 会計ソフトを入れる前後で、制度の理解が必要になる場面ごとに個別記事があります。**該当するものだけ**読んでください。
 
-| 知りたいこと | 記事 |
-|---|---|
-| 青色申告を始める手順（申請期限あり） | [初めての青色申告、やり方を5ステップで](https://ainetbiz.com/2026/08/13/%e5%88%9d%e3%82%81%e3%81%a6%e3%81%ae%e9%9d%92%e8%89%b2%e7%94%b3%e5%91%8a%e3%80%81%e3%82%84%e3%82%8a%e6%96%b9%e3%82%925%e3%82%b9%e3%83%86%e3%83%83%e3%83%97%e3%81%a7%e3%81%be%e3%81%a8%e3%82%81%e3%81%9f/) |
-| 65万円控除の4条件 | [青色申告特別控除65万円のやり方](https://treecosme.home.blog/2026/08/10/%e9%9d%92%e8%89%b2%e7%94%b3%e5%91%8a%e7%89%b9%e5%88%a5%e6%8e%a7%e9%99%a465%e4%b8%87%e5%86%86%e3%81%ae%e3%82%84%e3%82%8a%e6%96%b9%ef%bd%9c%e6%9d%a1%e4%bb%b6%e3%81%af4%e3%81%a4%e3%80%82%e4%bc%9a/) |
-| 帳簿の付け方（仕訳例のまね方） | [個人事業主の帳簿の付け方](https://treecosme.home.blog/2026/08/10/%e5%80%8b%e4%ba%ba%e4%ba%8b%e6%a5%ad%e4%b8%bb%e3%81%ae%e5%b8%b3%e7%b0%bf%e3%81%ae%e4%bb%98%e3%81%91%e6%96%b9%ef%bd%9c%e5%88%9d%e5%bf%83%e8%80%85%e3%81%af%e3%80%8c3%e3%81%a4%e3%81%ae%e8%a8%98%e9%8c%b2/) |
-| どこまで経費にできるか | [個人事業主の経費一覧](https://ainetbiz.com/2026/08/14/%e5%80%8b%e4%ba%ba%e4%ba%8b%e6%a5%ad%e4%b8%bb%e3%81%ae%e7%b5%8c%e8%b2%bb%e4%b8%80%e8%a6%a7%ef%bd%9c%e3%80%8c%e3%81%a9%e3%81%93%e3%81%be%e3%81%a7%e7%b5%8c%e8%b2%bb%e3%81%ab%e3%81%a7%e3%81%8d%e3%82%8b/) |
-| インボイス登録するか迷っている | [インボイス登録は個人事業主に必要か](https://treecosme.home.blog/2026/08/10/%e3%82%a4%e3%83%b3%e3%83%9c%e3%82%a4%e3%82%b9%e7%99%bb%e9%8c%b2%e3%81%af%e5%80%8b%e4%ba%ba%e4%ba%8b%e6%a5%ad%e4%b8%bb%e3%81%ab%e5%bf%85%e8%a6%81%e3%81%8b%ef%bd%9c%e5%88%a4%e6%96%ad%e3%81%ae%e5%88%86/) |
-| 請求書の書き方（法人客・出張仕事がある店） | [個人事業主の請求書の書き方](https://treecosme.home.blog/2026/08/10/%e5%80%8b%e4%ba%ba%e4%ba%8b%e6%a5%ad%e4%b8%bb%e3%81%ae%e8%ab%8b%e6%b1%82%e6%9b%b8%e3%81%ae%e6%9b%b8%e3%81%8d%e6%96%b9%ef%bd%9c%e5%bf%85%e9%a0%88%e9%a0%85%e7%9b%ae%e3%83%bb%e3%82%a4%e3%83%b3%e3%83%9c/) |
+<table style="width:100%;border-collapse:collapse;margin:24px 0;">
+<thead><tr style="background:#1a6b3c;color:#fff;">
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">知りたいこと</th>
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">記事</th>
+</tr></thead>
+<tbody>
+<tr style="background:#f9f9f9;"><td style="padding:10px;border:1px solid #ddd;">青色申告を始める手順（申請期限あり）</td><td style="padding:10px;border:1px solid #ddd;"><a href="https://ainetbiz.com/2026/08/13/%e5%88%9d%e3%82%81%e3%81%a6%e3%81%ae%e9%9d%92%e8%89%b2%e7%94%b3%e5%91%8a%e3%80%81%e3%82%84%e3%82%8a%e6%96%b9%e3%82%925%e3%82%b9%e3%83%86%e3%83%83%e3%83%97%e3%81%a7%e3%81%be%e3%81%a8%e3%82%81%e3%81%9f/">初めての青色申告、やり方を5ステップで</a></td></tr>
+<tr><td style="padding:10px;border:1px solid #ddd;">65万円控除の4条件</td><td style="padding:10px;border:1px solid #ddd;"><a href="https://treecosme.home.blog/2026/08/10/%e9%9d%92%e8%89%b2%e7%94%b3%e5%91%8a%e7%89%b9%e5%88%a5%e6%8e%a7%e9%99%a465%e4%b8%87%e5%86%86%e3%81%ae%e3%82%84%e3%82%8a%e6%96%b9%ef%bd%9c%e6%9d%a1%e4%bb%b6%e3%81%af4%e3%81%a4%e3%80%82%e4%bc%9a/">青色申告特別控除65万円のやり方</a></td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px;border:1px solid #ddd;">帳簿の付け方（仕訳例のまね方）</td><td style="padding:10px;border:1px solid #ddd;"><a href="https://treecosme.home.blog/2026/08/10/%e5%80%8b%e4%ba%ba%e4%ba%8b%e6%a5%ad%e4%b8%bb%e3%81%ae%e5%b8%b3%e7%b0%bf%e3%81%ae%e4%bb%98%e3%81%91%e6%96%b9%ef%bd%9c%e5%88%9d%e5%bf%83%e8%80%85%e3%81%af%e3%80%8c3%e3%81%a4%e3%81%ae%e8%a8%98%e9%8c%b2/">個人事業主の帳簿の付け方</a></td></tr>
+<tr><td style="padding:10px;border:1px solid #ddd;">どこまで経費にできるか</td><td style="padding:10px;border:1px solid #ddd;"><a href="https://ainetbiz.com/2026/08/14/%e5%80%8b%e4%ba%ba%e4%ba%8b%e6%a5%ad%e4%b8%bb%e3%81%ae%e7%b5%8c%e8%b2%bb%e4%b8%80%e8%a6%a7%ef%bd%9c%e3%80%8c%e3%81%a9%e3%81%93%e3%81%be%e3%81%a7%e7%b5%8c%e8%b2%bb%e3%81%ab%e3%81%a7%e3%81%8d%e3%82%8b/">個人事業主の経費一覧</a></td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px;border:1px solid #ddd;">インボイス登録するか迷っている</td><td style="padding:10px;border:1px solid #ddd;"><a href="https://treecosme.home.blog/2026/08/10/%e3%82%a4%e3%83%b3%e3%83%9c%e3%82%a4%e3%82%b9%e7%99%bb%e9%8c%b2%e3%81%af%e5%80%8b%e4%ba%ba%e4%ba%8b%e6%a5%ad%e4%b8%bb%e3%81%ab%e5%bf%85%e8%a6%81%e3%81%8b%ef%bd%9c%e5%88%a4%e6%96%ad%e3%81%ae%e5%88%86/">インボイス登録は個人事業主に必要か</a></td></tr>
+<tr><td style="padding:10px;border:1px solid #ddd;">請求書の書き方（法人客・出張仕事がある店）</td><td style="padding:10px;border:1px solid #ddd;"><a href="https://treecosme.home.blog/2026/08/10/%e5%80%8b%e4%ba%ba%e4%ba%8b%e6%a5%ad%e4%b8%bb%e3%81%ae%e8%ab%8b%e6%b1%82%e6%9b%b8%e3%81%ae%e6%9b%b8%e3%81%8d%e6%96%b9%ef%bd%9c%e5%bf%85%e9%a0%88%e9%a0%85%e7%9b%ae%e3%83%bb%e3%82%a4%e3%83%b3%e3%83%9c/">個人事業主の請求書の書き方</a></td></tr>
+</tbody>
+</table>
+
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<!-- wp:image {"id":1342,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-HUB-img03.png" alt="店舗の集客と予約を支えるデジタルツール" class="wp-image-1342"/></figure>
+<!-- /wp:image -->
+
+<h2 style="margin:0;font-size:1.2rem;">第2章【フェーズ2】集客の土台：見つけてもらう入口をつくる</h2>
+</div>
 
 ## 第2章【フェーズ2】集客の土台：見つけてもらう入口をつくる
 
@@ -110,6 +156,10 @@ search_intent: 情報収集（§2: 強引な購入誘導を避け、比較・関
 
 → 看板は **[A型看板の選び方](https://treecosme.home.blog/?p=56)**、のぼり・POP・額縁まで含めた店頭全体は **[小さな店の「素通りされない」販促グッズまとめ](https://treecosme.home.blog/2026/08/09/広告費をかける前に。小さな店の「素通りされな/)** で整理しています。
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">第3章【フェーズ3】運営の効率化：繰り返し作業を道具に任せる</h2>
+</div>
+
 ## 第3章【フェーズ3】運営の効率化：繰り返し作業を道具に任せる
 
 営業が回り始めると、「毎日・毎週発生する同じ作業」が積み上がります。ここからは、発生している悩みに該当するものだけ導入すれば十分です。
@@ -130,7 +180,7 @@ search_intent: 情報収集（§2: 強引な購入誘導を避け、比較・関
 
 業務委託スタッフや取引先との契約が増えてきたら、電子契約も選択肢です。印紙税がかからず、郵送の往復も消えます。月額無料から始められるツールもあるため、契約書が月に数通でも検討の価値があります。
 
-→ 比較と選び方は **[電子契約ツールは中小企業こそ導入価値が大きい](https://treecosme.home.blog/2026/08/10/%e9%9b%bb%e5%ad%90%e5%a5%91%e7%b4%84%e3%83%84%e3%83%bc%e3%83%ab%e3%81%af%e4%b8%ad%e5%b0%8f%e4%bc%81%e6%a5%ad%e3%81%93%e3%81%9d%e5%b0%8e%e5%85%a5%e4%be%a1%e5%80%a4%e3%81%8c%e5%a4%a7%e3%81%8d%e3%81%84/)** にまとめています。
+→ 比較と選び方は **[電子契約ツールは中小企業こそ導入価値が大きい](https://treecosme.home.blog/2026/08/10/%e9%9b%bb%e5%ad%90%e5%a5%91%e7%b4%84%e3%83%84%e3%83%bc%e3%83%ab%e3%81%af%e4%b8%ad%e5%b0%8e%e4%bc%81%e6%a5%ad%e3%81%93%e3%81%9d%e5%b0%8e%e5%85%a5%e4%be%a1%e5%80%a4%e3%81%8c%e5%a4%a7%e3%81%8d%e3%81%84/)** にまとめています。
 
 ### ⑨ 店舗設備・環境（該当する店だけ）
 
@@ -140,6 +190,14 @@ search_intent: 情報収集（§2: 強引な購入誘導を避け、比較・関
 - **防犯カメラ**：[小規模店舗の防犯カメラおすすめ3選](https://treecosme.home.blog/2026/08/10/%e5%b0%8f%e8%a6%8f%e6%a8%a1%e5%ba%97%e8%88%97%e3%81%ae%e9%98%b2%e7%8a%af%e3%82%ab%e3%83%a1%e3%83%a9%e3%81%8a%e3%81%99%e3%81%99%e3%82%813%e9%81%b8%ef%bd%9c%e5%b7%a5%e4%ba%8b%e4%b8%8d%e8%a6%81%e3%81%aew/)
 - **レジ周りの小物機器**：[レジ周りの「地味に困る」を解消する機器まとめ](https://treecosme.home.blog/2026/08/10/%e3%83%ac%e3%82%b8%e5%91%a8%e3%82%8a%e3%81%ae%e5%9c%b0%e5%91%b3%e3%81%ab%e5%9b%b0%e3%82%8b%e3%82%92%e8%a7%a3%e6%b6%88%e3%81%99%e3%82%8b%e6%a9%9f%e5%99%a8%e3%81%be%e3%81%a8%e3%82%81%e3%80%90/)
 - **消耗品のまとめ買い**：[小さな店の消耗品、Amazonでまとめ買いすべきもの](https://treecosme.home.blog/2026/08/09/小さな店の消耗品、amazonで「まとめ買い」すべきも/)
+
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<!-- wp:image {"id":1343,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-HUB-img04.png" alt="採用から労務までの店舗運営システム" class="wp-image-1343"/></figure>
+<!-- /wp:image -->
+
+<h2 style="margin:0;font-size:1.2rem;">第4章【フェーズ4】人を雇ったら：採用〜労務を順番に整える</h2>
+</div>
 
 ## 第4章【フェーズ4】人を雇ったら：採用〜労務を順番に整える
 
@@ -169,6 +227,10 @@ search_intent: 情報収集（§2: 強引な購入誘導を避け、比較・関
 
 → 判断材料は **[スタッフを雇い始めた店の労務、自分でやる？外注する？](https://treecosme.home.blog/2026/08/07/スタッフを雇い始めた店の労務、自分でやる？外/)** にまとめています。
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">準備中のジャンル（業態によって検討したいもの）</h2>
+</div>
+
 ## 準備中のジャンル（業態によって検討したいもの）
 
 以下は全ての店に必須ではありませんが、業態によっては早めに検討したいジャンルです。現在、詳しい個別記事を準備中で、公開次第ここからリンクを追加します（存在しない記事へのリンクは張っていません）。
@@ -177,6 +239,10 @@ search_intent: 情報収集（§2: 強引な購入誘導を避け、比較・関
 - **ビジネスカード（法人・個人事業主向けクレジットカード）**：事業の支払いをまとめ、経費管理と会計連携を楽にする。
 - **ネットショップ**：物販・テイクアウト・オンライン販売の入口をつくる。
 - **開業融資・資金の無料相談**：日本政策金融公庫の創業融資などを、専門家に相談する。
+
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">ツール導入で失敗しやすい注意点4つ（先に読んでください）</h2>
+</div>
 
 ## ツール導入で失敗しやすい注意点4つ（先に読んでください）
 
@@ -187,6 +253,10 @@ search_intent: 情報収集（§2: 強引な購入誘導を避け、比較・関
 3. **解約条件・最低利用期間を見落としやすい**：月額ツールの中には最低契約期間や解約予告のルールがあるものがあります。公式サイトに記載がない場合も「記載がない」ことを確認したうえで、問い合わせてから契約するのが安全です。
 4. **導入・習熟にも時間がかかる**：設定と運用に慣れるまでの数日〜数週間は、むしろ作業が増えます。繁忙期のど真ん中に新ツールを入れるのは避け、比較的余裕のある時期に移行するのが現実的です。
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">まだツールを増やさないほうがいい人</h2>
+</div>
+
 ## まだツールを増やさないほうがいい人
 
 逆に、次に当てはまる段階の人は、この記事のツールを今あわてて揃える必要はありません。
@@ -195,29 +265,57 @@ search_intent: 情報収集（§2: 強引な購入誘導を避け、比較・関
 - **月商の見通しが立たず、固定費を増やしたくない人**：無料プラン・無料トライアルの範囲で試すにとどめ、月額課金は売上が読めてからで十分です。
 - **今の道具で回っていて、明確な不満がない人**：「流行っているから」で乗り換えると、移行コストだけ払って効果を感じられないことがあります。困りごとが言語化できてからが導入のタイミングです。
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">ツールにお金をかけすぎない・かけなさすぎないための3原則</h2>
+</div>
+
 ## ツールにお金をかけすぎない・かけなさすぎないための3原則
+
+<div style="background:#f0faf4;border-left:4px solid #1a6b3c;padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;">
 
 1. **「毎月いくら」で判断する**：初期費用より、月額×12＋手数料の年間コストで比べる。無料をうたう機能の範囲は必ず確認する。
 2. **今の規模に合わせる**：将来の拡張機能に今から高い月額を払わない。多くのツールは後から上位プランに上げられます。
 3. **時間の節約額で元を取れるかで見る**：数百円〜数千円の差より、「その道具が自分の何時間を返してくれるか」で考えると判断を間違えにくい。月2時間浮くなら、あなたの時給換算でいくらか——それが実質の予算上限です。
 
+</div>
+
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">よくある質問</h2>
+</div>
+
 ## よくある質問
 
-**Q1. 開業前に全部揃えないとダメですか？**
+<div style="background:#e8f5e9;border-radius:12px;padding:16px 20px;margin:16px 0;position:relative;">
+<p style="margin:0;font-style:italic;">「Q1. 開業前に全部揃えないとダメですか？」</p>
+<span style="font-size:0.85rem;color:#555;">— よくある質問</span>
+</div>
 
 いいえ。開業前に必要なのはフェーズ1（レジ・会計）と、集客を始めるならフェーズ2の一部だけです。フェーズ3・4は「その悩みが実際に発生してから」で間に合います。全部を先に契約すると、使わない月額だけが積み上がります。
 
-**Q2. 無料プランだけで店は回せますか？**
+<div style="background:#e8f5e9;border-radius:12px;padding:16px 20px;margin:16px 0;position:relative;">
+<p style="margin:0;font-style:italic;">「Q2. 無料プランだけで店は回せますか？」</p>
+<span style="font-size:0.85rem;color:#555;">— よくある質問</span>
+</div>
 
 規模と業態によります。一人営業の初期は無料プランで回る場面が多い一方、スタッフが増える・店舗が増えると機能制限に当たりやすくなります。「今は無料で始めて、困った機能だけ課金する」が基本の考え方です。
 
-**Q3. あとから別のツールに乗り換えられますか？**
+<div style="background:#e8f5e9;border-radius:12px;padding:16px 20px;margin:16px 0;position:relative;">
+<p style="margin:0;font-style:italic;">「Q3. あとから別のツールに乗り換えられますか？」</p>
+<span style="font-size:0.85rem;color:#555;">— よくある質問</span>
+</div>
 
 多くの場合は可能ですが、データ移行の手間はツールごとに差があります。契約前に「データをCSV等で書き出せるか」を確認しておくと、乗り換えの自由が残ります。書き出せないツールへの依存は慎重に。
 
-**Q4. 何から読めばいいか結局迷います。**
+<div style="background:#e8f5e9;border-radius:12px;padding:16px 20px;margin:16px 0;position:relative;">
+<p style="margin:0;font-style:italic;">「Q4. 何から読めばいいか結局迷います。」</p>
+<span style="font-size:0.85rem;color:#555;">— よくある質問</span>
+</div>
 
 開業前なら第1章の会計ソフト比較、営業中で集客に悩んでいるなら第2章のGoogleビジネスプロフィール、人を雇う予定があるなら第4章の求人の出し方から読むのがおすすめです。
+
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">ツールを揃えたあとの悩み：「発信が続かない」への自社キットのご案内</h2>
+</div>
 
 ## ツールを揃えたあとの悩み：「発信が続かない」への自社キットのご案内
 
@@ -227,11 +325,23 @@ search_intent: 情報収集（§2: 強引な購入誘導を避け、比較・関
 
 → 内容の詳細・購入は **[Brainの販売ページ](https://brain-market.com/u/ai_store_yuya/a/b1MTM1UjMgoTZsNWa0JXY)** からどうぞ（こちらは当サイト運営者の自社商品の販売リンクです。クリックするとBrainの商品ページに移動します）。
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">まとめ：迷ったら「お金の入口と記録」から</h2>
+</div>
+
 ## まとめ：迷ったら「お金の入口と記録」から
+
+<div style="background:#f0faf4;border-left:4px solid #1a6b3c;padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;">
 
 やることが多すぎて動けないときは、**フェーズ1（レジ・会計）→ フェーズ2（集客の土台）**の順で1つずつ潰していくのが、遠回りのようで一番確実です。各ジャンルの詳しい選び方は、本文中のリンクからそれぞれの記事へ進んでください。
 
 今日やることを1つに絞るなら：**会計ソフトを無料で試し始めること**です（弥生・マネーフォワードとも無料で始められる入口があります。下の【実リンク】から公式サイトへ移動できます）。確定申告は全店主に必ず来るうえ、記帳は溜めるほど重くなる——一番先に片づける価値があります。
+
+</div>
+
+<div style="text-align:center;margin:32px 0;">
+<a href="https://px.a8.net/svt/ejp?a8mat=4B8B4X+FNTJFE+35XE+5YJRM" style="background:#f59e0b;color:#fff;padding:14px 32px;border-radius:8px;font-weight:bold;text-decoration:none;font-size:1.1rem;display:inline-block;">まずは会計ソフトを無料で始める →</a>
+</div>
 
 ---
 

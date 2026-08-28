@@ -1,6 +1,8 @@
 # 飲食店がGoogleマップで予約を増やす方法｜MEO対策の基本と次のステップ
 
-![Googleマップから飲食店の予約増加につなげるイメージ](images/WP-NEW-02/01_eyecatch.png)
+<!-- wp:image {"id":1404,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-NEW-02-01_eyecatch.png" alt="Googleマップから飲食店の予約増加につなげるイメージ" class="wp-image-1404"/></figure>
+<!-- /wp:image -->
 
 ※本記事にはプロモーション（アフィリエイトリンク）が含まれます
 
@@ -21,7 +23,9 @@
 
 ## 登録しているのに予約が来ない、あの感覚
 
-![Googleマップに登録しても予約が増えず悩む飲食店オーナー](images/WP-NEW-02/02_section-1.png)
+<!-- wp:image {"id":1405,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-NEW-02-02_section-1.png" alt="Googleマップに登録しても予約が増えず悩む飲食店オーナー" class="wp-image-1405"/></figure>
+<!-- /wp:image -->
 
 ランチの時間が近づいてくる。厨房で仕込みをしながら、ふと予約台帳に目をやる。今日も空白が目立つ。
 
@@ -37,7 +41,9 @@ Googleビジネスプロフィールへの登録は、もう半年以上前に�
 
 ## 早期結論：まず無料の整備を徹底し、限界を感じたら外部ツールへ
 
-![無料で行う3つの基本対策から外部ツール活用へ進む流れ](images/WP-NEW-02/03_diagram.png)
+<!-- wp:image {"id":1406,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-NEW-02-03_diagram.png" alt="無料で行う3つの基本対策から外部ツール活用へ進む流れ" class="wp-image-1406"/></figure>
+<!-- /wp:image -->
 
 先に答えをお伝えします。
 
@@ -51,13 +57,15 @@ Googleビジネスプロフィールへの登録は、もう半年以上前に�
 
 無料の整備を続けて「ここが限界」と感じた段階——具体的には、複数媒体の管理・口コミ対応・AI検索対策を同時に行う必要が出てきたとき——が、外部ツールを検討する適切なタイミングです。
 
-[LOCALGOATの詳細・無料相談はこちら]
+[LOCALGOATの詳細・無料相談はこちら](https://af.moshimo.com/af/shop/promotion/search?shop_site_id=682685)
 
 ---
 
 ## 無料でできること3項目の詳細
 
-![店舗情報の整備と写真投稿と口コミ返信の3つの無料対策](images/WP-NEW-02/04_section-2.png)
+<!-- wp:image {"id":1407,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-NEW-02-04_section-2.png" alt="店舗情報の整備と写真投稿と口コミ返信の3つの無料対策" class="wp-image-1407"/></figure>
+<!-- /wp:image -->
 
 ### 1. Googleビジネスプロフィールの基本情報を正確に保つ
 
@@ -211,7 +219,9 @@ Googleの公式ヘルプでも、口コミへの返信がローカル検索で�
 
 ## Googleビジネスプロフィールの最適化手順（ステップバイステップ）
 
-![飲食店のプロフィール最適化から予約獲得までのステップ](images/WP-NEW-02/05_cta.png)
+<!-- wp:image {"id":1408,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-NEW-02-05_cta.png" alt="飲食店のプロフィール最適化から予約獲得までのステップ" class="wp-image-1408"/></figure>
+<!-- /wp:image -->
 
 ![Googleビジネスプロフィール操作イメージ：ダッシュボードでの設定画面](affiliate_images/WP-NEW-02/gbp_setup.png)
 *スマートフォンやPCからGoogleビジネスプロフィールを管理できます*
@@ -330,7 +340,7 @@ MEO対策ツールが提供する主な機能は、以下のとおりです。
 - AIO（AI検索最適化）への対応
 - SNSとの連携・投稿管理
 
-[LOCALGOATの詳細・無料相談はこちら]
+[LOCALGOATの詳細・無料相談はこちら](https://af.moshimo.com/af/shop/promotion/search?shop_site_id=682685)
 
 ---
 
@@ -483,7 +493,7 @@ Googleマップからの予約を増やすためにすることは、複雑で�
 
 整備が進んで「一人で全部回すのが限界」と感じたとき、複数媒体の一括管理・AIO対策・口コミ管理を効率化するために外部ツールを検討してください。
 
-[LOCALGOATの詳細・無料相談はこちら]
+[LOCALGOATの詳細・無料相談はこちら](https://af.moshimo.com/af/shop/promotion/search?shop_site_id=682685)
 
 ---
 

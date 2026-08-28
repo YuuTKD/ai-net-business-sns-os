@@ -13,30 +13,56 @@ qa_status: PASS（セルフレビュー95点、内訳は02_ライター.md参照
 
 # 初めてスタッフを採用する店主へ｜求人の出し方3つの選択肢と、応募が来ない求人票の直し方
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">この記事で分かること</h2>
+</div>
+
 「そろそろ一人じゃ回らない」——そう感じて求人を出しても、応募がまったく来ない。来ても、求めていた人と違う。初めての採用は、多くの店主にとって手探りです。接客や技術には自信があっても、「人を採る」ことは別の技術だからです。
 
 先に結論をお伝えします。求人の出し方は **「無料媒体」「有料求人サイト」「採用代行」の3択** で整理でき、時間をかけられるなら無料媒体から、時間がない・初めてで不安なら採用代行の無料プランニングで戦略だけ先にもらう、が現実的な使い分けです。この記事では、3択の向き不向き、応募が来ない求人票の直し方、採用代行「採善策」の料金・申込み方法・契約前の確認事項まで、公開情報をもとに正直に整理します。
 
-## この記事で分かること
+<div style="background:#f0faf4;border-left:4px solid #1a6b3c;padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;">
 
 - 求人を出す3つの方法と、それぞれの向き不向き
 - 応募が来ない求人票によくある3つの原因と直し方
 - 採用代行「採善策」の概要・料金・申込みの流れと、契約前に確認したい5つの質問
 - どんな店に向き、どんな店には過剰か
 
-## なぜ「求人を出す」だけでは応募が来ないのか
+</div>
+
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<!-- wp:image {"id":1395,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-029-img01.png" alt="初めてのスタッフ採用に悩む店舗オーナー" class="wp-image-1395"/></figure>
+<!-- /wp:image -->
+
+<h2 style="margin:0;font-size:1.2rem;">なぜ「求人を出す」だけでは応募が来ないのか</h2>
+</div>
 
 美容室・飲食店・整体院のような現場系の求人は、応募者から見ると横並びに見えがちです。同じような時給、同じような「アットホームな職場」という言葉。その中で選ばれるには、掲載する場所と書き方の両方に工夫が要ります。
 
 最初のつまずきは、**「とりあえず知っている媒体に載せれば応募が来る」という思い込み**です。媒体ごとに主な利用者層（学生・主婦・フリーター・経験者など）が異なり、店の求める人物像とズレていると、掲載料を払っても応募は来ません。
 
-## 求人の出し方「3択」
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<!-- wp:image {"id":1396,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-029-img02.png" alt="店舗求人を出す3つの方法" class="wp-image-1396"/></figure>
+<!-- /wp:image -->
 
-| 方法 | コスト感 | 向いている店 | 手間 |
-|---|---|---|---|
-| 無料求人媒体・SNS | 0円 | 急いでいない・知人紹介も期待できる | 自分で書く・拡散する |
-| 有料求人サイト | 掲載課金・成果課金など様々 | ある程度の応募数を早く集めたい | 求人票作成・媒体選定は自分 |
-| 採用代行（プランニング＋複数媒体） | プランニング無料・運用は月額制 | 何から手をつけていいか分からない・時間を割けない | ほぼ任せられる |
+<h2 style="margin:0;font-size:1.2rem;">求人の出し方「3択」</h2>
+</div>
+
+<table style="width:100%;border-collapse:collapse;margin:24px 0;">
+<thead><tr style="background:#1a6b3c;color:#fff;">
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">方法</th>
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">コスト感</th>
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">向いている店</th>
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">手間</th>
+</tr></thead>
+<tbody>
+<tr style="background:#f9f9f9;"><td style="padding:10px;border:1px solid #ddd;">無料求人媒体・SNS</td><td style="padding:10px;border:1px solid #ddd;">0円</td><td style="padding:10px;border:1px solid #ddd;">急いでいない・知人紹介も期待できる</td><td style="padding:10px;border:1px solid #ddd;">自分で書く・拡散する</td></tr>
+<tr><td style="padding:10px;border:1px solid #ddd;">有料求人サイト</td><td style="padding:10px;border:1px solid #ddd;">掲載課金・成果課金など様々</td><td style="padding:10px;border:1px solid #ddd;">ある程度の応募数を早く集めたい</td><td style="padding:10px;border:1px solid #ddd;">求人票作成・媒体選定は自分</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px;border:1px solid #ddd;">採用代行（プランニング＋複数媒体）</td><td style="padding:10px;border:1px solid #ddd;">プランニング無料・運用は月額制</td><td style="padding:10px;border:1px solid #ddd;">何から手をつけていいか分からない・時間を割けない</td><td style="padding:10px;border:1px solid #ddd;">ほぼ任せられる</td></tr>
+</tbody>
+</table>
 
 **無料媒体**は、Indeedの無料掲載、地域のSNSコミュニティ、常連への声かけなど。コストはゼロですが、書き方次第で応募数が大きく変わります。
 
@@ -44,7 +70,13 @@ qa_status: PASS（セルフレビュー95点、内訳は02_ライター.md参照
 
 **採用代行**は、求人票の作成から媒体の選定、応募者対応まで、まとめて相談できるサービスです。「どの媒体に、どう書けば応募が来るか」が分からない店主には、最短ルートになり得ます。
 
-## 応募が来ない求人票、よくある3つの原因
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<!-- wp:image {"id":1397,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-029-img03.png" alt="応募が来る求人票へ改善するイメージ" class="wp-image-1397"/></figure>
+<!-- /wp:image -->
+
+<h2 style="margin:0;font-size:1.2rem;">応募が来ない求人票、よくある3つの原因</h2>
+</div>
 
 自分で求人票を作る場合、次の3つが特に多い失敗です。
 
@@ -54,7 +86,9 @@ qa_status: PASS（セルフレビュー95点、内訳は02_ライター.md参照
 
 自分で直すことは可能ですが、忙しい現場の合間に求人の書き方を一から学ぶのは負担です。ここで検討したいのが、採用のプロに相談する選択肢です。
 
-## 採用代行「採善策」とは｜どんなサービスか
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">採用代行「採善策」とは｜どんなサービスか</h2>
+</div>
 
 **採善策（さいぜんさく）**は、株式会社bサーチが運営する採用代行（RPO）サービスです。公式サイトによると、取扱広告媒体は100種類以上で、Indeedの正規認定パートナー、リクナビNEXTなど大手媒体の正規代理店でもあります（2026年8月時点）。
 
@@ -63,18 +97,26 @@ qa_status: PASS（セルフレビュー95点、内訳は02_ライター.md参照
 ▼ 無料プランニングの内容・最新情報は公式サイトで確認できます（広告・アフィリエイトリンク）
 <!-- ※アフィリンク挿入予定（A8.net「採善策」、提携審査中）：クリックで公式サイトへ移動し、無料相談の申込みページが開きます -->
 
-## 採善策の料金｜無料はどこまでで、有料はいくらからか
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">採善策の料金｜無料はどこまでで、有料はいくらからか</h2>
+</div>
 
 2026年8月時点の公式サイトの記載を整理すると、次のとおりです。
 
-| 項目 | 内容（2026年8月時点・公式サイトより） |
-|---|---|
-| 初期費用 | 0円 |
-| 初期相談・採用プランニング | 無料 |
-| 運用＋支援プラン | 月29,800円〜／媒体 |
-| 運用＋支援＋応募者対応プラン | 月268,000円〜（対応する応募者数に応じた段階制） |
-| 運用＋支援＋応募者対応＋採用広報プラン | 月498,000円 |
-| 応募数に応じた追加課金 | なし（公式サイト記載） |
+<table style="width:100%;border-collapse:collapse;margin:24px 0;">
+<thead><tr style="background:#1a6b3c;color:#fff;">
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">項目</th>
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">内容（2026年8月時点・公式サイトより）</th>
+</tr></thead>
+<tbody>
+<tr style="background:#f9f9f9;"><td style="padding:10px;border:1px solid #ddd;">初期費用</td><td style="padding:10px;border:1px solid #ddd;">0円</td></tr>
+<tr><td style="padding:10px;border:1px solid #ddd;">初期相談・採用プランニング</td><td style="padding:10px;border:1px solid #ddd;">無料</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px;border:1px solid #ddd;">運用＋支援プラン</td><td style="padding:10px;border:1px solid #ddd;">月29,800円〜／媒体</td></tr>
+<tr><td style="padding:10px;border:1px solid #ddd;">運用＋支援＋応募者対応プラン</td><td style="padding:10px;border:1px solid #ddd;">月268,000円〜（対応する応募者数に応じた段階制）</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px;border:1px solid #ddd;">運用＋支援＋応募者対応＋採用広報プラン</td><td style="padding:10px;border:1px solid #ddd;">月498,000円</td></tr>
+<tr><td style="padding:10px;border:1px solid #ddd;">応募数に応じた追加課金</td><td style="padding:10px;border:1px solid #ddd;">なし（公式サイト記載）</td></tr>
+</tbody>
+</table>
 
 小規模店の視点で正直に言うと、**応募者対応まで丸ごと任せるプラン（月26.8万円〜）は、複数人を継続採用する企業向けの水準**です。パート・アルバイトを1人採りたい個人店なら、まず無料プランニングで戦略をもらい、必要なら媒体運用のみのプラン（月29,800円〜／媒体）を検討する、という段階的な使い方が現実的です。
 
@@ -83,7 +125,13 @@ qa_status: PASS（セルフレビュー95点、内訳は02_ライター.md参照
 ▼ 自店の場合いくらになるかは、無料プランニングの段階で見積もりを出してもらえます（広告・アフィリエイトリンク）
 <!-- ※アフィリンク挿入予定（A8.net「採善策」、提携審査中）：クリックで公式サイトへ移動します -->
 
-### 採用代行のデメリット・注意点
+<div style="text-align:center;margin:32px 0;">
+<a href="#" style="background:#f59e0b;color:#fff;padding:14px 32px;border-radius:8px;font-weight:bold;text-decoration:none;font-size:1.1rem;display:inline-block;">採善策の無料プランニングを申し込む →（※提携審査中・リンク後日更新）</a>
+</div>
+
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">採用代行のデメリット・注意点</h2>
+</div>
 
 任せる前に、次の4点は押さえておいてください。
 
@@ -92,7 +140,11 @@ qa_status: PASS（セルフレビュー95点、内訳は02_ライター.md参照
 - **丸投げでは店の良さが伝わらない**：求人票の元になる情報（仕事内容・シフト・職場の雰囲気）は店側が出す必要があります。情報提供の手間はゼロにはなりません。
 - **応募・採用は保証されない**：プロに任せても、時給相場や立地といった条件面の不利まで消えるわけではありません。「何件応募が来たら成功か」の目線合わせを最初にしておくと、後悔が減ります。
 
-## 契約前に確認したい5つの質問（解約・費用の境界）
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">契約前に確認したい5つの質問（解約・費用の境界）</h2>
+</div>
+
+<div style="background:#f0faf4;border-left:4px solid #1a6b3c;padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;">
 
 採善策の公式サイトには、**最低契約期間・途中解約の条件・返金についての記載が見当たりませんでした**（2026年8月時点の調査）。だからこそ無料相談の段階で口頭確認し、契約書で裏を取るのが安全です。以下をそのまま質問リストとして使ってください。
 
@@ -102,9 +154,13 @@ qa_status: PASS（セルフレビュー95点、内訳は02_ライター.md参照
 4. 無料プランニングの後、どの作業から料金が発生するか
 5. 応募がゼロだった場合の対応はあるか（プラン見直し・掲載延長など。返金の有無も含めて）
 
+</div>
+
 この5つに明確に答えてもらえるか自体が、大事な判断材料です。あいまいな回答のまま契約しないでください。
 
-## 誰に向くか・誰には過剰か
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">誰に向くか・誰には過剰か</h2>
+</div>
 
 **検討する価値がある店**
 
@@ -121,7 +177,13 @@ qa_status: PASS（セルフレビュー95点、内訳は02_ライター.md参照
 
 急ぎでなければ、まずは無料媒体・SNSから。それでも応募が集まらない、あるいは初めてで不安が大きい場合は、プロに相談してから動くほうが遠回りを避けられます。
 
-## 申込みの流れ｜相談から掲載開始まで
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<!-- wp:image {"id":1398,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-029-img04.png" alt="店舗オーナーと応募者の面接" class="wp-image-1398"/></figure>
+<!-- /wp:image -->
+
+<h2 style="margin:0;font-size:1.2rem;">申込みの流れ｜相談から掲載開始まで</h2>
+</div>
 
 公式サイトによると、申込みから運用開始までの流れは次のとおりです（2026年8月時点）。
 
@@ -132,7 +194,14 @@ qa_status: PASS（セルフレビュー95点、内訳は02_ライター.md参照
 
 繁忙期の直前に慌てて申し込むより、1か月前に無料相談だけ済ませておくほうが余裕を持てます。
 
-## よくある質問
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">よくある質問</h2>
+</div>
+
+<div style="background:#e8f5e9;border-radius:12px;padding:16px 20px;margin:16px 0;position:relative;">
+<p style="margin:0;font-style:italic;">「採用代行に頼むと、必ず高額な費用がかかりますか？」</p>
+<span style="font-size:0.85rem;color:#555;">— よくある疑問</span>
+</div>
 
 **Q. 採用代行に頼むと、必ず高額な費用がかかりますか？**
 A. 採善策の場合、初期相談とプランニングまでは無料で、有料になるのは媒体運用から（最小プランは月29,800円〜／媒体、2026年8月時点）。契約前に「どこから有料か」を必ず確認してください。
@@ -146,14 +215,24 @@ A. 業種・地域によって強い媒体は異なります。無料媒体で�
 **Q. 採用と、雇った後の労務手続きは別物ですか？**
 A. はい。採用（求人〜面接〜内定）と、雇用後の労務（雇用契約・社会保険・勤怠・給与計算）は別の工程です。雇用後の労務については別記事「初めてスタッフを雇うときの労務手続きチェックリスト」もあわせてご覧ください。
 
-## まとめ：今日やることは「無料の範囲で戦略をもらう」か「求人票の3原因を直す」か
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">まとめ：今日やることは「無料の範囲で戦略をもらう」か「求人票の3原因を直す」か</h2>
+</div>
+
+<div style="background:#f0faf4;border-left:4px solid #1a6b3c;padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;">
 
 応募が来ない原因の多くは、媒体選定か書き方のどちらかにあります。時間をかけられるなら、今日やることは1つ。自分の求人票を「仕事内容が抽象的・給与以外が薄い・応募ハードルが高い」の3点でチェックして直すことです。
 
 時間がない、または何から手をつけていいか分からないなら、採善策の無料プランニングで自店向けの採用戦略と見積もりをもらい、「5つの質問」への回答とあわせて、任せるかどうかを判断してください。無料の範囲までなら、費用リスクなしで比較材料が手に入ります。
 
+</div>
+
 ▼ 採用代行【採善策】公式サイト｜無料相談・無料プランニングの申込みはこちら（広告・アフィリエイトリンク）
 <!-- ※アフィリンク挿入予定（A8.net「採善策」、提携審査中）：クリックで公式サイトへ移動し、問い合わせフォームから無料相談を申し込めます -->
+
+<div style="text-align:center;margin:32px 0;">
+<a href="#" style="background:#f59e0b;color:#fff;padding:14px 32px;border-radius:8px;font-weight:bold;text-decoration:none;font-size:1.1rem;display:inline-block;">採善策の無料相談を申し込む →（※提携審査中・リンク後日更新）</a>
+</div>
 
 ---
 

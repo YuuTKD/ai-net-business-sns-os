@@ -1,6 +1,8 @@
 # MEO対策ツール比較2026｜LOCALGOAT・カンリー・口コミコム・Gyro-n MEOの違いを整理して選ぶ
 
-![MEO対策ツールを比較検討する店舗オーナー](images/WP-NEW-01/01_eyecatch.png)
+<!-- wp:image {"id":1399,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-NEW-01-01_eyecatch.png" alt="MEO対策ツールを比較検討する店舗オーナー" class="wp-image-1399"/></figure>
+<!-- /wp:image -->
 
 ※本記事にはプロモーション（アフィリエイトリンク）が含まれます
 
@@ -21,7 +23,9 @@
 
 ## 導入：「どれにすればいいかわからない」という状況をリアルに整理する
 
-![複数のMEO対策ツールから自店に合う選択肢を整理する様子](images/WP-NEW-01/02_section-1.png)
+<!-- wp:image {"id":1400,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-NEW-01-02_section-1.png" alt="複数のMEO対策ツールから自店に合う選択肢を整理する様子" class="wp-image-1400"/></figure>
+<!-- /wp:image -->
 
 MEO対策ツールを調べようと思い立ち、いくつかのサービスサイトを開いた。
 
@@ -37,7 +41,9 @@ MEO対策ツールを調べようと思い立ち、いくつかのサービス�
 
 ## 早期結論：LOCALGOATが刺さる読者はどんな人か
 
-![MEO対策ツール4タイプの特徴を視覚的に比較した図](images/WP-NEW-01/03_diagram.png)
+<!-- wp:image {"id":1401,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-NEW-01-03_diagram.png" alt="MEO対策ツール4タイプの特徴を視覚的に比較した図" class="wp-image-1401"/></figure>
+<!-- /wp:image -->
 
 先に結論を提示します。
 
@@ -57,13 +63,15 @@ MEO対策ツールを調べようと思い立ち、いくつかのサービス�
 
 この整理を踏まえたうえで、各ツールの詳細を確認していきましょう。
 
-[LOCALGOATの詳細・無料相談はこちら]
+[LOCALGOATの詳細・無料相談はこちら](https://af.moshimo.com/af/shop/promotion/search?shop_site_id=682685)
 
 ---
 
 ## MEO対策の基本知識：なぜ今ツールが必要なのか
 
-![店舗情報と口コミと検索順位をまとめて改善するMEO対策の全体像](images/WP-NEW-01/04_section-2.png)
+<!-- wp:image {"id":1402,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-NEW-01-04_section-2.png" alt="店舗情報と口コミと検索順位をまとめて改善するMEO対策の全体像" class="wp-image-1402"/></figure>
+<!-- /wp:image -->
 
 ### Googleビジネスプロフィールとは何か
 
@@ -107,7 +115,9 @@ Googleビジネスプロフィールには「投稿」機能があり、お知�
 
 ## AIO（AI検索最適化）とは何か、なぜ2026年に重要なのか
 
-![AI検索時代の地域集客へ踏み出す店舗オーナー](images/WP-NEW-01/05_cta.png)
+<!-- wp:image {"id":1403,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-NEW-01-05_cta.png" alt="AI検索時代の地域集客へ踏み出す店舗オーナー" class="wp-image-1403"/></figure>
+<!-- /wp:image -->
 
 ![AI検索×MEO＝AIO対策のコンセプト図](affiliate_images/WP-NEW-01/aio_explanation.png)
 *ChatGPTやGeminiなどのAI検索とGoogleマップを組み合わせたAIO対策のイメージ*
@@ -344,7 +354,7 @@ LOCALGOATは「MEO・AIO・口コミ・SNSのオールインワン」を特徴�
 
 ## LOCALGOATの詳細・無料相談はこちら
 
-[LOCALGOATの詳細・無料相談はこちら]
+[LOCALGOATの詳細・無料相談はこちら](https://af.moshimo.com/af/shop/promotion/search?shop_site_id=682685)
 
 ---
 
@@ -420,7 +430,7 @@ LOCALGOATが気になる方は、まず無料相談で料金・プラン・最�
 
 「申し込み前に相談できる」という点はLOCALGOATの利点の一つです。相談だけで契約義務が生じるわけではないため、疑問点を持ち込んで確認することから始められます。
 
-[LOCALGOATの詳細・無料相談はこちら]
+[LOCALGOATの詳細・無料相談はこちら](https://af.moshimo.com/af/shop/promotion/search?shop_site_id=682685)
 
 ---
 

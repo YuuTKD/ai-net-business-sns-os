@@ -35,6 +35,10 @@ link status: inserted（実リンクは末尾【実リンク】ブロックに�
 
 この記事では、店舗オーナー（美容室・飲食店・整体院など）が自分で確定申告をする前提で、2つの料金・機能・向き不向きを、公開情報をもとに正直に整理しました。実際に両方を契約して検証したわけではないため、料金や仕様は各公式サイトの最新表示を必ず確認してください（この記事の料金は2026年8月時点の公開情報です）。
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">この記事で分かること</h2>
+</div>
+
 ## この記事で分かること
 
 - 弥生とマネーフォワード、それぞれの料金プランと「実際にいくらかかるか」
@@ -45,11 +49,27 @@ link status: inserted（実リンクは末尾【実リンク】ブロックに�
 
 なお、この2つ以外にもfreeeなどの選択肢はありますが、この記事では弥生とマネーフォワードの2社にしぼって比較します。
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<!-- wp:image {"id":1361,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-005-img01.png" alt="領収書整理に追われる個人事業主" class="wp-image-1361"/></figure>
+<!-- /wp:image -->
+
+<h2 style="margin:0;font-size:1.2rem;">そもそも、なぜ"あの数日"は毎年やってくるのか</h2>
+</div>
+
 ## そもそも、なぜ"あの数日"は毎年やってくるのか
 
 確定申告が地獄になる原因は、能力ではありません。**「1年ぶんの取引を、締め切り直前にまとめて処理しようとする」構造**にあります。レシートは色あせ、記憶は薄れ、どの支払いが何だったか思い出せない。この「後回しの積み重ね」が、毎年3月の徹夜を生みます。
 
 会計ソフトが効くのは、まさにここです。日々（あるいは月1回）の取引を少しずつ取り込んでおけば、**3月にやることが「1年ぶんの入力」から「最終チェックと送信」に変わります。** 引き出しのレシートを前に途方に暮れる夜を、来年からは無くせる——それが、ソフトを選ぶ本当の目的です。
+
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<!-- wp:image {"id":1362,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-005-img02.png" alt="クラウド会計ソフトの仕組み" class="wp-image-1362"/></figure>
+<!-- /wp:image -->
+
+<h2 style="margin:0;font-size:1.2rem;">まず全体像：2社はどう違う？</h2>
+</div>
 
 ## まず全体像：2社はどう違う？
 
@@ -59,6 +79,10 @@ link status: inserted（実リンクは末尾【実リンク】ブロックに�
 - **マネーフォワード クラウド確定申告**：銀行口座・クレジットカード・電子マネー・決済サービスとの**自動連携**に強い。日々の取引が多い店ほど、明細を自動で取り込んで仕訳できるので、入力の手間が減りやすい。
 
 どちらもクラウド型なので、WindowsでもMacでも使え、ソフトのインストールは不要です。データはクラウドに保存されます。
+
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">料金の比較（2026年8月時点）</h2>
+</div>
 
 ## 料金の比較（2026年8月時点）
 
@@ -80,13 +104,20 @@ link status: inserted（実リンクは末尾【実リンク】ブロックに�
 
 ### 料金比較表
 
-| 項目 | やよいの青色申告オンライン | マネーフォワード クラウド確定申告 |
-|---|---|---|
-| 最安プランの年額 | セルフ 12,980円（税込） | パーソナルミニ 10,800円（税抜） |
-| 青色申告向け標準プラン | セルフ／ベーシック | パーソナル 15,360円（税抜） |
-| サポート付きプラン | ベーシック 25,080円（税込） | パーソナルプラス 35,760円（税抜） |
-| 初年度の割引 | セルフ・ベーシックが初年度0円 | プランにより異なる（公式で確認） |
-| 税表記 | 税込 | 税抜 |
+<table style="width:100%;border-collapse:collapse;margin:24px 0;">
+<thead><tr style="background:#1a6b3c;color:#fff;">
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">項目</th>
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">やよいの青色申告オンライン</th>
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">マネーフォワード クラウド確定申告</th>
+</tr></thead>
+<tbody>
+<tr style="background:#fff;"><td style="padding:10px;border:1px solid #ddd;">最安プランの年額</td><td style="padding:10px;border:1px solid #ddd;">セルフ 12,980円（税込）</td><td style="padding:10px;border:1px solid #ddd;">パーソナルミニ 10,800円（税抜）</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px;border:1px solid #ddd;">青色申告向け標準プラン</td><td style="padding:10px;border:1px solid #ddd;">セルフ／ベーシック</td><td style="padding:10px;border:1px solid #ddd;">パーソナル 15,360円（税抜）</td></tr>
+<tr style="background:#fff;"><td style="padding:10px;border:1px solid #ddd;">サポート付きプラン</td><td style="padding:10px;border:1px solid #ddd;">ベーシック 25,080円（税込）</td><td style="padding:10px;border:1px solid #ddd;">パーソナルプラス 35,760円（税抜）</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px;border:1px solid #ddd;">初年度の割引</td><td style="padding:10px;border:1px solid #ddd;">セルフ・ベーシックが初年度0円</td><td style="padding:10px;border:1px solid #ddd;">プランにより異なる（公式で確認）</td></tr>
+<tr style="background:#fff;"><td style="padding:10px;border:1px solid #ddd;">税表記</td><td style="padding:10px;border:1px solid #ddd;">税込</td><td style="padding:10px;border:1px solid #ddd;">税抜</td></tr>
+</tbody>
+</table>
 
 ※金額はいずれも2026年8月時点の公開情報です。キャンペーンや改定で変わるため、契約前に各公式サイトで確認してください。
 
@@ -101,19 +132,46 @@ link status: inserted（実リンクは末尾【実リンク】ブロックに�
 
 **読み解き方**：「1年目のコストを最小にしたい」なら、初年度0円がある弥生が有利です。一方、「2年目以降も含めた継続コスト」と「自動連携での時短」を重視するなら、マネーフォワードのパーソナルも十分に候補になります。数百円〜数千円の年額差より、**あなたの3月の徹夜を何時間減らせるか**で考えると、判断を間違えにくくなります。
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<!-- wp:image {"id":1363,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-005-img03.png" alt="会計ソフトの機能と使い勝手の比較" class="wp-image-1363"/></figure>
+<!-- /wp:image -->
+
+<h2 style="margin:0;font-size:1.2rem;">機能・使い勝手の比較</h2>
+</div>
+
 ## 機能・使い勝手の比較
 
-| 比較項目 | やよいの青色申告オンライン | マネーフォワード クラウド確定申告 |
-|---|---|---|
-| 対応申告 | 青色申告（最大65万円控除）・白色申告 | 青色申告（最大65万円控除）・白色申告 |
-| 銀行・カード等の自動連携 | 対応 | 対応（連携先が多く自動取り込みに強いとされる） |
-| 対応OS | クラウド型（Win/Mac、ブラウザ） | クラウド型（Win/Mac、ブラウザ） |
-| スマホアプリ | あり | あり |
-| 電子申告（e-Tax） | 対応 | 対応 |
-| サポート | ベーシック以上で操作サポート | パーソナルプラスで電話サポート |
-| 向いている人 | まず無料で始めたい・定番の安心感が欲しい | 取引明細が多く自動化で手間を減らしたい |
+<table style="width:100%;border-collapse:collapse;margin:24px 0;">
+<thead><tr style="background:#1a6b3c;color:#fff;">
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">比較項目</th>
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">やよいの青色申告オンライン</th>
+<th style="padding:12px;text-align:left;border:1px solid #ddd;">マネーフォワード クラウド確定申告</th>
+</tr></thead>
+<tbody>
+<tr style="background:#fff;"><td style="padding:10px;border:1px solid #ddd;">対応申告</td><td style="padding:10px;border:1px solid #ddd;">青色申告（最大65万円控除）・白色申告</td><td style="padding:10px;border:1px solid #ddd;">青色申告（最大65万円控除）・白色申告</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px;border:1px solid #ddd;">銀行・カード等の自動連携</td><td style="padding:10px;border:1px solid #ddd;">対応</td><td style="padding:10px;border:1px solid #ddd;">対応（連携先が多く自動取り込みに強いとされる）</td></tr>
+<tr style="background:#fff;"><td style="padding:10px;border:1px solid #ddd;">対応OS</td><td style="padding:10px;border:1px solid #ddd;">クラウド型（Win/Mac、ブラウザ）</td><td style="padding:10px;border:1px solid #ddd;">クラウド型（Win/Mac、ブラウザ）</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px;border:1px solid #ddd;">スマホアプリ</td><td style="padding:10px;border:1px solid #ddd;">あり</td><td style="padding:10px;border:1px solid #ddd;">あり</td></tr>
+<tr style="background:#fff;"><td style="padding:10px;border:1px solid #ddd;">電子申告（e-Tax）</td><td style="padding:10px;border:1px solid #ddd;">対応</td><td style="padding:10px;border:1px solid #ddd;">対応</td></tr>
+<tr style="background:#f9f9f9;"><td style="padding:10px;border:1px solid #ddd;">サポート</td><td style="padding:10px;border:1px solid #ddd;">ベーシック以上で操作サポート</td><td style="padding:10px;border:1px solid #ddd;">パーソナルプラスで電話サポート</td></tr>
+<tr style="background:#fff;"><td style="padding:10px;border:1px solid #ddd;">向いている人</td><td style="padding:10px;border:1px solid #ddd;">まず無料で始めたい・定番の安心感が欲しい</td><td style="padding:10px;border:1px solid #ddd;">取引明細が多く自動化で手間を減らしたい</td></tr>
+</tbody>
+</table>
 
 自動連携の強さは、店舗のように「毎日カードや決済アプリの入金がある」業態ほど効いてきます。キャッシュレス決済が増えた今、この差は年々大きくなっています。逆に、現金中心で取引数がそれほど多くない店なら、どちらでも大きな差は出にくいです。
+
+<div style="text-align:center;margin:32px 0;">
+<a href="https://px.a8.net/svt/ejp?a8mat=4B8B4X+FNTJFE+35XE+5YJRM" style="background:#f59e0b;color:#fff;padding:14px 32px;border-radius:8px;font-weight:bold;text-decoration:none;font-size:1.1rem;display:inline-block;">やよいの青色申告オンライン 初年度0円で始める →</a>
+</div>
+
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<!-- wp:image {"id":1364,"sizeSlug":"large","linkDestination":"none"} -->
+<figure class="wp-block-image size-large"><img src="https://ainetbiz.com/wp-content/uploads/2026/08/WP-005-img04.png" alt="会計業務を効率化した個人事業主" class="wp-image-1364"/></figure>
+<!-- /wp:image -->
+
+<h2 style="margin:0;font-size:1.2rem;">誰におすすめか</h2>
+</div>
 
 ## 誰におすすめか
 
@@ -129,6 +187,10 @@ link status: inserted（実リンクは末尾【実リンク】ブロックに�
 - 明細の自動取り込みで、入力の手間をできるだけ減らしたい
 - 事業が伸びたら会計・請求など他の機能とまとめて使いたい
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">誰にはおすすめしないか（正直な注意点）</h2>
+</div>
+
 ## 誰にはおすすめしないか（正直な注意点）
 
 会計ソフトはどちらも便利ですが、次のような場合は立ち止まって考えてください。ここを正直に書くのは、あなたに無駄なお金を払ってほしくないからです。
@@ -136,6 +198,10 @@ link status: inserted（実リンクは末尾【実リンク】ブロックに�
 - **すでに税理士に記帳まで丸ごと依頼している人**：自分で入力しないなら、ソフト契約が二重コストになることがあります。税理士が指定するソフトに合わせるほうが良い場合もあります。
 - **年に数回しか取引がない超小規模・副業レベルの人**：無料の範囲や最安プランで足りることが多く、上位プランは過剰になりがちです。
 - **どうしても電話で手取り足取り教わりたい人**：その場合はサポート付きプラン（弥生ベーシック以上、MFパーソナルプラス）が前提になります。最安プランだけで判断しないでください。
+
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">それぞれのデメリット・注意点</h2>
+</div>
 
 ## それぞれのデメリット・注意点
 
@@ -151,6 +217,10 @@ link status: inserted（実リンクは末尾【実リンク】ブロックに�
 - 自動連携は便利ですが、連携設定と取り込み後のチェックは自分で行う必要があります。「全部自動で正確」ではありません。
 - プランによって使える機能・サポート範囲が変わるため、安いプランを選んだら必要な機能がなかった、が起きないよう申込前に確認してください。
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">そもそも会計ソフトは必要？Excelや手書きとの違い</h2>
+</div>
+
 ## そもそも会計ソフトは必要？Excelや手書きとの違い
 
 「エクセルで十分では」と考える人もいます。気持ちは分かりますが、青色申告で最大65万円控除を狙うなら、会計ソフトを使うほうが現実的です。理由は3つあります。
@@ -160,6 +230,10 @@ link status: inserted（実リンクは末尾【実リンク】ブロックに�
 - **申告書までつながる**：入力したデータから、そのまま確定申告書やe-Tax用のデータを作れます。エクセルだと最後に申告書へ転記する手間が残ります。
 
 逆に、取引が年に数件しかない・白色申告で十分、という規模なら、無理にソフトを入れなくても対応できることがあります。自分の取引量と、狙う控除額で判断してください。
+
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">確定申告までの流れ（弥生・マネーフォワード共通のイメージ）</h2>
+</div>
 
 ## 確定申告までの流れ（弥生・マネーフォワード共通のイメージ）
 
@@ -172,6 +246,10 @@ link status: inserted（実リンクは末尾【実リンク】ブロックに�
 
 ポイントは、**ソフトを入れれば自動で終わるわけではない**ことです。連携設定と、取り込んだ取引の分類チェックは自分で行います。この「チェックの手間」をどれだけ減らせるかが、自動連携の強いソフトを選ぶ価値になります。逆に言えば、月に一度この習慣さえ作れば、来年の3月は驚くほど静かに終わります。
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">選び方の手順（迷ったらこの順で）</h2>
+</div>
+
 ## 選び方の手順（迷ったらこの順で）
 
 1. **今年の取引の数を思い出す**：カード・決済アプリの入金が多い→マネーフォワード寄り。現金中心で少なめ→どちらでも可。
@@ -179,19 +257,43 @@ link status: inserted（実リンクは末尾【実リンク】ブロックに�
 3. **サポートが要るか決める**：電話サポートが欲しいなら、弥生ベーシック以上／MFパーソナルプラスを前提にする。
 4. **最終確認は公式の申込画面で**：料金・キャンペーン期限・プランの機能は変わるため、契約直前に必ず各公式で確認する。
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">よくある質問</h2>
+</div>
+
 ## よくある質問
 
-**Q. 青色申告の65万円控除は、どちらのソフトでもできますか？**
+<div style="background:#e8f5e9;border-radius:12px;padding:16px 20px;margin:16px 0;position:relative;">
+<p style="margin:0;font-style:italic;">「青色申告の65万円控除は、どちらのソフトでもできますか？」</p>
+<span style="font-size:0.85rem;color:#555;">— よくある質問</span>
+</div>
+
 A. どちらも青色申告（最大65万円控除）に対応しています。控除を受けるには、事前の青色申告承認申請や、e-Tax申告または電子帳簿保存などの要件があります。要件はソフトではなく制度側の条件なので、国税庁の情報も確認してください。
 
-**Q. WindowsとMacのどちらでも使えますか？**
+<div style="background:#e8f5e9;border-radius:12px;padding:16px 20px;margin:16px 0;position:relative;">
+<p style="margin:0;font-style:italic;">「WindowsとMacのどちらでも使えますか？」</p>
+<span style="font-size:0.85rem;color:#555;">— よくある質問</span>
+</div>
+
 A. 2つともクラウド型でブラウザから使うため、Windows・Macどちらでも利用できます。ソフトのインストールは不要です。
 
-**Q. 途中でソフトを乗り換えられますか？**
+<div style="background:#e8f5e9;border-radius:12px;padding:16px 20px;margin:16px 0;position:relative;">
+<p style="margin:0;font-style:italic;">「途中でソフトを乗り換えられますか？」</p>
+<span style="font-size:0.85rem;color:#555;">— よくある質問</span>
+</div>
+
 A. 乗り換え自体は可能ですが、年度の途中だとデータ移行の手間が出ます。できれば年度の区切りで検討するのが無難です。
 
-**Q. 無料で使い続けられますか？**
+<div style="background:#e8f5e9;border-radius:12px;padding:16px 20px;margin:16px 0;position:relative;">
+<p style="margin:0;font-style:italic;">「無料で使い続けられますか？」</p>
+<span style="font-size:0.85rem;color:#555;">— よくある質問</span>
+</div>
+
 A. 弥生はセルフ・ベーシックに初年度0円があります（2年目以降は有料）。マネーフォワードは無料でできる範囲が限られます。「ずっと完全無料」を前提にはしないでください。
+
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">【PR】経理の次は「発信」の時短も｜当サイトのBrain教材</h2>
+</div>
 
 ## 【PR】経理の次は「発信」の時短も｜当サイトのBrain教材
 
@@ -199,13 +301,21 @@ A. 弥生はセルフ・ベーシックに初年度0円があります（2年目
 
 🔗 <a href="https://brain-market.com/u/ai_store_yuya/a/b1MTM1UjMgoTZsNWa0JXY" target="_blank">ChatGPTで7日分のGoogle投稿・口コミ返信・SNS投稿を30分で作る 店舗集客立て直しキット（当サイト運営者の販売ページへ移動します）</a>
 
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">まとめ：来年の3月を、静かに終わらせるために</h2>
+</div>
+
 ## まとめ：来年の3月を、静かに終わらせるために
 
 最後にもう一度、判断の軸を整理します。
 
+<div style="background:#f0faf4;border-left:4px solid #1a6b3c;padding:16px 20px;border-radius:0 8px 8px 0;margin:24px 0;">
+
 - **1年目のコストをゼロにして、定番の安心感で始めたい** → やよいの青色申告オンライン（初年度0円のセルフ／ベーシック）
 - **カード・決済アプリの取引が多く、明細の自動取り込みで手間を減らしたい** → マネーフォワード クラウド確定申告（パーソナル）
 - **電話サポート必須** → 弥生ベーシック以上、またはMFパーソナルプラス
+
+</div>
 
 会計ソフトは「入力の手間をどれだけ減らせるか」で選ぶと失敗しにくいです。まずは自分の店の取引の入り方（現金かカードか）を思い出して、上の順番で当てはめてみてください。そして——今年こそ、あの引き出しのレシートを、来年の自分に押しつけない。始めるのは、締め切り前の3月ではなく、今日です。
 
@@ -215,6 +325,14 @@ A. 弥生はセルフ・ベーシックに初年度0円があります（2年目
 > - **無料登録で自動連携の便利さを確かめる** → ［無料で会員登録→マネーフォワード公式］
 >
 > ※広告（アフィリエイトリンク）を含みます。クリックで各社公式へ移動します。料金・キャンペーン条件は必ず公式でご確認ください。
+
+<div style="text-align:center;margin:32px 0;">
+<a href="https://px.a8.net/svt/ejp?a8mat=4B8B4S+C210S2+4JGQ+BX3J6" style="background:#f59e0b;color:#fff;padding:14px 32px;border-radius:8px;font-weight:bold;text-decoration:none;font-size:1.1rem;display:inline-block;">マネーフォワード クラウド確定申告 無料で試す →</a>
+</div>
+
+<div style="background:#1a6b3c;color:#fff;padding:16px 20px;border-radius:8px;margin:24px 0;">
+<h2 style="margin:0;font-size:1.2rem;">次に読む（店舗の開業・運営で揃えるもの）</h2>
+</div>
 
 ## 次に読む（店舗の開業・運営で揃えるもの）
 
