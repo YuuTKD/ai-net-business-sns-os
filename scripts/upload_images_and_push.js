@@ -1,9 +1,8 @@
 'use strict';
 /**
- * update_post_design.js
- * MDファイルを読み込み、Gutenberg変換してWP既存記事のcontentを更新する
- * 使い方: node --env-file=.env.local scripts/update_post_design.js --post-id 873 --md WP-034.md
- *         node --env-file=.env.local scripts/update_post_design.js --post-id 873 --md-path /absolute/path.md
+ * upload_images_and_push.js
+ * ローカル画像をWPにアップロードしてMDのURLを更新し、記事を再プッシュする
+ * 使い方: node --env-file=.env.local scripts/upload_images_and_push.js --post-id NNN --md FILENAME.md
  */
 
 const fs = require('fs');
@@ -21,10 +20,10 @@ function getArg(name) {
 
 const POST_ID = getArg('--post-id');
 const MD_NAME = getArg('--md');
-const MD_PATH = getArg('--md-path');
+const MD_PATH_ARG = getArg('--md-path');
 
-if (!POST_ID || (!MD_NAME && !MD_PATH)) {
-  console.log('使い方: --post-id <id> --md <filename.md>  または  --post-id <id> --md-path <絶対パス>');
+if (!POST_ID || (!MD_NAME && !MD_PATH_ARG)) {
+  console.log('使い方: --post-id <id> --md <filename.md>');
   process.exit(0);
 }
 
@@ -125,6 +124,17 @@ function mdToGutenberg(md) {
       continue;
     }
     if (line.trim() === '') { output.push(''); i++; continue; }
+    // Markdown image syntax: ![alt](url)
+    if (/^!\[/.test(line.trim())) {
+      const imgMatch = line.trim().match(/^!\[([^\]]*)\]\(([^)]+)\)/);
+      if (imgMatch) {
+        const alt = imgMatch[1], src = imgMatch[2];
+        output.push('<!-- wp:html -->');
+        output.push(`<div style="max-width:750px;margin-left:auto;margin-right:auto;"><figure style="width:100%;margin:20px 0;"><img src="${src}" alt="${alt}" style="width:100%;max-width:100%;height:auto;display:block;border-radius:8px;"></figure></div>`);
+        output.push('<!-- /wp:html -->'); output.push('');
+        i++; continue;
+      }
+    }
     if (/^<(div|table|figure|p|blockquote|ul|ol|h[1-6]|a )[^>]*>/.test(line.trim()) ||
         /^<\//.test(line.trim()) || line.trim().startsWith('</')) {
       const htmlLines = [];
@@ -165,17 +175,6 @@ function mdToGutenberg(md) {
       output.push('</figure>'); output.push('<!-- /wp:table -->'); output.push('');
       continue;
     }
-    // Markdown image syntax: ![alt](url)
-    if (/^!\[/.test(line.trim())) {
-      const imgMatch = line.trim().match(/^!\[([^\]]*)\]\(([^)]+)\)/);
-      if (imgMatch) {
-        const alt = imgMatch[1], src = imgMatch[2];
-        output.push('<!-- wp:html -->');
-        output.push(`<div style="max-width:750px;margin-left:auto;margin-right:auto;"><figure style="width:100%;margin:20px 0;"><img src="${src}" alt="${alt}" style="width:100%;max-width:100%;height:auto;display:block;border-radius:8px;"></figure></div>`);
-        output.push('<!-- /wp:html -->'); output.push('');
-        i++; continue;
-      }
-    }
     const text = inlineConvert(line);
     output.push('<!-- wp:paragraph -->');
     output.push(`<p>${text}</p>`);
@@ -185,22 +184,75 @@ function mdToGutenberg(md) {
   return output.join('\n');
 }
 
+async function uploadImage(token, localPath, filename) {
+  const fileBuffer = fs.readFileSync(localPath);
+  const ext = path.extname(filename).toLowerCase();
+  const mime = ext === '.png' ? 'image/png' : ext === '.jpg' || ext === '.jpeg' ? 'image/jpeg' : 'image/png';
+
+  const res = await fetch(`${API_BASE}/media`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': mime,
+      'Content-Disposition': `attachment; filename="${filename}"`,
+    },
+    body: fileBuffer,
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`画像アップロード失敗 ${res.status}: ${err}`);
+  }
+  const json = await res.json();
+  return json.source_url;
+}
+
 async function main() {
   const token = process.env.WP_ACCESS_TOKEN;
   if (!token) { console.error('WP_ACCESS_TOKEN 未設定'); process.exit(1); }
 
-  const mdFile = MD_PATH || path.join(DRAFTS_DIR, MD_NAME);
+  const mdFile = MD_PATH_ARG || path.join(DRAFTS_DIR, MD_NAME);
   if (!fs.existsSync(mdFile)) {
     console.error(`MDファイルが見つかりません: ${mdFile}`);
     process.exit(1);
   }
 
-  const md = fs.readFileSync(mdFile, 'utf8');
-  const content = mdToGutenberg(md);
+  let md = fs.readFileSync(mdFile, 'utf8');
+  const mdDir = path.dirname(mdFile);
 
-  console.log(`post_id: ${POST_ID}`);
-  console.log(`MDファイル: ${mdFile}`);
-  console.log(`変換後文字数: ${content.length}`);
+  // Find all local image references ![alt](images/WP-XXX/file.png)
+  const imgRegex = /!\[([^\]]*)\]\((images\/[^)]+)\)/g;
+  let match;
+  const uploads = [];
+  while ((match = imgRegex.exec(md)) !== null) {
+    const localRelPath = match[2];
+    const localAbsPath = path.join(DRAFTS_DIR, localRelPath);
+    if (fs.existsSync(localAbsPath)) {
+      uploads.push({ original: match[0], alt: match[1], localPath: localAbsPath, localRelPath });
+    }
+  }
+
+  if (uploads.length > 0) {
+    console.log(`📤 ${uploads.length}枚の画像をアップロード中...`);
+    for (const img of uploads) {
+      const filename = path.basename(img.localPath);
+      const postPrefix = path.basename(mdFile, '.md').replace(/_.*/, '');
+      const wpFilename = `${postPrefix}-${filename}`;
+      try {
+        const wpUrl = await uploadImage(token, img.localPath, wpFilename);
+        console.log(`  ✅ ${filename} → ${wpUrl}`);
+        md = md.replace(img.localRelPath, wpUrl);
+      } catch (e) {
+        console.error(`  ❌ ${filename}: ${e.message}`);
+      }
+    }
+    // Save updated MD
+    fs.writeFileSync(mdFile, md, 'utf8');
+    console.log(`✅ MDファイル更新済み: ${mdFile}`);
+  }
+
+  const content = mdToGutenberg(md);
+  console.log(`post_id: ${POST_ID}, 変換後文字数: ${content.length}`);
 
   const res = await fetch(`${API_BASE}/posts/${POST_ID}`, {
     method: 'POST',
@@ -213,11 +265,9 @@ async function main() {
     console.error(`❌ 更新失敗 ${res.status}: ${err}`);
     process.exit(1);
   }
-
   const json = await res.json();
   console.log(`✅ 更新完了: ${json.link}`);
 
-  // DBから確認
   const verify = await fetch(`${API_BASE}/posts/${POST_ID}?context=edit`, {
     headers: { Authorization: `Bearer ${token}` },
   });
