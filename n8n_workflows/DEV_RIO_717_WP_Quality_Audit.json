@@ -18,18 +18,18 @@
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [-600, 0],
-      "notes": "毎週月曜 10:00 JST (UTC 01:00) に全記事QAスキャンを実行"
+      "notes": "毎週月曜 10:00 JST (UTC 01:00) に超厳格基準で全記事QAスキャンを実行"
     },
     {
       "parameters": {
-        "command": "cd /Users/tokudayuya/ai-net-business-sns-os && node --env-file=.env.local scripts/wp_post_qa.js --slack 2>&1"
+        "command": "cd /Users/tokudayuya/ai-net-business-sns-os && node --env-file=.env.local scripts/wp_article_qa_strict.js --auto-fix --slack 2>&1"
       },
       "id": "node-qa-scan",
-      "name": "WP記事QAスキャン",
+      "name": "WP記事超厳格QAスキャン＋自動修正",
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [-380, 0],
-      "notes": "5項目チェック: デザイン/免責文/H2スタイル/CTAリンク/本文長。違反があればSlack通知。"
+      "notes": "超厳格16項目チェック: C1本文空白/C2Markdown露出/C3フロントマター/C4開発コンテンツ/C5ローカル画像/C6href=#残存/C7-404/C8コンテンツ混入 + H1文字数/H2見出し数/H3比較表/H4FAQ/H5CTA/H6アイキャッチ/H7H2グラデ/H8TOC。自動修正可能な項目は即時修正してSlack通知。"
     },
     {
       "parameters": {
@@ -44,40 +44,29 @@
         }
       },
       "id": "node-if-violation",
-      "name": "違反あり？",
+      "name": "BLOCK/REVISEあり？",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
       "position": [-160, 0]
     },
     {
       "parameters": {
-        "command": "cd /Users/tokudayuya/ai-net-business-sns-os && node --env-file=.env.local scripts/wp_design_patcher.js --run 2>&1 && node --env-file=.env.local scripts/wp_html_design_patcher.js --run 2>&1"
-      },
-      "id": "node-auto-fix",
-      "name": "デザイン自動修正",
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [60, -80],
-      "notes": "デザイン未適用の記事を自動修正。修正後Slackで報告。"
-    },
-    {
-      "parameters": {
         "authentication": "webhook",
         "webhookUri": "={{ $env.SLACK_WEBHOOK_URL }}",
-        "text": "={{ '🔧 WP記事QA違反を自動修正しました\\n' + $json.stdout }}",
+        "text": "={{ '🚨 *WP記事QA違反検出*\\n自動修正済み（修正不可分はゆうさんが確認必要）\\n\\n' + $json.stdout.substring(0, 1500) }}",
         "otherOptions": {}
       },
-      "id": "node-slack-fixed",
-      "name": "Slack: 修正完了通知",
+      "id": "node-slack-violation",
+      "name": "Slack: 違反・修正報告",
       "type": "n8n-nodes-base.slack",
       "typeVersion": 2.1,
-      "position": [280, -80]
+      "position": [60, -80]
     },
     {
       "parameters": {
         "authentication": "webhook",
         "webhookUri": "={{ $env.SLACK_WEBHOOK_URL }}",
-        "text": "✅ *WP記事週次QA: 全件OK*\n違反ゼロ。デザイン・免責・CTA全て準拠。",
+        "text": "✅ *WP記事週次QA（超厳格16項目）: 全件PASS*\nBLOCK・REVISE記事ゼロ。ainetbiz.com全記事が品質基準を満たしています。",
         "otherOptions": {}
       },
       "id": "node-slack-ok",
@@ -89,23 +78,44 @@
   ],
   "connections": {
     "毎週月曜 10:00 JST": {
-      "main": [[{ "node": "WP記事QAスキャン", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "WP記事超厳格QAスキャン＋自動修正", "type": "main", "index": 0 }]]
     },
-    "WP記事QAスキャン": {
-      "main": [[{ "node": "違反あり？", "type": "main", "index": 0 }]]
+    "WP記事超厳格QAスキャン＋自動修正": {
+      "main": [[{ "node": "BLOCK/REVISEあり？", "type": "main", "index": 0 }]]
     },
-    "違反あり？": {
+    "BLOCK/REVISEあり？": {
       "main": [
-        [{ "node": "デザイン自動修正", "type": "main", "index": 0 }],
+        [{ "node": "Slack: 違反・修正報告", "type": "main", "index": 0 }],
         [{ "node": "Slack: 全件OK通知", "type": "main", "index": 0 }]
       ]
-    },
-    "デザイン自動修正": {
-      "main": [[{ "node": "Slack: 修正完了通知", "type": "main", "index": 0 }]]
     }
   },
   "settings": { "executionOrder": "v1" },
   "staticData": null,
-  "tags": ["wp", "qa", "weekly-audit"],
-  "meta": { "instanceId": "dev-rio-717" }
+  "tags": ["wp", "qa", "weekly-audit", "ultra-strict"],
+  "meta": {
+    "instanceId": "dev-rio-717",
+    "version": "2.0",
+    "updated": "2026-08-31",
+    "check_items": [
+      "C1: 本文空白（<500字）",
+      "C2: Markdown生テキスト露出（**/**##）",
+      "C3: フロントマター露出（post_id/type/qa_score等）",
+      "C4: 開発コンテンツ露出（セルフQA/カテゴリ案/DEV_RIO）",
+      "C5: ローカル画像パス残存（images/WP-XXX/）",
+      "C6: アフィリリンクhref=\"#\"残存",
+      "C7: 404/リダイレクト異常",
+      "C8: コンテンツ混入（タイトルと本文不一致）",
+      "H1: 本文文字数（基準15,000〜40,000字）",
+      "H2: H2見出し数（基準8〜15本）",
+      "H3: 比較表数（基準2個以上）",
+      "H4: FAQ数（基準10問以上）",
+      "H5: CTAボタン数（基準3個: 冒頭・中盤・末尾）",
+      "H6: アイキャッチ画像（featured_media>0）",
+      "H7: H2グラデーション（linear-gradient）",
+      "H8: TOC（目次）"
+    ],
+    "auto_fix_items": ["C2_markdown", "H7_gradient", "H8_toc", "H5_cta"],
+    "script": "scripts/wp_article_qa_strict.js"
+  }
 }
