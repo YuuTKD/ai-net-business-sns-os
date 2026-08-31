@@ -1,0 +1,102 @@
+{
+  "name": "DEV_RIO_716_WP_Scheduled_Auto_Publish",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 0,
+              "triggerAtMinute": 5
+            }
+          ]
+        }
+      },
+      "id": "trig-schedule",
+      "name": "Schedule Trigger (0:05 UTC / 9:05 JST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-600, 0],
+      "notes": "毎日 9:05 JST に起動。scheduled_YYYY-MM-DD の記事を自動公開する。"
+    },
+    {
+      "parameters": {
+        "command": "cd /Users/tokudayuya/ai-net-business-sns-os && node --env-file=.env.local scripts/wp_scheduled_publisher.js --run 2>&1"
+      },
+      "id": "node-publish",
+      "name": "WP自動公開 (scheduled_* → publish)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [-380, 0],
+      "notes": "wp_scheduled_publisher.js を実行。draft_status=scheduled_YYYY-MM-DD で日付<=今日の記事を公開し、CSVを更新する。Slack通知も内蔵。"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.stdout }}",
+              "operation": "contains",
+              "value2": "公開完了"
+            }
+          ]
+        }
+      },
+      "id": "node-if-published",
+      "name": "公開あり？",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [-160, 0]
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "webhookUri": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "text": "={{ '📝 WP自動公開完了\\n' + $json.stdout.split('\\n').filter(l => l.includes('公開完了') || l.includes('公開中')).join('\\n') }}",
+        "otherOptions": {}
+      },
+      "id": "node-slack-ok",
+      "name": "Slack: 公開成功通知",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [60, -80],
+      "notes": "公開URLをSlackに通知"
+    },
+    {
+      "parameters": {
+        "authentication": "webhook",
+        "webhookUri": "={{ $env.SLACK_WEBHOOK_URL }}",
+        "text": "={{ '📋 WP自動公開: 本日対象なし\\n' + new Date().toISOString().slice(0,10) }}",
+        "otherOptions": {}
+      },
+      "id": "node-slack-none",
+      "name": "Slack: 対象なし通知",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.1,
+      "position": [60, 80],
+      "notes": "公開対象がない日は「対象なし」と通知"
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (0:05 UTC / 9:05 JST)": {
+      "main": [[{ "node": "WP自動公開 (scheduled_* → publish)", "type": "main", "index": 0 }]]
+    },
+    "WP自動公開 (scheduled_* → publish)": {
+      "main": [[{ "node": "公開あり？", "type": "main", "index": 0 }]]
+    },
+    "公開あり？": {
+      "main": [
+        [{ "node": "Slack: 公開成功通知", "type": "main", "index": 0 }],
+        [{ "node": "Slack: 対象なし通知", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": ["wp", "auto-publish", "scheduled"],
+  "meta": {
+    "instanceId": "dev-rio-716"
+  }
+}

@@ -1,7 +1,7 @@
 ---
 name: 編集者
 description: "既存コンテンツを他媒体向けに再構成するリパーパス専門家。DEV_RIO_701（アフィリ挿入）・DEV_RIO_702（X投稿下書き）・DEV_RIO_704（Threads×noteリパーパス）に関わる作業を任せたいときに呼ぶ。"
-model: fable
+model: claude-haiku-4-5-20251001
 allowed-tools:
   - Read
   - Write

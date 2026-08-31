@@ -1,48 +1,64 @@
-# 引き継ぎメモ（2026-08-10 作成 / 前セッションはcontext limitで強制終了）
+# Session Handoff — 2026-08-26
 
-## 1. 完了した作業（直近セッション分）
-- ブランチ: feature/brain-registration-note-004-005-006
-- a7aeace  WP-014(最先端AIアイテム)を執筆・下書き作成
-- 35e5c7c  最先端AIアイテム3点を新規リンクライブラリに追加
-- 078fbcf  KPI週次ログ更新（2026-08-10・実績確認）
-- 9fa05ab  WP-012/WP-013を執筆・wp_queue_runner.jsで下書き自動作成
-- e4ce4fe  WordPress記事の下書き自動作成ツールを実装
-- ab58ac7  Threads自動投稿の有効化完了を記録（macOS cron・毎日10:00）
-- （このセッションでコミット）WP-015(2026最先端PCガジェット)下書き作成＋リンクライブラリ更新
+**Date**: 2026-08-26 22:10 JST  
+**Branch**: feature/brain-registration-note-004-005-006  
+**Status**: NOTE-015公開完了。Codex画像依頼送信済み。
 
-## 2. 下書き記事の状態（wp_drafts/ 全19本）
-- WP-012 / WP-013 / WP-014 / WP-015 → 作成済み・WordPress上は「下書き」のまま未公開
-- WP-009（キャッシュレス決済端末）→ 提携承認待ちのため保留中
-- WP-005〜WP-008 → v2版まで作成済み、公開状況は要確認
-- WP-010 / WP-011 → 公開済み（コミットログに「WordPress公開・キューに記録」の記載あり）
+---
 
-## 3. 進行中・未完了
-- ASP提携申請：S-1決済端末 / S-2電子契約 / A-1法人カード / A-2予約システム
-- 楽天ROOMバッチ（開業什器の残り8点）
-- 楽天ROOMバッチ（物撮り・バックオフィス10点）
-- WP-HUB まとめ記事（ファイルは存在するが下書き作成の進捗未確認）
+## ✅ 今セッションで完了したこと
 
-## 4. 「別ユーザーのROOMに飛んだ」座標ズレの件
-- 発生箇所：未記録。次セッションで再現確認が必要
-- 対応状況：未記録
-- 確認方法：楽天ROOMバッチ関連スクリプト（コミット 6ae4c64, 797b262, aca82d9 あたり）の
-  リンク生成ロジックを codex-analyze で調査する
+1. **ainetbiz.com 全16記事 Yoast SEO 90点以上** — ブラウザのnonce+Fetch APIで全記事修正完了
+2. **最短収益化作戦会議** → Remoba労務に集中決定
+3. **Remoba WP-008/WP-020にCTA3点化**
+4. **Threads TQ-074〜076作成・キュー追加**（アフィリリンクも正式URL）
+5. **LOCALGOAT記事3本（WP-NEW-03/04/05）公開**
+6. **ainetbiz.com 4記事からRemobaへの内部リンク追加**（記事347・402・398・360）
+7. **Brain「AIエージェントの教科書」価格¥55,800をゆうさんが確認**
+8. **NOTE-015公開** (`https://note.com/ai_store_yuya/n/na4d2ef627da6`)
+   - タイトル: 「複数のAIを部署のように分業させる」——AIエージェントという仕組みを、実在の教材から理解する
+   - 3,929文字・全文無料・紹介リンク3箇所
+9. **Codexに画像依頼送信** — INBOX + Slack(#ai-team-bridge)通知済み
 
-## 5. 気になる残置ブランチ（要確認）
-- setup/codex-claude-pr-workflow というブランチが既に存在している
-  → 過去にCodex連携のセットアップに着手した形跡の可能性。中身を確認すること：
-    git log --oneline -10 setup/codex-claude-pr-workflow
+---
 
-## 6. ゆうさん判断待ちの作業
-1. WP-012・WP-013・WP-014・WP-015 の内容確認 → WordPress管理画面から公開
-2. 公開後、Threadsキューに送客投稿を追加（重複チェック込み）
-3. WP-015をこのまま完結させるか、別方向に切り替えるか
+## 🔄 Codex待ち（自動で完了予定）
 
-## 7. 次セッションへの技術的申し送り（重要）
-- 前セッションは毎ターン wp_drafts配下4ファイル＋WP_PUBLISH_SETUP.md（計459行）を
-  自動読み込みし、応答前にcontext limitに到達して機能停止した
-- 同じ構成で再開しないこと。下書き記事の全文読み込みは禁止。
-  必要な場合のみ、対象1ファイルに絞って読むこと
-- 重い調査・実装・エラー修正は Codex CLI に委譲する（codex-analyze / codex-exec / codex-fix）
-- cron設定：毎日10:00で稼働中。ScheduleWakeup は使用しない方針で確定済み
-- git logを使う際は `git --no-pager log` を使うこと（lessページャーで停止する事故が過去に発生）
+- **NOTE-015 画像3枚生成・挿入**
+  - 依頼ファイル: `INBOX_CODEX/URGENT_2026-08-26T13-09-35-458Z.md`
+  - 保存先: `products/revenue-intelligence-os/data/note_drafts/images/NOTE-015/`
+  - カバー画像(1280×670)・挿絵1(比較図)・挿絵2(8部署図)
+
+---
+
+## ⏳ 次のセッションでやること
+
+### 優先度A（すぐやる）
+1. **Codex画像完了確認** → noteエディターで挿入されているか目視確認
+2. **WP-035・WP-036公開**（2026-08-27予定。`wordpress_posts_queue.csv`のscheduled_2026-08-27を確認）
+
+### 優先度B（今週中）
+3. **Windsor.ai × Google Search Console接続**
+   - URL: https://app.windsor.ai/ → Sources → Google Search Console
+   - ゆうさんの手動操作が必要（Googleアカウント認証）
+4. **Threads TQ-074** 自動投稿確認（2026-08-29予定、n8nが実行）
+
+---
+
+## 📁 重要ファイル
+
+| ファイル | 用途 |
+|---------|------|
+| `products/revenue-intelligence-os/data/note_posts_queue.csv` | NOTE-015がpublished |
+| `products/revenue-intelligence-os/data/threads_posts_queue.csv` | TQ-074〜076待機中 |
+| `products/revenue-intelligence-os/data/wordpress_posts_queue.csv` | WP-035/036 scheduled_2026-08-27 |
+| `products/revenue-intelligence-os/data/note_drafts/images/NOTE-015/` | Codex画像保存先 |
+
+---
+
+## 🔑 次のセッションへの引き継ぎ手順
+
+1. このHANDOFF.mdを読む
+2. `git status` で変更ファイルを確認
+3. NOTE-015の画像がCodexから届いているか `ls products/revenue-intelligence-os/data/note_drafts/images/NOTE-015/` で確認
+4. WP-035/036の公開日を確認してから作業開始

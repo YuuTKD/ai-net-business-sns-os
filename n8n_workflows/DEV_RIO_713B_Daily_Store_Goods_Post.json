@@ -1,0 +1,907 @@
+{
+  "name": "DEV_RIO_713B_Daily_Store_Goods_Post",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 14 * * *"
+            }
+          ]
+        }
+      },
+      "id": "713b-0001-schedule",
+      "name": "Schedule Trigger (14:00 UTC / 23:00 JST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1400,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// JSTの曜日から今日の業種カテゴリを決定\n// 月:飲食 火:飲食 水:美容 木:飲食 金:美容 土:整体 日:飲食 → 週に飲食4・美容2・整体1\nconst jstNow = new Date(Date.now() + 9 * 3600000);\nconst dow = jstNow.getUTCDay(); // +9h済み → getUTCDayでJSTの曜日(0=日)\nconst map = { 0: '飲食', 1: '飲食', 2: '飲食', 3: '美容', 4: '飲食', 5: '美容', 6: '整体' };\nconst category = map[dow];\nconst today = jstNow.toISOString().slice(0, 10);\nreturn [{ json: { category, today, dow } }];"
+      },
+      "id": "713b-0002-detect-cat",
+      "name": "Detect Category (JST DOW)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1180,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "store_goods_pool",
+          "mode": "name"
+        },
+        "options": {}
+      },
+      "id": "713b-0003-read-pool",
+      "name": "Read store_goods_pool",
+      "alwaysOutputData": true,
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        -960,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 今日の業種カテゴリ × status=ready の候補を抽出し、date_added最古順に並べる（最大3件を再試行用に保持）\nconst ctx = $('Detect Category (JST DOW)').first().json;\nlet rows = [];\ntry { rows = $('Read store_goods_pool').all().map(i => i.json).filter(r => r && r.item_name); } catch (e) {}\nconst candidates = rows\n  .filter(r => String(r.category) === ctx.category && String(r.status) === 'ready')\n  .sort((a, b) => String(a.date_added || '').localeCompare(String(b.date_added || '')));\nif (!candidates.length) {\n  return [{ json: { proceed: false, reason: 'no_ready_goods', category: ctx.category, today: ctx.today } }];\n}\n// 上位3件を再試行候補として保持。post_idが空の行はrow_number等で更新できないため、item_name+date_addedをキーにして後段で照合する。\nconst picks = candidates.slice(0, 3).map(c => ({\n  item_name: c.item_name,\n  price: c.price,\n  url: c.url || '',\n  affiliate_url: c.affiliate_url || c.url || '',\n  category: c.category,\n  description: c.description || '',\n  source: c.source || '',\n  date_added: c.date_added || '',\n  post_id: c.post_id || ''\n}));\nreturn [{ json: { proceed: true, category: ctx.category, today: ctx.today, picks } }];"
+      },
+      "id": "713b-0004-select",
+      "name": "Select Candidates",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -740,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.proceed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "713b-0005-if-proceed",
+      "name": "IF Has Candidates",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// 候補ごとに投稿文をまとめて生成させるプロンプトを組み立てる（1回のAIコールで最大3件）\nconst sel = $('Select Candidates').first().json;\nconst picks = sel.picks || [];\nconst brief = picks.map((c, i) => ({\n  idx: i,\n  item_name: c.item_name.slice(0, 100),\n  price: c.price,\n  category: c.category,\n  description: String(c.description || '').slice(0, 200),\n  source: c.source\n}));\nconst prompt =\n  'あなたは飲食店・美容サロン・整体院向けメディア「@ai_store_lab」のSNS担当です。' +\n  '以下の各商品について、「店舗オーナーへのおすすめアイテム紹介」としてThreads投稿文を作成してください。\\n\\n' +\n  '【投稿文ルール】\\n' +\n  '- 文字数: 150〜300字\\n' +\n  '- 冒頭: 絵文字1個＋「今日のおすすめアイテム」で始める\\n' +\n  '- 業種: categoryの店舗オーナーが「これ使えそう」と思う具体的な場面を描写\\n' +\n  '- 価格帯・特徴を1〜2行で紹介\\n' +\n  '- 断定・保証表現（必ず・絶対・確実に）は禁止\\n' +\n  '- 薬機法NG表現（治る・効果がある・医療・改善する・予防・効く・症状）禁止\\n' +\n  '- 末尾に #店舗経営 #（categoryの値）経営 を付ける（例: 飲食なら #飲食経営）\\n' +\n  '- URLは本文に一切含めない\\n' +\n  '- 「1コメント目のリンクから」等の案内文は書かない\\n\\n' +\n  '出力は必ずJSON配列のみ。各要素は {\"idx\":0,\"text\":\"投稿本文\"} の形式。説明文・コードブロック記号・前置きは不要。\\n\\n' +\n  '商品リスト:\\n' + JSON.stringify(brief);\nreturn [{ json: { picks, category: sel.category, today: sel.today, prompt } }];"
+      },
+      "id": "713b-0006-prep-copy",
+      "name": "Prepare Copy Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -300,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "anthropicApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'claude-sonnet-4-5', max_tokens: 2000, messages: [{ role: 'user', content: $json.prompt }] }) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "713b-0007-copy-gen",
+      "name": "Copy Gen (Claude)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -80,
+        200
+      ],
+      "credentials": {
+        "anthropicApi": {
+          "id": "gSjvXXaj0OLWBIza",
+          "name": "Anthropic account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// AI生成文をパースし、コンプラチェックを通過した最初の1件を選ぶ（最大3候補を順に検査）\nconst payload = $('Prepare Copy Prompt').first().json;\nconst picks = payload.picks || [];\nconst texts = {};\ntry {\n  const res = $input.first().json;\n  const raw = (res && res.content && res.content[0] && res.content[0].text) ? res.content[0].text : '';\n  const m = raw.match(/\\[[\\s\\S]*\\]/);\n  const arr = JSON.parse(m ? m[0] : raw);\n  for (const a of arr) texts[Number(a.idx)] = String(a.text || '');\n} catch (e) { /* パース失敗 → 全件textなし扱い */ }\n\nconst yakki = /治る|治療|効く|効果がある|改善する|予防|痩せる|若返る|病気|症状|医療/;\nconst kodai = /必ず|絶対|確実に/;\nconst urlRe = /https?:\\/\\//;\n\nlet chosen = null;\nlet chosenText = '';\nconst skipped = [];\nfor (let i = 0; i < picks.length; i++) {\n  const t = String(texts[i] || '').trim();\n  const name = picks[i].item_name;\n  if (!t) { skipped.push(`${name}: 生成文なし`); continue; }\n  if (t.length > 480) { skipped.push(`${name}: 480字超`); continue; }\n  if (yakki.test(t)) { skipped.push(`${name}: 薬機法NGワード`); continue; }\n  if (kodai.test(t)) { skipped.push(`${name}: 断定・保証表現`); continue; }\n  if (urlRe.test(t)) { skipped.push(`${name}: URL含む`); continue; }\n  chosen = picks[i];\n  chosenText = t;\n  break;\n}\n\nif (!chosen) {\n  return [{ json: { proceed: false, reason: 'all_skipped', category: payload.category, today: payload.today, skipped } }];\n}\nreturn [{ json: {\n  proceed: true,\n  category: payload.category,\n  today: payload.today,\n  text: chosenText,\n  item_name: chosen.item_name,\n  price: chosen.price,\n  affiliate_url: chosen.affiliate_url || chosen.url || '',\n  source: chosen.source,\n  date_added: chosen.date_added,\n  post_id: chosen.post_id,\n  skipped\n} }];"
+      },
+      "id": "713b-0008-parse-compliance",
+      "name": "Parse & Compliance Gate",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        140,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.proceed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "713b-0009-if-clean",
+      "name": "IF Compliance Passed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        360,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.threads.net/v1.0/me/threads",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "media_type",
+              "value": "TEXT"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.text }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "713b-0010-create",
+      "name": "Threads Create Media",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        580,
+        100
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "EqL89RW6m6CtCIbm",
+          "name": "Bearer Auth account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "amount": 30,
+        "unit": "seconds"
+      },
+      "id": "713b-0011-wait",
+      "name": "Wait 30s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        100
+      ],
+      "webhookId": "713b-wait-publish-0001"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.threads.net/v1.0/me/threads_publish",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "creation_id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "713b-0012-publish",
+      "name": "Threads Publish",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1020,
+        100
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "EqL89RW6m6CtCIbm",
+          "name": "Bearer Auth account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 投稿成否を判定。成功時はpool更新行(status=posted)を組み立て、コメント投稿用にthread_id/URLも保持\nconst sel = $('Parse & Compliance Gate').first().json;\nlet created = null;\ntry { created = $('Threads Create Media').first().json; } catch (e) {}\nlet pub = null;\ntry { pub = $input.first().json; } catch (e) {}\nconst createOk = created && created.id && !created.error;\nconst pubOk = pub && pub.id && !pub.error;\nconst jstNow = new Date(Date.now() + 9 * 3600000);\nconst postedAt = jstNow.toISOString().replace('Z', '+09:00');\nif (!createOk || !pubOk) {\n  const detail = JSON.stringify((pub && pub.error) || (created && created.error) || pub || created || {}).slice(0, 300);\n  return [{ json: {\n    ok: false,\n    item_name: sel.item_name,\n    date_added: sel.date_added,\n    post_id: sel.post_id || '',\n    status: 'failed',\n    posted_at: postedAt,\n    message: `⚠️ DEV_RIO_713B Threads投稿失敗 [${sel.category}] ${sel.item_name}\\n${detail}`\n  } }];\n}\nreturn [{ json: {\n  ok: true,\n  item_name: sel.item_name,\n  date_added: sel.date_added,\n  post_id: pub.id,\n  status: 'posted',\n  posted_at: postedAt,\n  thread_id: pub.id,\n  category: sel.category,\n  affiliate_url: sel.affiliate_url || '',\n  message: `✅ DEV_RIO_713B 投稿完了 [${sel.category}] ${sel.item_name}\\nthread_id: ${pub.id}`\n} }];"
+      },
+      "id": "713b-0013-verify",
+      "name": "Verify Post",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1240,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.ok }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "713b-0014-if-ok",
+      "name": "IF Publish OK",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1460,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.affiliate_url }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "713b-0015-if-has-url",
+      "name": "IF Has URL",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1680,
+        20
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.threads.net/v1.0/me/threads",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "media_type",
+              "value": "TEXT"
+            },
+            {
+              "name": "text",
+              "value": "={{ $json.item_name + '\\n' + $json.affiliate_url }}"
+            },
+            {
+              "name": "reply_to_id",
+              "value": "={{ $json.thread_id }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "713b-0016-comment-create",
+      "name": "Comment Create Media",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1900,
+        -60
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "EqL89RW6m6CtCIbm",
+          "name": "Bearer Auth account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "amount": 15,
+        "unit": "seconds"
+      },
+      "id": "713b-0017-comment-wait",
+      "name": "Wait 15s (comment)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2120,
+        -60
+      ],
+      "webhookId": "713b-wait-comment-0001"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.threads.net/v1.0/me/threads_publish",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "creation_id",
+              "value": "={{ $json.id }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "713b-0018-comment-publish",
+      "name": "Comment Publish",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2340,
+        -60
+      ],
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "EqL89RW6m6CtCIbm",
+          "name": "Bearer Auth account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// pool更新行を組み立て（post_idがあればそれで照合、無ければitem_name+date_addedで照合するため両方を出力）\nconst v = $('Verify Post').first().json;\nreturn [{ json: {\n  item_name: v.item_name,\n  date_added: v.date_added,\n  status: 'posted',\n  posted_at: v.posted_at,\n  post_id: v.post_id\n} }];"
+      },
+      "id": "713b-0019-build-update",
+      "name": "Build Pool Update (posted)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1900,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "store_goods_pool",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "item_name"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "713b-0020-update-pool",
+      "name": "Update store_goods_pool (posted)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        2120,
+        120
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 投稿失敗時: pool行をstatus=failedへ更新する行を組み立てる\nconst v = $('Verify Post').first().json;\nreturn [{ json: {\n  item_name: v.item_name,\n  date_added: v.date_added,\n  status: 'failed',\n  posted_at: v.posted_at\n} }];"
+      },
+      "id": "713b-0021-build-failed",
+      "name": "Build Pool Update (failed)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "store_goods_pool",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [
+            "item_name"
+          ],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "713b-0022-update-failed",
+      "name": "Update store_goods_pool (failed)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1900,
+        260
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// 商材不足時のアラート文\nconst ctx = $('Detect Category (JST DOW)').first().json;\nreturn [{ json: { message: `⚠️ DEV_RIO_713B 商材不足: 今日の業種「${ctx.category}」のready商品が0件です。713A（週次リサーチ）の手動実行を検討してください。` } }];"
+      },
+      "id": "713b-0023-empty-msg",
+      "name": "Build Shortage Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -300,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// コンプラ全落ち時のアラート文\nconst j = $('Parse & Compliance Gate').first().json;\nconst detail = (j.skipped || []).join(' / ') || '不明';\nreturn [{ json: { message: `⚠️ DEV_RIO_713B コンプラ全落ち: 今日の候補（${j.category}）が全てスキップされました。\\n${detail}` } }];"
+      },
+      "id": "713b-0024-skip-msg",
+      "name": "Build Skip Alert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        580,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#ai-team-bridge",
+          "mode": "name"
+        },
+        "text": "={{ $json.message }}",
+        "otherOptions": {}
+      },
+      "id": "713b-0025-slack",
+      "name": "Slack Notify (#ai-team-bridge)",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [
+        2340,
+        140
+      ],
+      "webhookId": "713b-slack-notify-0001",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "bWml4XelhrDy3QPK",
+          "name": "Slack account"
+        }
+      },
+      "continueOnFail": true
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger (14:00 UTC / 23:00 JST)": {
+      "main": [
+        [
+          {
+            "node": "Detect Category (JST DOW)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Detect Category (JST DOW)": {
+      "main": [
+        [
+          {
+            "node": "Read store_goods_pool",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read store_goods_pool": {
+      "main": [
+        [
+          {
+            "node": "Select Candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Candidates": {
+      "main": [
+        [
+          {
+            "node": "IF Has Candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Has Candidates": {
+      "main": [
+        [
+          {
+            "node": "Prepare Copy Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Shortage Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Copy Prompt": {
+      "main": [
+        [
+          {
+            "node": "Copy Gen (Claude)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copy Gen (Claude)": {
+      "main": [
+        [
+          {
+            "node": "Parse & Compliance Gate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Compliance Gate": {
+      "main": [
+        [
+          {
+            "node": "IF Compliance Passed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Compliance Passed": {
+      "main": [
+        [
+          {
+            "node": "Threads Create Media",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Skip Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Threads Create Media": {
+      "main": [
+        [
+          {
+            "node": "Wait 30s",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 30s": {
+      "main": [
+        [
+          {
+            "node": "Threads Publish",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Threads Publish": {
+      "main": [
+        [
+          {
+            "node": "Verify Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Post": {
+      "main": [
+        [
+          {
+            "node": "IF Publish OK",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Publish OK": {
+      "main": [
+        [
+          {
+            "node": "IF Has URL",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Build Pool Update (posted)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Slack Notify (#ai-team-bridge)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Pool Update (failed)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Slack Notify (#ai-team-bridge)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Has URL": {
+      "main": [
+        [
+          {
+            "node": "Comment Create Media",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Comment Create Media": {
+      "main": [
+        [
+          {
+            "node": "Wait 15s (comment)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 15s (comment)": {
+      "main": [
+        [
+          {
+            "node": "Comment Publish",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Pool Update (posted)": {
+      "main": [
+        [
+          {
+            "node": "Update store_goods_pool (posted)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Pool Update (failed)": {
+      "main": [
+        [
+          {
+            "node": "Update store_goods_pool (failed)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Shortage Alert": {
+      "main": [
+        [
+          {
+            "node": "Slack Notify (#ai-team-bridge)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Skip Alert": {
+      "main": [
+        [
+          {
+            "node": "Slack Notify (#ai-team-bridge)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

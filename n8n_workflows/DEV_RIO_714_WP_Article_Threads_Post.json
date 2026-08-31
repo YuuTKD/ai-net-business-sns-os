@@ -1,0 +1,313 @@
+{
+  "name": "DEV_RIO_714_WP_Article_Threads_Post",
+  "active": false,
+  "nodes": [
+    {
+      "id": "714-0001-schedule",
+      "name": "Schedule Trigger (12:00 UTC / 21:00 JST)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 300],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 12 * * *"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "714-0002-wp-api",
+      "name": "WP公開記事取得",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 300],
+      "parameters": {
+        "method": "GET",
+        "url": "https://public-api.wordpress.com/wp/v2/sites/treecosme.home.blog/posts",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "status", "value": "publish"},
+            {"name": "orderby", "value": "date"},
+            {"name": "order", "value": "asc"},
+            {"name": "per_page", "value": "100"},
+            {"name": "_fields", "value": "id,date,title,excerpt,link"}
+          ]
+        },
+        "options": {"timeout": 30000}
+      }
+    },
+    {
+      "id": "714-0003-read-log",
+      "name": "Read wp_threads_log",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [440, 300],
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "wp_threads_log",
+          "mode": "name"
+        },
+        "options": {"alwaysOutputData": true}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "id": "714-0004-code-filter",
+      "name": "未投稿記事を選出",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [660, 300],
+      "parameters": {
+        "jsCode": "// WP公開記事リスト取得（配列 or 分割アイテム両対応）\nconst wpItems = $('WP公開記事取得').all();\nlet posts = [];\nif (wpItems.length === 1 && Array.isArray(wpItems[0].json)) {\n  posts = wpItems[0].json;\n} else {\n  posts = wpItems.map(i => i.json).filter(p => p && p.id);\n}\n\n// 投稿済みpost_id一覧（Sheetsから）\nconst logItems = $input.all();\nconst postedIds = new Set(\n  logItems\n    .map(i => i.json.post_id)\n    .filter(Boolean)\n    .map(String)\n);\n\n// 古い順で最初の未投稿記事を1件選出\nconst unposted = posts.find(p => p && p.id && !postedIds.has(String(p.id)));\n\nif (!unposted) {\n  return [{ json: { proceed: false } }];\n}\n\n// HTMLタグ除去・エンティティ変換\nconst stripHtml = (str) => (str || '')\n  .replace(/<[^>]+>/g, '')\n  .replace(/&nbsp;/g, ' ')\n  .replace(/&amp;/g, '&')\n  .replace(/&lt;/g, '<')\n  .replace(/&gt;/g, '>')\n  .replace(/&#[0-9]+;/g, '')\n  .replace(/\\n+/g, ' ')\n  .trim();\n\nconst title = stripHtml((unposted.title || {}).rendered);\nconst excerpt = stripHtml((unposted.excerpt || {}).rendered).slice(0, 120);\n\nreturn [{\n  json: {\n    proceed: true,\n    post_id: String(unposted.id),\n    post_date: unposted.date,\n    title,\n    excerpt,\n    url: unposted.link\n  }\n}];"
+      }
+    },
+    {
+      "id": "714-0005-if",
+      "name": "IF 未投稿あり",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [880, 300],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.proceed }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "714-0006-build-text",
+      "name": "投稿文を生成",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1100, 180],
+      "parameters": {
+        "jsCode": "const { title, excerpt, url } = $json;\n\nconst base = `📖 ${title}\\n\\n${excerpt}\\n\\n▼ 続きを読む\\n${url}`;\n\nlet text = base;\nif (text.length > 480) {\n  const maxEx = 480 - `📖 ${title}\\n\\n…\\n\\n▼ 続きを読む\\n${url}`.length;\n  const short = excerpt.slice(0, Math.max(0, maxEx)) + '…';\n  text = `📖 ${title}\\n\\n${short}\\n\\n▼ 続きを読む\\n${url}`;\n}\n\nreturn [{ json: { ...$json, text } }];"
+      }
+    },
+    {
+      "id": "714-0007-threads-create",
+      "name": "Threads Create Media",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1320, 180],
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.threads.net/v1.0/me/threads",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "media_type", "value": "TEXT"},
+            {"name": "text", "value": "={{ $json.text }}"}
+          ]
+        },
+        "options": {"timeout": 30000}
+      },
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "EqL89RW6m6CtCIbm",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "id": "714-0008-wait",
+      "name": "Wait 30s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1540, 180],
+      "webhookId": "714-wait-publish-0001",
+      "parameters": {
+        "amount": 30,
+        "unit": "seconds"
+      }
+    },
+    {
+      "id": "714-0009-threads-publish",
+      "name": "Threads Publish",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1760, 180],
+      "parameters": {
+        "method": "POST",
+        "url": "https://graph.threads.net/v1.0/me/threads_publish",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBearerAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {"name": "creation_id", "value": "={{ $json.id }}"}
+          ]
+        },
+        "options": {"timeout": 30000}
+      },
+      "credentials": {
+        "httpBearerAuth": {
+          "id": "EqL89RW6m6CtCIbm",
+          "name": "Bearer Auth account"
+        }
+      }
+    },
+    {
+      "id": "714-0010-append-log",
+      "name": "Append wp_threads_log",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [1980, 180],
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1ZpufySbgfVGqdPkDbrRnuHsDcX6k2JDkGq1Bw-6nHv4",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "wp_threads_log",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "post_id": "={{ $('未投稿記事を選出').first().json.post_id }}",
+            "post_date": "={{ $('未投稿記事を選出').first().json.post_date }}",
+            "title": "={{ $('未投稿記事を選出').first().json.title }}",
+            "url": "={{ $('未投稿記事を選出').first().json.url }}",
+            "threads_id": "={{ $json.id }}",
+            "posted_at": "={{ new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 19).replace('T', ' ') }} JST"
+          }
+        },
+        "options": {}
+      },
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "3MvBU36ZMU4wtaoc",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "id": "714-0011-slack-success",
+      "name": "Slack 投稿成功通知",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [2200, 180],
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#ai-team-bridge",
+          "mode": "name"
+        },
+        "text": "={{ '✅ [714] WP記事をThreadsに投稿\\n📖 ' + $(\\'未投稿記事を選出\\').first().json.title + '\\n🔗 ' + $(\\'未投稿記事を選出\\').first().json.url }}",
+        "otherOptions": {}
+      },
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "bWml4XelhrDy3QPK",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "id": "714-0012-slack-empty",
+      "name": "Slack 記事なし通知",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [1100, 440],
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#ai-team-bridge",
+          "mode": "name"
+        },
+        "text": "ℹ️ [714] 未投稿のWP記事がありません。新規記事の公開後に自動再開します。",
+        "otherOptions": {}
+      },
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "bWml4XelhrDy3QPK",
+          "name": "Slack account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger (02:00 UTC / 11:00 JST)": {
+      "main": [[{"node": "WP公開記事取得", "type": "main", "index": 0}]]
+    },
+    "WP公開記事取得": {
+      "main": [[{"node": "Read wp_threads_log", "type": "main", "index": 0}]]
+    },
+    "Read wp_threads_log": {
+      "main": [[{"node": "未投稿記事を選出", "type": "main", "index": 0}]]
+    },
+    "未投稿記事を選出": {
+      "main": [[{"node": "IF 未投稿あり", "type": "main", "index": 0}]]
+    },
+    "IF 未投稿あり": {
+      "main": [
+        [{"node": "投稿文を生成", "type": "main", "index": 0}],
+        [{"node": "Slack 記事なし通知", "type": "main", "index": 0}]
+      ]
+    },
+    "投稿文を生成": {
+      "main": [[{"node": "Threads Create Media", "type": "main", "index": 0}]]
+    },
+    "Threads Create Media": {
+      "main": [[{"node": "Wait 30s", "type": "main", "index": 0}]]
+    },
+    "Wait 30s": {
+      "main": [[{"node": "Threads Publish", "type": "main", "index": 0}]]
+    },
+    "Threads Publish": {
+      "main": [[{"node": "Append wp_threads_log", "type": "main", "index": 0}]]
+    },
+    "Append wp_threads_log": {
+      "main": [[{"node": "Slack 投稿成功通知", "type": "main", "index": 0}]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}

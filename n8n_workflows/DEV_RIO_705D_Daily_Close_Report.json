@@ -7,13 +7,13 @@
           "interval": [
             {
               "field": "cronExpression",
-              "expression": "40 14 * * *"
+              "expression": "0 16 * * *"
             }
           ]
         }
       },
       "id": "705d-0001-schedule",
-      "name": "Schedule Trigger (14:40 UTC / 23:40 JST)",
+      "name": "Schedule Trigger (16:00 UTC / 01:00 JST)",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1.2,
       "position": [-880, 200]
@@ -157,7 +157,7 @@
   ],
   "pinData": {},
   "connections": {
-    "Schedule Trigger (14:40 UTC / 23:40 JST)": {
+    "Schedule Trigger (16:00 UTC / 01:00 JST)": {
       "main": [[{ "node": "Read posts", "type": "main", "index": 0 }]]
     },
     "Read posts": {
@@ -176,7 +176,7 @@
       "main": [[{ "node": "Slack Daily Report (#ai-team-bridge)", "type": "main", "index": 0 }]]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
